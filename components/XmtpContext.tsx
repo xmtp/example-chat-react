@@ -59,11 +59,15 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
   useEffect(() => {
     const registerUser = async () => {
       if (!client || !user) return;
-      const bundle = await client.getPublicKeyBundle(
+      const bundle = await client.getUserContact(
         user.identityKey.publicKey.walletSignatureAddress()
       );
       if (!bundle) {
-        await client.registerPublicKeyBundle(user.getPublicKeyBundle());
+        console.log(
+          "publishing",
+          user.getPublicKeyBundle().identityKey?.walletSignatureAddress()
+        );
+        await client.publishUserContact(user.getPublicKeyBundle());
       }
     };
     registerUser();

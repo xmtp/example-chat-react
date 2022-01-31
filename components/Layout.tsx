@@ -1,32 +1,12 @@
 import { Fragment, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
-import {
-  BellIcon,
-  CalendarIcon,
-  ChartBarIcon,
-  FolderIcon,
-  HomeIcon,
-  InboxIcon,
-  MenuAlt2Icon,
-  UsersIcon,
-  XIcon,
-} from "@heroicons/react/outline";
+import { BellIcon, MenuAlt2Icon, XIcon } from "@heroicons/react/outline";
 import { SearchIcon } from "@heroicons/react/solid";
 import Image from "next/image";
-
-const navigation = [
-  { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
-  { name: "Team", href: "#", icon: UsersIcon, current: false },
-  { name: "Projects", href: "#", icon: FolderIcon, current: false },
-  { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
-  { name: "Documents", href: "#", icon: InboxIcon, current: false },
-  { name: "Reports", href: "#", icon: ChartBarIcon, current: false },
-];
-const userNavigation = [
-  { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
-  { name: "Sign out", href: "#" },
-];
+import Address from "./Address";
+import { useXmtp } from "./XmtpContext";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -38,6 +18,8 @@ type LayoutProps = {
 
 const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user } = useXmtp();
+  const router = useRouter();
 
   return (
     <>
@@ -93,17 +75,21 @@ const Layout = ({ children }: LayoutProps) => {
                   </div>
                 </Transition.Child>
                 <div className="flex-shrink-0 flex items-center px-4">
-                  <Image
-                    className="h-8 w-auto"
-                    src="/xmtp-logo.png"
-                    alt="XMTP"
-                    width={120}
-                    height={28}
-                  />
+                  <Link href="/">
+                    <a>
+                      <Image
+                        className="h-8 w-auto"
+                        src="/xmtp-logo.png"
+                        alt="XMTP"
+                        width={120}
+                        height={28}
+                      />
+                    </a>
+                  </Link>
                 </div>
                 <div className="mt-5 flex-1 h-0 overflow-y-auto">
                   <nav className="px-2 space-y-1">
-                    {navigation.map((item) => (
+                    {/* {navigation.map((item) => (
                       <a
                         key={item.name}
                         href={item.href}
@@ -125,7 +111,7 @@ const Layout = ({ children }: LayoutProps) => {
                         />
                         {item.name}
                       </a>
-                    ))}
+                    ))} */}
                   </nav>
                 </div>
               </div>
@@ -141,17 +127,21 @@ const Layout = ({ children }: LayoutProps) => {
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex flex-col flex-grow border-r border-gray-200 pt-5 bg-white overflow-y-auto">
             <div className="flex items-center flex-shrink-0 px-4">
-              <Image
-                className="h-8 w-auto"
-                src="/xmtp-logo.png"
-                alt="XMTP"
-                width={120}
-                height={28}
-              />
+              <Link href="/">
+                <a>
+                  <Image
+                    className="h-8 w-auto"
+                    src="/xmtp-logo.png"
+                    alt="XMTP"
+                    width={120}
+                    height={28}
+                  />
+                </a>
+              </Link>
             </div>
             <div className="mt-5 flex-grow flex flex-col">
               <nav className="flex-1 px-2 pb-4 space-y-1">
-                {navigation.map((item) => (
+                {/* {navigation.map((item) => (
                   <a
                     key={item.name}
                     href={item.href}
@@ -173,7 +163,7 @@ const Layout = ({ children }: LayoutProps) => {
                     />
                     {item.name}
                   </a>
-                ))}
+                ))} */}
               </nav>
             </div>
           </div>
@@ -190,8 +180,20 @@ const Layout = ({ children }: LayoutProps) => {
             </button>
             <div className="flex-1 px-4 flex justify-between">
               <div className="flex-1 flex">
-                <form className="w-full flex md:ml-0" action="#" method="GET">
-                  <label htmlFor="search-field" className="sr-only">
+                <form
+                  className="w-full flex md:ml-0"
+                  action="#"
+                  method="GET"
+                  onSubmit={(e: React.SyntheticEvent) => {
+                    e.preventDefault();
+                    const data = e.target as typeof e.target & {
+                      recipient: { value: string };
+                    };
+                    if (!data.recipient) return;
+                    router.push(`/dm/${data.recipient.value}`);
+                  }}
+                >
+                  <label htmlFor="recipient-field" className="sr-only">
                     Recipient
                   </label>
                   <div className="relative w-full text-gray-400 focus-within:text-gray-600">
@@ -199,12 +201,13 @@ const Layout = ({ children }: LayoutProps) => {
                       <SearchIcon className="h-5 w-5" aria-hidden="true" />
                     </div>
                     <input
-                      id="search-field"
+                      id="recipient-field"
                       className="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
                       placeholder="Ethereum address or ENS name"
-                      type="search"
-                      name="search"
+                      type="recipient"
+                      name="recipient"
                     />
+                    <button type="submit" className="hidden" />
                   </div>
                 </form>
               </div>
@@ -218,124 +221,67 @@ const Layout = ({ children }: LayoutProps) => {
                 </button>
 
                 {/* Profile dropdown */}
-                <Menu as="div" className="ml-3 relative">
-                  <div>
-                    <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                      <span className="sr-only">Open user menu</span>
-                      <Image
-                        className="h-8 w-8 rounded-full"
-                        src="/ethereum-logo.png"
-                        alt=""
-                        width={30}
-                        height={30}
-                      />
-                    </Menu.Button>
-                  </div>
-                  <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      {userNavigation.map((item) => (
-                        <Menu.Item key={item.name}>
+                {user && (
+                  <Menu as="div" className="ml-3 relative">
+                    <div>
+                      <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none">
+                        <span className="sr-only">Open user menu</span>
+                        <Address
+                          address={user.identityKey.publicKey.walletSignatureAddress()}
+                          className="inline-flex items-center justify-center px-3 py-2 text-xs font-bold leading-none text-white bg-indigo-500 rounded"
+                        />
+                      </Menu.Button>
+                    </div>
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                      <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <Menu.Item>
                           {({ active }) => (
                             <a
-                              href={item.href}
+                              onClick={() => {
+                                navigator.clipboard.writeText(
+                                  user.identityKey.publicKey.walletSignatureAddress()
+                                );
+                              }}
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
+                              )}
+                            >
+                              Copy address
+                            </a>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              onClick={() => {
+                                console.log("TODO: disconnect");
+                              }}
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
                               )}
                             >
-                              {item.name}
+                              Disconnect
                             </a>
                           )}
                         </Menu.Item>
-                      ))}
-                    </Menu.Items>
-                  </Transition>
-                </Menu>
+                      </Menu.Items>
+                    </Transition>
+                  </Menu>
+                )}
               </div>
             </div>
           </div>
-
-          <main className="flex-grow">
-            <div className="pb-6">{children}</div>
-          </main>
-
-          <div className="sticky bottom-0 z-10 flex-shrink-0 flex h-16 bg-white shadow">
-            <div className="flex w-full p-3 border-t border-gray-300">
-              <button>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-gray-500 mr-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </button>
-              <button>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                  />
-                </svg>
-              </button>
-              <input
-                type="text"
-                placeholder="Message"
-                className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-full py-2 pl-4 mx-3"
-                name="message"
-                required
-              />
-              <button>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-gray-500 mr-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                  />
-                </svg>
-              </button>
-              <button type="submit">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 rotate-90 text-gray-500"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                </svg>
-              </button>
-            </div>
-          </div>
+          {children}
         </div>
       </div>
     </>
