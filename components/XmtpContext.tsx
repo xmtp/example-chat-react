@@ -2,11 +2,11 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Client, PrivateKeyBundle } from "xmtp-js";
 import newWallet from "../helpers/newWallet";
 
-const localNodeBootstrapAddr =
-  "/ip4/127.0.0.1/tcp/9001/ws/p2p/16Uiu2HAmNCxLZCkXNbpVPBpSSnHj9iq4HZQj7fxRzw2kj1kKSHHA";
+// const localNodeBootstrapAddr =
+//   "/ip4/127.0.0.1/tcp/9001/ws/p2p/16Uiu2HAmNCxLZCkXNbpVPBpSSnHj9iq4HZQj7fxRzw2kj1kKSHHA";
 
-// const testnetBootstrapAddr =
-//   '/dns4/bootstrap-node-0.testnet.xmtp.network/tcp/8443/wss/p2p/16Uiu2HAm888gVYpr4cZQ4qhEendQW6oYEhG8n6fnqw1jVW3Prdc6'
+const testnetBootstrapAddr =
+  "/dns4/bootstrap-node-0.testnet.xmtp.network/tcp/8443/wss/p2p/16Uiu2HAm888gVYpr4cZQ4qhEendQW6oYEhG8n6fnqw1jVW3Prdc6";
 
 type XmtpContextType = {
   client: Client | undefined;
@@ -56,7 +56,7 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
     const initClient = async () => {
       setClient(
         await Client.create({
-          bootstrapAddrs: [localNodeBootstrapAddr],
+          bootstrapAddrs: [testnetBootstrapAddr],
         })
       );
     };
