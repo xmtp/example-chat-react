@@ -7,6 +7,7 @@ import Address from "./Address";
 import { useXmtp } from "./XmtpContext";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Head from "next/head";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -23,6 +24,9 @@ const Layout = ({ children }: LayoutProps) => {
 
   return (
     <>
+      <Head>
+        <title>Chat via XMTP</title>
+      </Head>
       <div>
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
