@@ -11,11 +11,19 @@ const localNodeBootstrapAddr =
 type XmtpContextType = {
   client: Client | undefined;
   user: PrivateKeyBundle | undefined;
+  connect: (user: PrivateKeyBundle) => void;
+  disconnect: () => void;
+  generateUser: () => Promise<PrivateKeyBundle>;
 };
+
+const generateUser = async () => PrivateKeyBundle.generate(newWallet());
 
 const XmtpContext = createContext<XmtpContextType>({
   client: undefined,
   user: undefined,
+  connect: () => undefined,
+  disconnect: () => undefined,
+  generateUser,
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,6 +43,14 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
   const [client, setClient] = useState<Client>();
   const [user, setUser] = useState<PrivateKeyBundle>();
 
+  const connect = (user: PrivateKeyBundle) => {
+    setUser(user);
+  };
+
+  const disconnect = () => {
+    setUser(undefined);
+  };
+
   // Initialize the client.
   useEffect(() => {
     const initClient = async () => {
@@ -45,14 +61,6 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
       );
     };
     initClient();
-  }, []);
-
-  // Initialize the user private key bundle.
-  useEffect(() => {
-    const initUser = async () => {
-      setUser(await PrivateKeyBundle.generate(newWallet()));
-    };
-    initUser();
   }, []);
 
   // Register user private key bundle, if necessary.
@@ -78,6 +86,9 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
       value={{
         client,
         user,
+        connect,
+        disconnect,
+        generateUser,
       }}
     >
       {children}

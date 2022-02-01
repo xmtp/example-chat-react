@@ -18,7 +18,7 @@ type LayoutProps = {
 
 const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user } = useXmtp();
+  const { user, connect, disconnect, generateUser } = useXmtp();
   const router = useRouter();
 
   return (
@@ -221,7 +221,7 @@ const Layout = ({ children }: LayoutProps) => {
                 </button>
 
                 {/* Profile dropdown */}
-                {user && (
+                {user ? (
                   <Menu as="div" className="ml-3 relative">
                     <div>
                       <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none">
@@ -262,11 +262,9 @@ const Layout = ({ children }: LayoutProps) => {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              onClick={() => {
-                                console.log("TODO: disconnect");
-                              }}
+                              onClick={disconnect}
                               className={classNames(
-                                active ? "bg-gray-100" : "",
+                                active ? "bg-gray-100 cursor-pointer" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
                               )}
                             >
@@ -277,6 +275,15 @@ const Layout = ({ children }: LayoutProps) => {
                       </Menu.Items>
                     </Transition>
                   </Menu>
+                ) : (
+                  <button
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-3"
+                    onClick={async () => {
+                      connect(await generateUser());
+                    }}
+                  >
+                    Connect
+                  </button>
                 )}
               </div>
             </div>
