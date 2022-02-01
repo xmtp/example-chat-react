@@ -65,31 +65,28 @@ const Conversation: NextPage = () => {
         <div className="pb-6">
           <div className="w-full flex flex-col">
             <div className="relative w-full p-6 overflow-y-auto flex">
-              <ul className="space-y-2 w-full">
-                {messages?.map((msg: Message, index: number) => (
-                  <li
-                    key={index}
-                    className={`flex justify-${
-                      msg.senderAddress() ===
-                      user.identityKey.publicKey.walletSignatureAddress()
-                        ? "end"
-                        : "start"
-                    }`}
-                  >
+              <div className="space-y-2 w-full">
+                {messages?.map((msg: Message, index: number) => {
+                  const isSender =
+                    msg.senderAddress() ===
+                    user.identityKey.publicKey.walletSignatureAddress();
+                  return (
                     <div
-                      className={`relative max-w-xl px-4 py-2 mb-2 ${
-                        msg.senderAddress() ===
-                        user.identityKey.publicKey.walletSignatureAddress()
-                          ? "text-white bg-indigo-500"
-                          : "bg-white"
-                      } rounded shadow`}
+                      key={index}
+                      className={`flex justify-${isSender ? "end" : "start"}`}
                     >
-                      <span className="block">{msg.decrypted}</span>
+                      <div
+                        className={`relative max-w-xl px-4 py-2 mb-2 ${
+                          isSender ? "text-white bg-indigo-500" : "bg-white"
+                        } rounded shadow`}
+                      >
+                        <span className="block">{msg.decrypted}</span>
+                      </div>
                     </div>
-                  </li>
-                ))}
+                  );
+                })}
                 <div ref={messagesEndRef} />
-              </ul>
+              </div>
             </div>
           </div>
         </div>
