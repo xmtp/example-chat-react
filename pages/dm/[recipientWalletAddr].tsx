@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
-import { Message, PublicKeyBundle } from "xmtp-js";
+import { Message, PublicKeyBundle } from "@xmtp/xmtp-js";
 import { useXmtp } from "../../components/XmtpContext";
 
 const Conversation: NextPage = () => {
@@ -31,7 +31,6 @@ const Conversation: NextPage = () => {
     const streamMessages = async () => {
       if (!client || !user || !recipient?.identityKey) return;
       const stream = client.streamMessages(
-        user.identityKey.publicKey.walletSignatureAddress(),
         recipient.identityKey.walletSignatureAddress(),
         user
       );

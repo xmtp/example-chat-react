@@ -1,5 +1,5 @@
 import { Wallet } from "ethers";
-import { PrivateKey } from "xmtp-js";
+import { PrivateKey } from "@xmtp/xmtp-js";
 
 const newWallet = (): Wallet => {
   const key = PrivateKey.generate();

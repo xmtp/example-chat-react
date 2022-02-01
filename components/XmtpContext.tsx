@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { Client, PrivateKeyBundle } from "xmtp-js";
+import { Client, PrivateKeyBundle } from "@xmtp/xmtp-js";
 import newWallet from "../helpers/newWallet";
 
 // const localNodeBootstrapAddr =
