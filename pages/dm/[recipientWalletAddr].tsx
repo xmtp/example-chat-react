@@ -24,6 +24,7 @@ const Conversation: NextPage = () => {
       const recipient = await client.getUserContact(recipientWalletAddr);
       console.log("recipient", recipient);
       setRecipient(recipient);
+      setMessages([]);
     };
     initRecipient();
   }, [client, recipientWalletAddr]);
