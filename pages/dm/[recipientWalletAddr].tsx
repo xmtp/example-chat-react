@@ -1,15 +1,21 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { Message, PublicKeyBundle } from "@xmtp/xmtp-js";
 import { useXmtp } from "../../components/XmtpContext";
+import Emoji from "react-emoji-render";
 
 const Conversation: NextPage = () => {
   const router = useRouter();
   const recipientWalletAddr = router.query.recipientWalletAddr as string;
   const [recipient, setRecipient] = useState<PublicKeyBundle>();
   const { client, user } = useXmtp();
-  const [messages, setMessages] = useState<Message[]>();
+  const [messages, dispatchMessages] = useReducer(
+    (state: Message[], newMessages: Message[] | undefined) =>
+      // clear out messages when given undefined
+      newMessages === undefined ? [] : state.concat(newMessages),
+    []
+  );
   const messagesEndRef = useRef(null);
 
   const scrollToMessagesEndRef = () => {
@@ -22,7 +28,7 @@ const Conversation: NextPage = () => {
       if (!client) return;
       const recipient = await client.getUserContact(recipientWalletAddr);
       setRecipient(recipient);
-      setMessages([]);
+      dispatchMessages(undefined);
     };
     initRecipient();
   }, [client, recipientWalletAddr]);
@@ -34,7 +40,7 @@ const Conversation: NextPage = () => {
         recipient.identityKey.walletSignatureAddress(),
         user
       );
-      setMessages((messages) => [...(messages || []), ...msgs]);
+      dispatchMessages(msgs);
       scrollToMessagesEndRef();
     };
     listMessages();
@@ -48,7 +54,7 @@ const Conversation: NextPage = () => {
         user
       );
       for await (const msg of stream.iterator) {
-        setMessages((messages) => [...(messages || []), msg]);
+        dispatchMessages([msg]);
         scrollToMessagesEndRef();
       }
     };
@@ -93,7 +99,9 @@ const Conversation: NextPage = () => {
                           isSender ? "text-white bg-indigo-500" : "bg-white"
                         } rounded shadow`}
                       >
-                        <span className="block">{msg.decrypted}</span>
+                        <span className="block">
+                          <Emoji text={msg.decrypted} />
+                        </span>
                       </div>
                     </div>
                   );
