@@ -28,6 +28,19 @@ const Conversation: NextPage = () => {
   }, [client, recipientWalletAddr]);
 
   useEffect(() => {
+    const listMessages = async () => {
+      if (!client || !user || !recipient?.identityKey) return;
+      const msgs = await client.listMessages(
+        recipient.identityKey.walletSignatureAddress(),
+        user
+      );
+      setMessages((messages) => [...(messages || []), ...msgs]);
+      scrollToMessagesEndRef();
+    };
+    listMessages();
+  }, [user, client, recipient]);
+
+  useEffect(() => {
     const streamMessages = async () => {
       if (!client || !user || !recipient?.identityKey) return;
       const stream = client.streamMessages(
