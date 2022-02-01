@@ -2,7 +2,6 @@ import { Fragment, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuAlt2Icon, XIcon } from "@heroicons/react/outline";
 import { SearchIcon } from "@heroicons/react/solid";
-import Image from "next/image";
 import Address from "./Address";
 import { useXmtp } from "./XmtpContext";
 import { useRouter } from "next/router";
@@ -81,12 +80,10 @@ const Layout = ({ children }: LayoutProps) => {
                 <div className="flex-shrink-0 flex items-center px-4">
                   <Link href="/">
                     <a>
-                      <Image
+                      <img
                         className="h-8 w-auto"
                         src="/xmtp-logo.png"
                         alt="XMTP"
-                        width={120}
-                        height={28}
                       />
                     </a>
                   </Link>
@@ -133,13 +130,7 @@ const Layout = ({ children }: LayoutProps) => {
             <div className="flex items-center flex-shrink-0 px-4">
               <Link href="/">
                 <a>
-                  <Image
-                    className="h-8 w-auto"
-                    src="/xmtp-logo.png"
-                    alt="XMTP"
-                    width={120}
-                    height={28}
-                  />
+                  <img className="h-8 w-auto" src="/xmtp-logo.png" alt="XMTP" />
                 </a>
               </Link>
             </div>
