@@ -15,7 +15,11 @@ class AppDocument extends Document {
   render() {
     return (
       <Html className="h-full bg-gray-100">
-        <Head />
+        <Head>
+          <title>Chat via XMTP</title>
+          <meta name="description" content="Chat via XMTP" />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
         <body className="h-full">
           <Main />
           <NextScript />
