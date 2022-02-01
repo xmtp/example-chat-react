@@ -20,9 +20,7 @@ const Conversation: NextPage = () => {
   useEffect(() => {
     const initRecipient = async () => {
       if (!client) return;
-      console.log("recipientWalletAddr", recipientWalletAddr);
       const recipient = await client.getUserContact(recipientWalletAddr);
-      console.log("recipient", recipient);
       setRecipient(recipient);
       setMessages([]);
     };
@@ -30,7 +28,6 @@ const Conversation: NextPage = () => {
   }, [client, recipientWalletAddr]);
 
   useEffect(() => {
-    console.log("recipient", recipient);
     const streamMessages = async () => {
       if (!client || !user || !recipient?.identityKey) return;
       const stream = client.streamMessages(
@@ -39,7 +36,6 @@ const Conversation: NextPage = () => {
         user
       );
       for await (const msg of stream.iterator) {
-        console.log("received message", msg);
         setMessages((messages) => [...(messages || []), msg]);
         scrollToMessagesEndRef();
       }

@@ -71,10 +71,6 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
         user.identityKey.publicKey.walletSignatureAddress()
       );
       if (!bundle) {
-        console.log(
-          "publishing",
-          user.getPublicKeyBundle().identityKey?.walletSignatureAddress()
-        );
         await client.publishUserContact(user.getPublicKeyBundle());
       }
     };
