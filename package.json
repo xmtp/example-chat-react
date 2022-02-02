@@ -8,11 +8,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.4.3",
+    "@heroicons/react": "^1.0.5",
+    "@xmtp/xmtp-js": "^0.0.1-alpha.1",
+    "ethers": "^5.5.3",
     "next": "12.0.9",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-emoji-render": "^1.2.4"
   },
   "devDependencies": {
+    "@tailwindcss/forms": "^0.4.0",
     "@types/node": "17.0.13",
     "@types/react": "17.0.38",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
