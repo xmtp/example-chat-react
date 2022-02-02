@@ -9,7 +9,7 @@ const Conversation: NextPage = () => {
   const router = useRouter();
   const recipientWalletAddr = router.query.recipientWalletAddr as string;
   const [recipient, setRecipient] = useState<PublicKeyBundle>();
-  const { client, user } = useXmtp();
+  const { client, walletAddress } = useXmtp();
   const [messages, dispatchMessages] = useReducer(
     (state: Message[], newMessages: Message[] | undefined) =>
       // clear out messages when given undefined
@@ -35,23 +35,21 @@ const Conversation: NextPage = () => {
 
   useEffect(() => {
     const listMessages = async () => {
-      if (!client || !user || !recipient?.identityKey) return;
+      if (!client || !recipient?.identityKey) return;
       const msgs = await client.listMessages(
-        recipient.identityKey.walletSignatureAddress(),
-        user
+        recipient.identityKey.walletSignatureAddress()
       );
       dispatchMessages(msgs);
       scrollToMessagesEndRef();
     };
     listMessages();
-  }, [user, client, recipient]);
+  }, [client, recipient]);
 
   useEffect(() => {
     const streamMessages = async () => {
-      if (!client || !user || !recipient?.identityKey) return;
+      if (!client || !recipient?.identityKey) return;
       const stream = client.streamMessages(
-        recipient.identityKey.walletSignatureAddress(),
-        user
+        recipient.identityKey.walletSignatureAddress()
       );
       for await (const msg of stream.iterator) {
         dispatchMessages([msg]);
@@ -59,22 +57,25 @@ const Conversation: NextPage = () => {
       }
     };
     streamMessages();
-  }, [user, client, recipient]);
+  }, [client, recipient]);
 
   const handleSend = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    if (!client || !user) return;
+    if (!client) return;
     if (!recipient) throw new Error("missing recipient");
     const data = e.target as typeof e.target & {
       message: { value: string };
     };
     if (!data.message) return;
-    await client.sendMessage(user, recipient, data.message.value);
+    await client.sendMessage(
+      recipient.identityKey.walletSignatureAddress(),
+      data.message.value
+    );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (e.target as any).reset();
   };
 
-  if (!user || !recipient) {
+  if (!recipient) {
     return <div />;
   }
 
@@ -86,9 +87,7 @@ const Conversation: NextPage = () => {
             <div className="relative w-full p-6 overflow-y-auto flex">
               <div className="space-y-2 w-full">
                 {messages?.map((msg: Message, index: number) => {
-                  const isSender =
-                    msg.senderAddress() ===
-                    user.identityKey.publicKey.walletSignatureAddress();
+                  const isSender = msg.senderAddress() === walletAddress;
                   return (
                     <div
                       key={index}
