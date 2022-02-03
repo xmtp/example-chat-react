@@ -1,5 +1,11 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { Client } from "@xmtp/xmtp-js";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
+import { Client, Message } from "@xmtp/xmtp-js";
 import { ethers } from "ethers";
 
 // const localNodeBootstrapAddr =
@@ -8,10 +14,15 @@ import { ethers } from "ethers";
 const testnetBootstrapAddr =
   "/dns4/bootstrap-node-0.testnet.xmtp.network/tcp/8443/wss/p2p/16Uiu2HAm888gVYpr4cZQ4qhEendQW6oYEhG8n6fnqw1jVW3Prdc6";
 
+type Conversation = {
+  peerAddress: string;
+};
+
 type XmtpContextType = {
   wallet: ethers.Wallet | undefined;
   walletAddress: string | undefined;
   client: Client | undefined;
+  conversations: Conversation[];
   connect: (wallet: ethers.Wallet) => void;
   disconnect: () => void;
 };
@@ -20,6 +31,7 @@ const XmtpContext = createContext<XmtpContextType>({
   wallet: undefined,
   walletAddress: undefined,
   client: undefined,
+  conversations: [],
   connect: () => undefined,
   disconnect: () => undefined,
 });
@@ -40,6 +52,18 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
   const [wallet, setWallet] = useState<ethers.Wallet>();
   const [walletAddress, setWalletAddress] = useState<string>();
   const [client, setClient] = useState<Client>();
+  const [conversations, dispatchConversations] = useReducer(
+    (state: Conversation[], newConvos: Conversation[]) => {
+      newConvos = newConvos.filter(
+        (convo) =>
+          state.findIndex((otherConvo) => {
+            return convo.peerAddress === otherConvo.peerAddress;
+          }) < 0
+      );
+      return newConvos === undefined ? [] : state.concat(newConvos);
+    },
+    []
+  );
 
   const connect = async (wallet: ethers.Wallet) => {
     setWallet(wallet);
@@ -63,12 +87,40 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
     initClient();
   }, [wallet]);
 
+  useEffect(() => {
+    const listConversations = async () => {
+      if (!client) return;
+      const msgs = await client.listIntroductionMessages();
+      msgs.forEach((msg: Message) => {
+        const peerAddress = msg.senderAddress();
+        if (!peerAddress || peerAddress === walletAddress) return;
+        dispatchConversations([{ peerAddress }]);
+      });
+    };
+    listConversations();
+  }, [client, walletAddress]);
+
+  useEffect(() => {
+    const streamConversations = async () => {
+      if (!client) return;
+      const msgs = client.streamIntroductionMessages();
+      for await (const msg of msgs.iterator) {
+        const peerAddress = msg.senderAddress();
+        if (peerAddress) {
+          dispatchConversations([{ peerAddress }]);
+        }
+      }
+    };
+    streamConversations();
+  }, [client, walletAddress]);
+
   return (
     <XmtpContext.Provider
       value={{
         wallet,
         walletAddress,
         client,
+        conversations,
         connect,
         disconnect,
       }}
