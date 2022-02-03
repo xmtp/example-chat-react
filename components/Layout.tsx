@@ -7,6 +7,7 @@ import { useXmtp } from "./XmtpContext";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Head from "next/head";
+import newWallet from "../helpers/newWallet";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -18,7 +19,7 @@ type LayoutProps = {
 
 const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user, connect, disconnect, generateUser } = useXmtp();
+  const { walletAddress, connect, disconnect } = useXmtp();
   const router = useRouter();
 
   return (
@@ -216,13 +217,13 @@ const Layout = ({ children }: LayoutProps) => {
                 </button>
 
                 {/* Profile dropdown */}
-                {user ? (
+                {walletAddress ? (
                   <Menu as="div" className="ml-3 relative">
                     <div>
                       <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none">
                         <span className="sr-only">Open user menu</span>
                         <Address
-                          address={user.identityKey.publicKey.walletSignatureAddress()}
+                          address={walletAddress}
                           className="inline-flex items-center justify-center px-3 py-2 text-xs font-bold leading-none text-white bg-indigo-500 rounded"
                         />
                       </Menu.Button>
@@ -241,9 +242,7 @@ const Layout = ({ children }: LayoutProps) => {
                           {({ active }) => (
                             <a
                               onClick={() => {
-                                navigator.clipboard.writeText(
-                                  user.identityKey.publicKey.walletSignatureAddress()
-                                );
+                                navigator.clipboard.writeText(walletAddress);
                               }}
                               className={classNames(
                                 active ? "bg-gray-100" : "",
@@ -274,7 +273,7 @@ const Layout = ({ children }: LayoutProps) => {
                   <button
                     className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-3"
                     onClick={async () => {
-                      connect(await generateUser());
+                      connect(newWallet());
                     }}
                   >
                     Connect
