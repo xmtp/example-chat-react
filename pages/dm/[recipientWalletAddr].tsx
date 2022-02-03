@@ -1,14 +1,13 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect, useReducer, useRef, useState } from "react";
-import { Message, PublicKeyBundle } from "@xmtp/xmtp-js";
+import { useEffect, useReducer, useRef } from "react";
+import { Message } from "@xmtp/xmtp-js";
 import { useXmtp } from "../../components/XmtpContext";
 import Emoji from "react-emoji-render";
 
 const Conversation: NextPage = () => {
   const router = useRouter();
   const recipientWalletAddr = router.query.recipientWalletAddr as string;
-  const [recipient, setRecipient] = useState<PublicKeyBundle>();
   const { client, walletAddress } = useXmtp();
   const [messages, dispatchMessages] = useReducer(
     (state: Message[], newMessages: Message[] | undefined) =>
@@ -24,58 +23,41 @@ const Conversation: NextPage = () => {
   };
 
   useEffect(() => {
-    const initRecipient = async () => {
-      if (!client) return;
-      const recipient = await client.getUserContact(recipientWalletAddr);
-      setRecipient(recipient);
-      dispatchMessages(undefined);
-    };
-    initRecipient();
-  }, [client, recipientWalletAddr]);
-
-  useEffect(() => {
     const listMessages = async () => {
-      if (!client || !recipient?.identityKey) return;
-      const msgs = await client.listConversationMessages(
-        recipient.identityKey.walletSignatureAddress()
-      );
+      if (!client) return;
+      const msgs = await client.listConversationMessages(recipientWalletAddr);
       dispatchMessages(msgs);
       scrollToMessagesEndRef();
     };
     listMessages();
-  }, [client, recipient]);
+  }, [client, recipientWalletAddr]);
 
   useEffect(() => {
     const streamMessages = async () => {
-      if (!client || !recipient?.identityKey) return;
-      const stream = client.streamConversationMessages(
-        recipient.identityKey.walletSignatureAddress()
-      );
+      if (!client) return;
+      const stream = client.streamConversationMessages(recipientWalletAddr);
       for await (const msg of stream.iterator) {
         dispatchMessages([msg]);
         scrollToMessagesEndRef();
       }
     };
     streamMessages();
-  }, [client, recipient]);
+  }, [client, recipientWalletAddr]);
 
   const handleSend = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (!client) return;
-    if (!recipient) throw new Error("missing recipient");
+    if (!recipientWalletAddr) throw new Error("missing recipient");
     const data = e.target as typeof e.target & {
       message: { value: string };
     };
     if (!data.message) return;
-    await client.sendMessage(
-      recipient.identityKey.walletSignatureAddress(),
-      data.message.value
-    );
+    await client.sendMessage(recipientWalletAddr, data.message.value);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (e.target as any).reset();
   };
 
-  if (!recipient) {
+  if (!recipientWalletAddr) {
     return <div />;
   }
 
