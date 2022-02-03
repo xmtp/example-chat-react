@@ -53,9 +53,15 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
   const [walletAddress, setWalletAddress] = useState<string>();
   const [client, setClient] = useState<Client>();
   const [conversations, dispatchConversations] = useReducer(
-    (state: Conversation[], newConvos: Conversation[]) =>
-      // TODO: don't add dups
-      newConvos === undefined ? [] : state.concat(newConvos),
+    (state: Conversation[], newConvos: Conversation[]) => {
+      newConvos = newConvos.filter(
+        (convo) =>
+          state.findIndex((otherConvo) => {
+            return convo.peerAddress === otherConvo.peerAddress;
+          }) < 0
+      );
+      return newConvos === undefined ? [] : state.concat(newConvos);
+    },
     []
   );
 

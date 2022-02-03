@@ -146,33 +146,34 @@ const Layout = ({ children }: LayoutProps) => {
             </div>
             <div className="mt-5 flex-grow flex flex-col">
               <nav className="flex-1 px-2 pb-4 space-y-1">
-                {conversations?.map((convo) => {
-                  const path = `/dm/${convo.peerAddress}`;
-                  const isCurrentPath = router.pathname == path;
-                  return (
-                    <Link href={path} key={convo.peerAddress}>
-                      <a
-                        className={classNames(
-                          isCurrentPath
-                            ? "bg-gray-100 text-gray-900"
-                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                          "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
-                        )}
-                      >
-                        <InboxInIcon
+                {conversations &&
+                  conversations.reverse().map((convo) => {
+                    const path = `/dm/${convo.peerAddress}`;
+                    const isCurrentPath = router.pathname == path;
+                    return (
+                      <Link href={path} key={convo.peerAddress}>
+                        <a
                           className={classNames(
                             isCurrentPath
-                              ? "text-gray-500"
-                              : "text-gray-400 group-hover:text-gray-500",
-                            "mr-3 flex-shrink-0 h-6 w-6"
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                            "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
                           )}
-                          aria-hidden="true"
-                        />
-                        <Address address={convo.peerAddress} />
-                      </a>
-                    </Link>
-                  );
-                })}
+                        >
+                          <InboxInIcon
+                            className={classNames(
+                              isCurrentPath
+                                ? "text-gray-500"
+                                : "text-gray-400 group-hover:text-gray-500",
+                              "mr-3 flex-shrink-0 h-6 w-6"
+                            )}
+                            aria-hidden="true"
+                          />
+                          <Address address={convo.peerAddress} />
+                        </a>
+                      </Link>
+                    );
+                  })}
               </nav>
             </div>
           </div>
