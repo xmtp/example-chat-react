@@ -36,7 +36,7 @@ const Conversation: NextPage = () => {
     const streamMessages = async () => {
       if (!client) return;
       const stream = client.streamConversationMessages(recipientWalletAddr);
-      for await (const msg of stream.iterator) {
+      for await (const msg of stream) {
         dispatchMessages([msg]);
         scrollToMessagesEndRef();
       }

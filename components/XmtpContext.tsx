@@ -104,7 +104,7 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
     const streamConversations = async () => {
       if (!client) return;
       const msgs = client.streamIntroductionMessages();
-      for await (const msg of msgs.iterator) {
+      for await (const msg of msgs) {
         const peerAddress = msg.senderAddress();
         if (peerAddress) {
           dispatchConversations([{ peerAddress }]);
