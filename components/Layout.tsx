@@ -19,11 +19,7 @@ type LayoutProps = {
 
 const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const {
-    walletAddress,
-    connect: connectXmtp,
-    disconnect: disconnectXmtp,
-  } = useXmtp();
+  const { walletAddress, connect, disconnect } = useXmtp();
   const router = useRouter();
 
   return (
@@ -260,7 +256,7 @@ const Layout = ({ children }: LayoutProps) => {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              onClick={disconnectXmtp}
+                              onClick={disconnect}
                               className={classNames(
                                 active ? "bg-gray-100 cursor-pointer" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
@@ -277,7 +273,7 @@ const Layout = ({ children }: LayoutProps) => {
                   <button
                     className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-3"
                     onClick={async () => {
-                      connectXmtp(newWallet());
+                      connect(newWallet());
                     }}
                   >
                     Connect
