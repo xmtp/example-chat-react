@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect, useReducer, useRef } from "react";
-import { Message } from "@xmtp/xmtp-js";
+import { useEffect, useReducer, useRef, useState } from "react";
+import { Message, Stream } from "@xmtp/xmtp-js";
 import { useXmtp } from "../../components/XmtpContext";
 import Emoji from "react-emoji-render";
 
@@ -15,6 +15,7 @@ const Conversation: NextPage = () => {
       newMessages === undefined ? [] : state.concat(newMessages),
     []
   );
+  const [stream, setStream] = useState<Stream>();
   const messagesEndRef = useRef(null);
 
   const scrollToMessagesEndRef = () => {
@@ -22,9 +23,16 @@ const Conversation: NextPage = () => {
     (messagesEndRef.current as any)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Clear messages when the recipient wallet address changes.
+  // Clear messages and close the stream when the recipient wallet address
+  // changes.
   useEffect(() => {
     dispatchMessages(undefined);
+    const closeStream = async () => {
+      if (!stream) return;
+      await stream.return();
+    };
+    closeStream();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipientWalletAddr]);
 
   useEffect(() => {
@@ -39,8 +47,9 @@ const Conversation: NextPage = () => {
 
   useEffect(() => {
     const streamMessages = async () => {
-      if (!client) return;
+      if (!client || !recipientWalletAddr) return;
       const stream = client.streamConversationMessages(recipientWalletAddr);
+      setStream(stream);
       for await (const msg of stream) {
         dispatchMessages([msg]);
         scrollToMessagesEndRef();
