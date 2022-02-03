@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import {
   BellIcon,
@@ -26,6 +26,21 @@ const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { walletAddress, conversations, connect, disconnect } = useXmtp();
   const router = useRouter();
+  const [recipientWalletAddress, setRecipientWalletAddress] =
+    useState<string>("");
+  const recipientWalletAddressUrlParam = router.query
+    .recipientWalletAddr as string;
+
+  const handleRecipientChange = (e: React.SyntheticEvent) => {
+    const data = e.target as typeof e.target & {
+      value: string;
+    };
+    setRecipientWalletAddress(data.value);
+  };
+
+  useEffect(() => {
+    setRecipientWalletAddress(recipientWalletAddressUrlParam || "");
+  }, [recipientWalletAddressUrlParam]);
 
   return (
     <>
@@ -216,6 +231,8 @@ const Layout = ({ children }: LayoutProps) => {
                       placeholder="Ethereum address or ENS name"
                       type="recipient"
                       name="recipient"
+                      onChange={handleRecipientChange}
+                      value={recipientWalletAddress}
                     />
                     <button type="submit" className="hidden" />
                   </div>
