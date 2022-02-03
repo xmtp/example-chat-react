@@ -92,9 +92,11 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
       if (!client) return;
       const msgs = await client.listIntroductionMessages();
       msgs.forEach((msg: Message) => {
-        const peerAddress = msg.senderAddress();
-        if (!peerAddress || peerAddress === walletAddress) return;
-        dispatchConversations([{ peerAddress }]);
+        const recipientAddress = msg.recipientAddress();
+        const senderAddress = msg.senderAddress();
+        if (!recipientAddress || !senderAddress) return;
+        if (recipientAddress !== walletAddress) return;
+        dispatchConversations([{ peerAddress: senderAddress }]);
       });
     };
     listConversations();
@@ -105,10 +107,11 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
       if (!client) return;
       const msgs = client.streamIntroductionMessages();
       for await (const msg of msgs) {
-        const peerAddress = msg.senderAddress();
-        if (peerAddress) {
-          dispatchConversations([{ peerAddress }]);
-        }
+        const recipientAddress = msg.recipientAddress();
+        const senderAddress = msg.senderAddress();
+        if (!recipientAddress || !senderAddress) continue;
+        if (recipientAddress !== walletAddress) continue;
+        dispatchConversations([{ peerAddress: senderAddress }]);
       }
     };
     streamConversations();
