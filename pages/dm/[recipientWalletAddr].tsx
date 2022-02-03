@@ -36,7 +36,7 @@ const Conversation: NextPage = () => {
   useEffect(() => {
     const listMessages = async () => {
       if (!client || !recipient?.identityKey) return;
-      const msgs = await client.listMessages(
+      const msgs = await client.listConversationMessages(
         recipient.identityKey.walletSignatureAddress()
       );
       dispatchMessages(msgs);
@@ -48,7 +48,7 @@ const Conversation: NextPage = () => {
   useEffect(() => {
     const streamMessages = async () => {
       if (!client || !recipient?.identityKey) return;
-      const stream = client.streamMessages(
+      const stream = client.streamConversationMessages(
         recipient.identityKey.walletSignatureAddress()
       );
       for await (const msg of stream.iterator) {
