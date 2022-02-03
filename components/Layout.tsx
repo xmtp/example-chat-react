@@ -24,7 +24,6 @@ const Layout = ({ children }: LayoutProps) => {
     connect: connectXmtp,
     disconnect: disconnectXmtp,
   } = useXmtp();
-  // const { wallet, connect: connectWallet, disconnect: disconnectWallet } = useWallet();
   const router = useRouter();
 
   return (

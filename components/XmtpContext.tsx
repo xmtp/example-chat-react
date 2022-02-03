@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { Client } from "@xmtp/xmtp-js";
-// import newWallet from "../helpers/newWallet";
 import { ethers } from "ethers";
 
 // const localNodeBootstrapAddr =
