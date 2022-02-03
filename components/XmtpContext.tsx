@@ -91,13 +91,11 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
     const listConversations = async () => {
       if (!client) return;
       const msgs = await client.listIntroductionMessages();
-      await Promise.all(
-        msgs.map(async (msg: Message) => {
-          const peerAddress = msg.senderAddress();
-          if (!peerAddress || peerAddress === walletAddress) return;
-          dispatchConversations([{ peerAddress }]);
-        })
-      );
+      msgs.forEach((msg: Message) => {
+        const peerAddress = msg.senderAddress();
+        if (!peerAddress || peerAddress === walletAddress) return;
+        dispatchConversations([{ peerAddress }]);
+      });
     };
     listConversations();
   }, [client, walletAddress]);
