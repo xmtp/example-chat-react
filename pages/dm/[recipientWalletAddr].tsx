@@ -22,6 +22,11 @@ const Conversation: NextPage = () => {
     (messagesEndRef.current as any)?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // Clear messages when the recipient wallet address changes.
+  useEffect(() => {
+    dispatchMessages(undefined);
+  }, [recipientWalletAddr]);
+
   useEffect(() => {
     const listMessages = async () => {
       if (!client) return;
