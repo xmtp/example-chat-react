@@ -95,8 +95,11 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
         const recipientAddress = msg.recipientAddress();
         const senderAddress = msg.senderAddress();
         if (!recipientAddress || !senderAddress) return;
-        if (recipientAddress !== walletAddress) return;
-        dispatchConversations([{ peerAddress: senderAddress }]);
+        if (recipientAddress === walletAddress) {
+          dispatchConversations([{ peerAddress: senderAddress }]);
+        } else if (senderAddress == walletAddress) {
+          dispatchConversations([{ peerAddress: recipientAddress }]);
+        }
       });
     };
     listConversations();
@@ -110,8 +113,11 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
         const recipientAddress = msg.recipientAddress();
         const senderAddress = msg.senderAddress();
         if (!recipientAddress || !senderAddress) continue;
-        if (recipientAddress !== walletAddress) continue;
-        dispatchConversations([{ peerAddress: senderAddress }]);
+        if (recipientAddress === walletAddress) {
+          dispatchConversations([{ peerAddress: senderAddress }]);
+        } else if (senderAddress == walletAddress) {
+          dispatchConversations([{ peerAddress: recipientAddress }]);
+        }
       }
     };
     streamConversations();
