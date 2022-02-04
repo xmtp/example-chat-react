@@ -53,7 +53,10 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
   const [walletAddress, setWalletAddress] = useState<string>();
   const [client, setClient] = useState<Client>();
   const [conversations, dispatchConversations] = useReducer(
-    (state: Conversation[], newConvos: Conversation[]) => {
+    (state: Conversation[], newConvos: Conversation[] | undefined) => {
+      if (newConvos === undefined) {
+        return [];
+      }
       newConvos = newConvos.filter(
         (convo) =>
           state.findIndex((otherConvo) => {
@@ -73,6 +76,7 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
   const disconnect = async () => {
     setWallet(undefined);
     setWalletAddress(undefined);
+    dispatchConversations(undefined);
   };
 
   useEffect(() => {
