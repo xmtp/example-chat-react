@@ -107,30 +107,32 @@ const Conversation: NextPage = () => {
           </div>
         </div>
       </main>
-      <div className="sticky bottom-0 z-10 flex-shrink-0 flex h-16 bg-white shadow">
-        <form
-          className="flex w-full p-3 border-t border-gray-300"
-          onSubmit={handleSend}
-        >
-          <input
-            type="text"
-            placeholder="Message"
-            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-full py-2 pl-4 mr-3"
-            name="message"
-            required
-          />
-          <button type="submit">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8 rotate-90 text-gray-500"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-            </svg>
-          </button>
-        </form>
-      </div>
+      {walletAddress && (
+        <div className="sticky bottom-0 z-10 flex-shrink-0 flex h-16 bg-white shadow">
+          <form
+            className="flex w-full p-3 border-t border-gray-300"
+            onSubmit={handleSend}
+          >
+            <input
+              type="text"
+              placeholder="Message"
+              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-full py-2 pl-4 mr-3"
+              name="message"
+              required
+            />
+            <button type="submit">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8 rotate-90 text-gray-500"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+              </svg>
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };
