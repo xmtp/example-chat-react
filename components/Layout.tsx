@@ -162,7 +162,7 @@ const Layout = ({ children }: LayoutProps) => {
             <div className="mt-5 flex-grow flex flex-col">
               <nav className="flex-1 px-2 pb-4 space-y-1">
                 {conversations &&
-                  conversations.reverse().map((convo) => {
+                  conversations.map((convo) => {
                     const path = `/dm/${convo.peerAddress}`;
                     const isCurrentPath = router.pathname == path;
                     return (
