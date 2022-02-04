@@ -15,7 +15,6 @@ const testnetBootstrapAddr =
   "/dns4/bootstrap-node-0.testnet.xmtp.network/tcp/8443/wss/p2p/16Uiu2HAm888gVYpr4cZQ4qhEendQW6oYEhG8n6fnqw1jVW3Prdc6";
 
 type Conversation = {
-  createdAt: Date;
   peerAddress: string;
 };
 
@@ -64,11 +63,7 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
             return convo.peerAddress === otherConvo.peerAddress;
           }) < 0
       );
-      return newConvos === undefined
-        ? []
-        : state
-            .concat(newConvos)
-            .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+      return newConvos === undefined ? [] : state.concat(newConvos);
     },
     []
   );
@@ -101,25 +96,13 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
       if (!client) return;
       const msgs = await client.listIntroductionMessages();
       msgs.forEach((msg: Message) => {
-        if (!msg.header) return;
         const recipientAddress = msg.recipientAddress();
         const senderAddress = msg.senderAddress();
-        const createdAt = new Date(msg.header.timestamp);
         if (!recipientAddress || !senderAddress) return;
         if (recipientAddress === walletAddress) {
-          dispatchConversations([
-            {
-              createdAt,
-              peerAddress: senderAddress,
-            },
-          ]);
+          dispatchConversations([{ peerAddress: senderAddress }]);
         } else if (senderAddress == walletAddress) {
-          dispatchConversations([
-            {
-              createdAt,
-              peerAddress: recipientAddress,
-            },
-          ]);
+          dispatchConversations([{ peerAddress: recipientAddress }]);
         }
       });
     };
@@ -131,25 +114,13 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
       if (!client) return;
       const msgs = client.streamIntroductionMessages();
       for await (const msg of msgs) {
-        if (!msg.header) return;
         const recipientAddress = msg.recipientAddress();
         const senderAddress = msg.senderAddress();
-        const createdAt = new Date(msg.header.timestamp);
         if (!recipientAddress || !senderAddress) continue;
         if (recipientAddress === walletAddress) {
-          dispatchConversations([
-            {
-              createdAt,
-              peerAddress: senderAddress,
-            },
-          ]);
+          dispatchConversations([{ peerAddress: senderAddress }]);
         } else if (senderAddress == walletAddress) {
-          dispatchConversations([
-            {
-              createdAt,
-              peerAddress: recipientAddress,
-            },
-          ]);
+          dispatchConversations([{ peerAddress: recipientAddress }]);
         }
       }
     };
