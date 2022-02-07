@@ -13,7 +13,6 @@
     "@xmtp/xmtp-js": "^0.0.1-alpha.6",
     "ethers": "^5.5.3",
     "next": "12.0.9",
-    "prune": "^0.0.2",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-emoji-render": "^1.2.4"
