@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import {
   BellIcon,
@@ -12,7 +12,7 @@ import { useXmtp } from "./XmtpContext";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Head from "next/head";
-import newWallet from "../helpers/newWallet";
+import { useWallet } from "./WalletContext";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -24,12 +24,31 @@ type LayoutProps = {
 
 const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { walletAddress, conversations, connect, disconnect } = useXmtp();
+  const {
+    walletAddress,
+    conversations,
+    connect: connectXmtp,
+    disconnect: disconnectXmtp,
+  } = useXmtp();
   const router = useRouter();
   const [recipientWalletAddress, setRecipientWalletAddress] =
     useState<string>("");
   const recipientWalletAddressUrlParam = router.query
     .recipientWalletAddr as string;
+  const {
+    signer,
+    connect: connectWallet,
+    disconnect: disconnectWallet,
+  } = useWallet();
+
+  const usePrevious = <T,>(value: T): T | undefined => {
+    const ref = useRef<T>();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+  };
+  const prevSigner = usePrevious(signer);
 
   const handleRecipientChange = (e: React.SyntheticEvent) => {
     const data = e.target as typeof e.target & {
@@ -41,6 +60,20 @@ const Layout = ({ children }: LayoutProps) => {
   useEffect(() => {
     setRecipientWalletAddress(recipientWalletAddressUrlParam || "");
   }, [recipientWalletAddressUrlParam]);
+
+  useEffect(() => {
+    if (!signer && prevSigner) {
+      disconnectXmtp();
+    }
+    if (!signer || signer === prevSigner) return;
+    const connect = async () => {
+      const prevAddress = await prevSigner?.getAddress();
+      const address = await signer.getAddress();
+      if (address === prevAddress) return;
+      connectXmtp(signer);
+    };
+    connect();
+  }, [signer, prevSigner, connectXmtp, disconnectXmtp]);
 
   return (
     <>
@@ -287,8 +320,9 @@ const Layout = ({ children }: LayoutProps) => {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              onClick={() => {
-                                disconnect();
+                              onClick={async () => {
+                                disconnectXmtp();
+                                await disconnectWallet();
                                 router.push("/");
                               }}
                               className={classNames(
@@ -307,7 +341,7 @@ const Layout = ({ children }: LayoutProps) => {
                   <button
                     className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-3"
                     onClick={async () => {
-                      connect(newWallet());
+                      await connectWallet();
                     }}
                   >
                     Connect

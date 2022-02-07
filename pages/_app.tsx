@@ -1,16 +1,17 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { XmtpProvider } from "../components/XmtpContext";
-import Layout from "../components/Layout";
+import dynamic from "next/dynamic";
 
-function App({ Component, pageProps }: AppProps) {
+const AppWithoutSSR = dynamic(() => import("../components/App"), {
+  ssr: false,
+});
+
+function AppWrapper({ Component, pageProps }: AppProps) {
   return (
-    <XmtpProvider>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
-    </XmtpProvider>
+    <AppWithoutSSR>
+      <Component {...pageProps} />
+    </AppWithoutSSR>
   );
 }
 
-export default App;
+export default AppWrapper;

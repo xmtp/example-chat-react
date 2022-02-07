@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import { Client, Message } from "@xmtp/xmtp-js";
-import { ethers } from "ethers";
+import { Signer } from "ethers";
 
 // const localNodeBootstrapAddr =
 //   "/ip4/127.0.0.1/tcp/9001/ws/p2p/16Uiu2HAmNCxLZCkXNbpVPBpSSnHj9iq4HZQj7fxRzw2kj1kKSHHA";
@@ -19,11 +19,11 @@ type Conversation = {
 };
 
 type XmtpContextType = {
-  wallet: ethers.Wallet | undefined;
+  wallet: Signer | undefined;
   walletAddress: string | undefined;
   client: Client | undefined;
   conversations: Conversation[];
-  connect: (wallet: ethers.Wallet) => void;
+  connect: (wallet: Signer) => void;
   disconnect: () => void;
 };
 
@@ -49,7 +49,7 @@ type XmtpProviderProps = {
 };
 
 export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
-  const [wallet, setWallet] = useState<ethers.Wallet>();
+  const [wallet, setWallet] = useState<Signer>();
   const [walletAddress, setWalletAddress] = useState<string>();
   const [client, setClient] = useState<Client>();
   const [conversations, dispatchConversations] = useReducer(
@@ -68,9 +68,10 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
     []
   );
 
-  const connect = async (wallet: ethers.Wallet) => {
+  const connect = async (wallet: Signer) => {
     setWallet(wallet);
-    setWalletAddress(await wallet.getAddress());
+    const walletAddr = await wallet.getAddress();
+    setWalletAddress(walletAddr);
   };
 
   const disconnect = async () => {
