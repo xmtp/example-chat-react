@@ -15,7 +15,7 @@ const Conversation: NextPage = () => {
       newMessages === undefined ? [] : state.concat(newMessages),
     []
   );
-  const [stream, setStream] = useState<Stream>();
+  const [stream, setStream] = useState<Stream<Message>>();
   const messagesEndRef = useRef(null);
 
   const scrollToMessagesEndRef = () => {
