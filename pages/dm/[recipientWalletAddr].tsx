@@ -83,7 +83,7 @@ const Conversation: NextPage = () => {
             <div className="relative w-full p-6 overflow-y-auto flex">
               <div className="space-y-2 w-full">
                 {messages?.map((msg: Message, index: number) => {
-                  const isSender = msg.senderAddress() === walletAddress;
+                  const isSender = msg.senderAddress === walletAddress;
                   return (
                     <div
                       key={index}
@@ -93,9 +93,10 @@ const Conversation: NextPage = () => {
                         className={`relative max-w-xl px-4 py-2 mb-2 ${
                           isSender ? "text-white bg-indigo-500" : "bg-white"
                         } rounded shadow`}
+                        title={`Error: ${msg.error?.message}`}
                       >
                         <span className="block">
-                          <Emoji text={msg.decrypted} />
+                          {msg.decrypted && <Emoji text={msg.decrypted} />}
                         </span>
                       </div>
                     </div>
