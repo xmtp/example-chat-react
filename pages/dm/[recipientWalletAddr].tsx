@@ -93,10 +93,13 @@ const Conversation: NextPage = () => {
                         className={`relative max-w-xl px-4 py-2 mb-2 ${
                           isSender ? "text-white bg-indigo-500" : "bg-white"
                         } rounded shadow`}
-                        title={`Error: ${msg.error?.message}`}
                       >
                         <span className="block">
-                          {msg.decrypted && <Emoji text={msg.decrypted} />}
+                          {msg.error ? (
+                            `Error: ${msg.error?.message}`
+                          ) : (
+                            <Emoji text={msg.decrypted || ""} />
+                          )}
                         </span>
                       </div>
                     </div>
