@@ -15,7 +15,7 @@ const Conversation: NextPage = () => {
       newMessages === undefined ? [] : state.concat(newMessages),
     []
   );
-  const [stream, setStream] = useState<Stream>();
+  const [stream, setStream] = useState<Stream<Message>>();
   const messagesEndRef = useRef(null);
 
   const scrollToMessagesEndRef = () => {
@@ -83,7 +83,7 @@ const Conversation: NextPage = () => {
             <div className="relative w-full p-6 overflow-y-auto flex">
               <div className="space-y-2 w-full">
                 {messages?.map((msg: Message, index: number) => {
-                  const isSender = msg.senderAddress() === walletAddress;
+                  const isSender = msg.senderAddress === walletAddress;
                   return (
                     <div
                       key={index}
@@ -95,7 +95,11 @@ const Conversation: NextPage = () => {
                         } rounded shadow`}
                       >
                         <span className="block">
-                          <Emoji text={msg.decrypted} />
+                          {msg.error ? (
+                            `Error: ${msg.error?.message}`
+                          ) : (
+                            <Emoji text={msg.decrypted || ""} />
+                          )}
                         </span>
                       </div>
                     </div>

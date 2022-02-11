@@ -97,13 +97,11 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
       if (!client) return;
       const msgs = await client.listIntroductionMessages();
       msgs.forEach((msg: Message) => {
-        const recipientAddress = msg.recipientAddress();
-        const senderAddress = msg.senderAddress();
-        if (!recipientAddress || !senderAddress) return;
-        if (recipientAddress === walletAddress) {
-          dispatchConversations([{ peerAddress: senderAddress }]);
-        } else if (senderAddress == walletAddress) {
-          dispatchConversations([{ peerAddress: recipientAddress }]);
+        if (!msg.recipientAddress || !msg.senderAddress) return;
+        if (msg.recipientAddress === walletAddress) {
+          dispatchConversations([{ peerAddress: msg.senderAddress }]);
+        } else if (msg.senderAddress == walletAddress) {
+          dispatchConversations([{ peerAddress: msg.recipientAddress }]);
         }
       });
     };
@@ -115,13 +113,11 @@ export const XmtpProvider = ({ children }: XmtpProviderProps): JSX.Element => {
       if (!client) return;
       const msgs = client.streamIntroductionMessages();
       for await (const msg of msgs) {
-        const recipientAddress = msg.recipientAddress();
-        const senderAddress = msg.senderAddress();
-        if (!recipientAddress || !senderAddress) continue;
-        if (recipientAddress === walletAddress) {
-          dispatchConversations([{ peerAddress: senderAddress }]);
-        } else if (senderAddress == walletAddress) {
-          dispatchConversations([{ peerAddress: recipientAddress }]);
+        if (!msg.recipientAddress || !msg.senderAddress) continue;
+        if (msg.recipientAddress === walletAddress) {
+          dispatchConversations([{ peerAddress: msg.senderAddress }]);
+        } else if (msg.senderAddress == walletAddress) {
+          dispatchConversations([{ peerAddress: msg.recipientAddress }]);
         }
       }
     };
