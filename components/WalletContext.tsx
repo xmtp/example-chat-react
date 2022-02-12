@@ -11,17 +11,23 @@ import WalletConnectProvider from '@walletconnect/web3-provider'
 import WalletLink from 'walletlink'
 
 type WalletContextType = {
+  provider: ethers.providers.Web3Provider | undefined
   signer: Signer | undefined
   address: string | undefined
   web3Modal: Web3Modal | undefined
+  resolveName: (name: string) => Promise<string | undefined>
+  lookupAddress: (address: string) => Promise<string | undefined>
   connect: () => Promise<Signer | undefined>
   disconnect: () => Promise<void>
 }
 
 const WalletContext = createContext<WalletContextType>({
+  provider: undefined,
   signer: undefined,
   address: undefined,
   web3Modal: undefined,
+  resolveName: async () => undefined,
+  lookupAddress: async () => undefined,
   connect: async () => undefined,
   disconnect: async () => undefined,
 })
@@ -38,10 +44,19 @@ type WalletProviderProps = {
   children?: React.ReactNode
 }
 
-export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
+export const WalletProvider = ({
+  children,
+}: WalletProviderProps): JSX.Element => {
+  const [provider, setProvider] = useState<ethers.providers.Web3Provider>()
   const [signer, setSigner] = useState<Signer>()
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
   const [address, setAddress] = useState<string>()
+
+  const resolveName = async (name: string) =>
+    (await provider?.resolveName(name)) || undefined
+
+  const lookupAddress = async (address: string) =>
+    (await provider?.lookupAddress(address)) || undefined
 
   const connect = async () => {
     if (!web3Modal) throw new Error('web3Modal not initialized')
@@ -137,6 +152,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       instance.on('accountsChanged', handleAccountsChanged)
       const provider = new ethers.providers.Web3Provider(instance)
       const signer = provider.getSigner()
+      setProvider(provider)
       setSigner(signer)
       setAddress(await signer.getAddress())
     }
@@ -146,9 +162,12 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   return (
     <WalletContext.Provider
       value={{
+        provider,
         signer,
         address,
         web3Modal,
+        resolveName,
+        lookupAddress,
         connect,
         disconnect,
       }}
