@@ -1,5 +1,7 @@
 import { SearchIcon } from '@heroicons/react/outline'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
+import AddressInput from './AddressInput'
+import { useWallet } from './WalletContext'
 
 type RecipientInputProps = {
   initialAddress: string | undefined
@@ -10,14 +12,7 @@ const RecipientInput = ({
   initialAddress,
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
-  const [address, setAddress] = useState<string>(initialAddress || '')
-
-  const handleChange = useCallback((e: React.SyntheticEvent) => {
-    const data = e.target as typeof e.target & {
-      value: string
-    }
-    setAddress(data.value)
-  }, [])
+  const { resolveName } = useWallet()
 
   const handleSubmit = useCallback(
     (e: React.SyntheticEvent) => {
@@ -46,14 +41,13 @@ const RecipientInput = ({
           <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none">
             <SearchIcon className="h-5 w-5" aria-hidden="true" />
           </div>
-          <input
+          <AddressInput
             id="recipient-field"
             className="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
             placeholder="Ethereum address or ENS name"
-            type="recipient"
             name="recipient"
-            onChange={handleChange}
-            value={address}
+            initialValue={initialAddress}
+            resolveName={resolveName}
           />
           <button type="submit" className="hidden" />
         </div>
