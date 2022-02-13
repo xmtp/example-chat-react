@@ -11,6 +11,12 @@ type ConversationViewProps = {
 
 type MessageComposerProps = Pick<ConversationViewProps, 'handleSend'>;
 
+type MessageTileProps = {
+	message: Message;
+	isSender: boolean;
+	key: string | number;
+};
+
 const MessageComposer = ({ handleSend }: MessageComposerProps): JSX.Element => (
 	<div className="sticky bottom-0 z-10 flex-shrink-0 flex h-16 bg-white shadow">
 		<form className="flex w-full p-3 border-t border-gray-300" onSubmit={handleSend}>
@@ -35,6 +41,20 @@ const MessageComposer = ({ handleSend }: MessageComposerProps): JSX.Element => (
 	</div>
 );
 
+const MessageTile = ({ message, isSender, key }: MessageTileProps): JSX.Element => (
+	<div key={key} className={`flex justify-${isSender ? 'end' : 'start'}`}>
+		<div
+			className={`relative max-w-xl px-4 py-2 mb-2 ${
+				isSender ? 'text-white bg-indigo-500' : 'bg-white'
+			} rounded shadow`}
+		>
+			<span className="block">
+				{message.error ? `Error: ${message.error?.message}` : <Emoji text={message.text || ''} />}
+			</span>
+		</div>
+	</div>
+);
+
 const ConversationView = ({
 	messages,
 	walletAddress,
@@ -49,23 +69,7 @@ const ConversationView = ({
 						<div className="space-y-2 w-full">
 							{messages?.map((msg: Message, index: number) => {
 								const isSender = msg.senderAddress === walletAddress;
-								return (
-									<div key={index} className={`flex justify-${isSender ? 'end' : 'start'}`}>
-										<div
-											className={`relative max-w-xl px-4 py-2 mb-2 ${
-												isSender ? 'text-white bg-indigo-500' : 'bg-white'
-											} rounded shadow`}
-										>
-											<span className="block">
-												{msg.error ? (
-													`Error: ${msg.error?.message}`
-												) : (
-													<Emoji text={msg.text || ''} />
-												)}
-											</span>
-										</div>
-									</div>
-								);
+								return <MessageTile message={msg} key={index} isSender={isSender} />;
 							})}
 							<div ref={messagesEndRef} />
 						</div>
