@@ -14,7 +14,6 @@ type MessageComposerProps = Pick<ConversationViewProps, 'handleSend'>;
 type MessageTileProps = {
 	message: Message;
 	isSender: boolean;
-	key: string | number;
 };
 
 const MessageComposer = ({ handleSend }: MessageComposerProps): JSX.Element => (
@@ -41,8 +40,8 @@ const MessageComposer = ({ handleSend }: MessageComposerProps): JSX.Element => (
 	</div>
 );
 
-const MessageTile = ({ message, isSender, key }: MessageTileProps): JSX.Element => (
-	<div key={key} className={`flex justify-${isSender ? 'end' : 'start'}`}>
+const MessageTile = ({ message, isSender }: MessageTileProps): JSX.Element => (
+	<div className={`flex justify-${isSender ? 'end' : 'start'}`}>
 		<div
 			className={`relative max-w-xl px-4 py-2 mb-2 ${
 				isSender ? 'text-white bg-indigo-500' : 'bg-white'
