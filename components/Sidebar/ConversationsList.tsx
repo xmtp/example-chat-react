@@ -1,13 +1,10 @@
-import { NextRouter } from 'next/router';
 import { SidebarProps } from './types';
 import { classNames } from '../../helpers';
 import Link from 'next/link';
 import { InboxInIcon } from '@heroicons/react/outline';
 import Address from '../Address';
 
-type ConversationListProps = SidebarProps & {
-	router: NextRouter;
-};
+type ConversationListProps = SidebarProps;
 
 const ConversationsList = ({ conversations, router }: ConversationListProps): JSX.Element => {
 	return (
