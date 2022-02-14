@@ -1,10 +1,10 @@
-import { XmtpProvider } from "../components/XmtpContext";
-import Layout from "../components/Layout";
-import { WalletProvider } from "./WalletContext";
+import { XmtpProvider } from '../components/XmtpContext'
+import Layout from '../components/Layout'
+import { WalletProvider } from './WalletContext'
 
 type AppProps = {
-  children?: React.ReactNode;
-};
+  children?: React.ReactNode
+}
 
 function App({ children }: AppProps) {
   return (
@@ -13,7 +13,7 @@ function App({ children }: AppProps) {
         <Layout>{children}</Layout>
       </XmtpProvider>
     </WalletProvider>
-  );
+  )
 }
 
-export default App;
+export default App
