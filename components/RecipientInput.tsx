@@ -1,5 +1,5 @@
 import { SearchIcon } from '@heroicons/react/outline'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 type RecipientInputProps = {
   initialAddress: string | undefined
@@ -10,7 +10,7 @@ const RecipientInput = ({
   initialAddress,
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
-  const [address, setAddress] = useState<string>()
+  const [address, setAddress] = useState<string>(initialAddress || '')
 
   const handleChange = useCallback((e: React.SyntheticEvent) => {
     const data = e.target as typeof e.target & {
@@ -30,10 +30,6 @@ const RecipientInput = ({
     },
     [onSubmit]
   )
-
-  useEffect(() => {
-    setAddress(initialAddress || '')
-  }, [initialAddress])
 
   return (
     <div className="flex-1 flex">
