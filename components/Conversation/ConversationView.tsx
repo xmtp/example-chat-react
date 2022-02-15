@@ -6,7 +6,7 @@ import MessageComposer from './MessageComposer'
 export type ConversationViewProps = {
   messages: Message[]
   walletAddress: string | undefined
-  handleSend: (message: string) => Promise<void>
+  onSend: (message: string) => Promise<void>
   messagesEndRef: MutableRefObject<null>
 }
 
@@ -36,7 +36,7 @@ const MessageTile = ({ message, isSender }: MessageTileProps): JSX.Element => (
 const ConversationView = ({
   messages,
   walletAddress,
-  handleSend,
+  onSend,
   messagesEndRef,
 }: ConversationViewProps): JSX.Element => (
   <div className="flex flex-col flex-1 h-screen">
@@ -57,7 +57,7 @@ const ConversationView = ({
         </div>
       </div>
     </main>
-    {walletAddress && <MessageComposer handleSend={handleSend} />}
+    {walletAddress && <MessageComposer onSend={onSend} />}
   </div>
 )
 
