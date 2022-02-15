@@ -6,8 +6,9 @@ import {
   useReducer,
   useState,
 } from 'react'
-import { Client, Conversation } from '@xmtp/xmtp-js'
+import { Client } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
+import { Conversation } from '@xmtp/xmtp-js/dist/types/src/conversations'
 
 type XmtpContextType = {
   wallet: Signer | undefined

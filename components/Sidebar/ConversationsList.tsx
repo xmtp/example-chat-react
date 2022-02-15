@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { InboxInIcon } from '@heroicons/react/outline'
 import Address from '../Address'
 import { useRouter } from 'next/router'
-import { Conversation } from '@xmtp/xmtp-js'
+import { Conversation } from '@xmtp/xmtp-js/dist/types/src/conversations'
 
 type ConversationListProps = {
   conversations: Conversation[]
