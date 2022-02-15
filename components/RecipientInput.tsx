@@ -54,7 +54,7 @@ const RecipientInput = ({
             type="recipient"
             name="recipient"
             onChange={handleChange}
-            value={address === undefined ? initialAddress : address}
+            value={address === undefined ? initialAddress || '' : address}
           />
           <button type="submit" className="hidden" />
         </div>

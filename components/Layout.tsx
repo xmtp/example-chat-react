@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useXmtp } from './XmtpContext'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
@@ -25,7 +25,6 @@ const RightPanelLayout: React.FC = ({ children }) => (
 const Layout: React.FC = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const {
-    walletAddress,
     conversations,
     connect: connectXmtp,
     disconnect: disconnectXmtp,
@@ -36,6 +35,16 @@ const Layout: React.FC = ({ children }) => {
     connect: connectWallet,
     disconnect: disconnectWallet,
   } = useWallet()
+
+  const handleDisconnect = useCallback(async () => {
+    disconnectXmtp()
+    await disconnectWallet()
+    router.push('/')
+  }, [disconnectWallet, disconnectXmtp, router])
+
+  const handleConnect = useCallback(async () => {
+    await connectWallet()
+  }, [connectWallet])
 
   const usePrevious = <T,>(value: T): T | undefined => {
     const ref = useRef<T>()
@@ -81,13 +90,8 @@ const Layout: React.FC = ({ children }) => {
                 }}
               />
               <UserMenu
-                {...{
-                  connectWallet,
-                  disconnectWallet,
-                  disconnectXmtp,
-                  walletAddress,
-                  router,
-                }}
+                onConnect={handleConnect}
+                onDisconnect={handleDisconnect}
               />
             </TopRightLayout>
           </TopBarLayout>
