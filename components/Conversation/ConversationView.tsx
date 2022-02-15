@@ -1,4 +1,4 @@
-import { Message } from '@xmtp/xmtp-js/dist/types/src'
+import { Message } from '@xmtp/xmtp-js'
 import React, { MutableRefObject } from 'react'
 import Emoji from 'react-emoji-render'
 import MessageComposer from './MessageComposer'
