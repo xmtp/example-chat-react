@@ -10,6 +10,9 @@ import Web3Modal, { IProviderOptions, providers } from 'web3modal'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import WalletLink from 'walletlink'
 
+const cachedLookupAddress = new Map<string, string | undefined>()
+const cachedResolveName = new Map<string, string | undefined>()
+
 type WalletContextType = {
   provider: ethers.providers.Web3Provider | undefined
   signer: Signer | undefined
@@ -51,12 +54,6 @@ export const WalletProvider = ({
   const [signer, setSigner] = useState<Signer>()
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
   const [address, setAddress] = useState<string>()
-  const [cachedLookupAddress, setCachedLookupAddress] = useState<
-    Map<string, string | undefined>
-  >(new Map())
-  const [cachedResolveName, setCachedResolveName] = useState<
-    Map<string, string | undefined>
-  >(new Map())
 
   const resolveName = useCallback(
     async (name: string) => {
@@ -65,10 +62,9 @@ export const WalletProvider = ({
       }
       const address = (await provider?.resolveName(name)) || undefined
       cachedResolveName.set(name, address)
-      setCachedResolveName(cachedResolveName)
       return address
     },
-    [provider, cachedResolveName]
+    [provider]
   )
 
   const lookupAddress = useCallback(
@@ -78,10 +74,9 @@ export const WalletProvider = ({
       }
       const name = (await provider?.lookupAddress(address)) || undefined
       cachedLookupAddress.set(address, name)
-      setCachedLookupAddress(cachedLookupAddress)
       return name
     },
-    [provider, cachedLookupAddress]
+    [provider]
   )
 
   const disconnect = useCallback(async () => {
