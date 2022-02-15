@@ -24,11 +24,7 @@ const RightPanelLayout: React.FC = ({ children }) => (
 
 const Layout: React.FC = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const {
-    conversations,
-    connect: connectXmtp,
-    disconnect: disconnectXmtp,
-  } = useXmtp()
+  const { connect: connectXmtp, disconnect: disconnectXmtp } = useXmtp()
   const router = useRouter()
   const {
     signer,
@@ -76,9 +72,10 @@ const Layout: React.FC = ({ children }) => {
       </Head>
       <div>
         <MobileSidebar
-          {...{ conversations, setSidebarOpen, sidebarOpen, router }}
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
         />
-        <DesktopSidebar {...{ conversations, router }} />
+        <DesktopSidebar />
         <RightPanelLayout>
           <TopBarLayout>
             <HamburgerMenu setSidebarOpen={setSidebarOpen} />

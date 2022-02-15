@@ -1,15 +1,21 @@
-import { SidebarProps } from './types'
 import { classNames } from '../../helpers'
 import Link from 'next/link'
 import { InboxInIcon } from '@heroicons/react/outline'
 import Address from '../Address'
+import { useRouter } from 'next/router'
 
-type ConversationListProps = SidebarProps
+// TODO: expose Conversation from xmtp-js index
+import { Conversation } from '@xmtp/xmtp-js/dist/types/src/conversations'
+
+type ConversationListProps = {
+  conversations: Conversation[]
+}
 
 const ConversationsList = ({
   conversations,
-  router,
 }: ConversationListProps): JSX.Element => {
+  const router = useRouter()
+
   return (
     <>
       {conversations &&
