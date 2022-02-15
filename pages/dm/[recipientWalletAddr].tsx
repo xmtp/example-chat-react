@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { Message, Stream } from '@xmtp/xmtp-js'
 import { useXmtp, useConversation } from '../../components/XmtpContext'
-import ConversationView from '../../components/ConversationView'
+import { ConversationView } from '../../components/Conversation'
 
 const buildMessageKey = (msg: Message): string =>
   `${msg.sent}${msg.recipientAddress}${msg.senderAddress}${msg.decrypted}`
@@ -74,16 +74,10 @@ const Conversation: NextPage = () => {
   }, [conversation, scrollToMessagesEndRef])
 
   const handleSend = useCallback(
-    async (e: React.SyntheticEvent) => {
-      e.preventDefault()
+    async (message: string) => {
       if (!conversation) return
-      const data = e.target as typeof e.target & {
-        message: { value: string }
-      }
-      if (!data.message) return
-      await conversation.send(data.message.value)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(e.target as any).reset()
+
+      await conversation.send(message)
     },
     [conversation]
   )

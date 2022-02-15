@@ -6,7 +6,7 @@ import { useWallet } from './WalletContext'
 import { DesktopSidebar, MobileSidebar } from './Sidebar'
 import RecipientInput from './RecipientInput'
 import UserMenu from './UserMenu'
-import HamburgerMenu from './HandburgerMenu'
+import HamburgerMenu from './HamburgerMenu'
 
 const TopBarLayout: React.FC = ({ children }) => (
   <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white shadow">

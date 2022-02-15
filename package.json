@@ -12,7 +12,9 @@
     "@heroicons/react": "^1.0.5",
     "@xmtp/xmtp-js": "^1.1.0",
     "ethers": "^5.5.3",
+    "imagemin-svgo": "^9.0.0",
     "next": "12.0.9",
+    "next-optimized-images": "^2.6.2",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-emoji-render": "^1.2.4"
@@ -30,6 +32,7 @@
     "node-localstorage": "^2.2.1",
     "postcss": "^8.4.5",
     "prettier": "^2.5.1",
+    "sass": "^1.49.7",
     "tailwindcss": "^3.0.18",
     "typescript": "4.5.5",
     "walletlink": "^2.4.6",
