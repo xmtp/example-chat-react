@@ -5,6 +5,7 @@ const withOptimizedImages = require('next-optimized-images')
 const nextConfig = withOptimizedImages({
   reactStrictMode: true,
   images: {
+    loader: 'custom',
     disableStaticImages: true,
   },
   webpack: (config, { isServer }) => {
