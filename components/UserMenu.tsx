@@ -1,41 +1,23 @@
 import { Menu, Transition } from '@headlessui/react'
 import { BellIcon } from '@heroicons/react/outline'
-import { Signer } from 'ethers'
-import { NextRouter } from 'next/router'
 import { Fragment, useCallback } from 'react'
 import { classNames } from '../helpers'
 import Address from './Address'
+import { useXmtp } from './XmtpContext'
 
 type UserMenuProps = {
-  walletAddress?: string
-  disconnectXmtp: () => void
-  disconnectWallet: () => Promise<void>
-  connectWallet: () => Promise<Signer | undefined>
-  router: NextRouter
+  onConnect: () => Promise<void>
+  onDisconnect: () => Promise<void>
 }
 
-const UserMenu = ({
-  walletAddress,
-  disconnectXmtp,
-  disconnectWallet,
-  connectWallet,
-  router,
-}: UserMenuProps): JSX.Element => {
-  const onDisconnect = useCallback(async () => {
-    disconnectXmtp()
-    await disconnectWallet()
-    router.push('/')
-  }, [disconnectWallet, disconnectXmtp, router])
+const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
+  const { walletAddress } = useXmtp()
 
   const onClickCopy = useCallback(() => {
     if (walletAddress) {
       navigator.clipboard.writeText(walletAddress)
     }
   }, [walletAddress])
-
-  const onClickConnect = useCallback(async () => {
-    await connectWallet()
-  }, [connectWallet])
 
   return (
     <div className="ml-4 flex items-center md:ml-6">
@@ -101,7 +83,7 @@ const UserMenu = ({
       ) : (
         <button
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-3"
-          onClick={onClickConnect}
+          onClick={onConnect}
         >
           Connect
         </button>

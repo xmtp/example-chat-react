@@ -3,11 +3,12 @@ import { classNames } from '../../helpers'
 import messageComposerStyles from '../../styles/MessageComposer.module.scss'
 import upArrowGreen from '../../public/up-arrow-green.svg'
 import upArrowGrey from '../../public/up-arrow-grey.svg'
-import { ConversationViewProps } from './ConversationView'
 
-type MessageComposerProps = Pick<ConversationViewProps, 'handleSend'>
+type MessageComposerProps = {
+  onSend: (msg: string) => Promise<void>
+}
 
-const MessageComposer = ({ handleSend }: MessageComposerProps): JSX.Element => {
+const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
   const [message, setMessage] = useState('')
   const onMessageChange = useCallback(
     (e: React.FormEvent<HTMLInputElement>) => setMessage(e.currentTarget.value),
@@ -19,10 +20,10 @@ const MessageComposer = ({ handleSend }: MessageComposerProps): JSX.Element => {
       if (!message) {
         return
       }
-      await handleSend(message)
+      await onSend(message)
       setMessage('')
     },
-    [handleSend, message]
+    [onSend, message]
   )
   return (
     <div

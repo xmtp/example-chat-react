@@ -1,38 +1,34 @@
 import { SearchIcon } from '@heroicons/react/outline'
-import { NextRouter, useRouter } from 'next/router'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 type RecipientInputProps = {
-  recipientWalletAddress?: string
-  setRecipientWalletAddress: (recipient: string) => void
-  router: NextRouter
+  initialAddress: string | undefined
+  onSubmit: (address: string) => Promise<void>
 }
 
 const RecipientInput = ({
-  recipientWalletAddress,
-  setRecipientWalletAddress,
+  initialAddress,
+  onSubmit,
 }: RecipientInputProps): JSX.Element => {
-  const router = useRouter()
-  const handleRecipientChange = useCallback(
-    (e: React.SyntheticEvent) => {
-      const data = e.target as typeof e.target & {
-        value: string
-      }
-      setRecipientWalletAddress(data.value)
-    },
-    [setRecipientWalletAddress]
-  )
+  const [address, setAddress] = useState<string>(initialAddress || '')
 
-  const onSubmit = useCallback(
+  const handleChange = useCallback((e: React.SyntheticEvent) => {
+    const data = e.target as typeof e.target & {
+      value: string
+    }
+    setAddress(data.value)
+  }, [])
+
+  const handleSubmit = useCallback(
     (e: React.SyntheticEvent) => {
       e.preventDefault()
       const data = e.target as typeof e.target & {
         recipient: { value: string }
       }
       if (!data.recipient) return
-      router.push(`/dm/${data.recipient.value}`)
+      onSubmit(data.recipient.value)
     },
-    [router]
+    [onSubmit]
   )
 
   return (
@@ -41,7 +37,7 @@ const RecipientInput = ({
         className="w-full flex md:ml-0"
         action="#"
         method="GET"
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
       >
         <label htmlFor="recipient-field" className="sr-only">
           Recipient
@@ -56,8 +52,8 @@ const RecipientInput = ({
             placeholder="Ethereum address or ENS name"
             type="recipient"
             name="recipient"
-            onChange={handleRecipientChange}
-            value={recipientWalletAddress}
+            onChange={handleChange}
+            value={address}
           />
           <button type="submit" className="hidden" />
         </div>
