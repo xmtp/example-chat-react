@@ -12,6 +12,7 @@
     "@heroicons/react": "^1.0.5",
     "@xmtp/xmtp-js": "^1.1.0",
     "ethers": "^5.5.3",
+    "imagemin-svgo": "^9.0.0",
     "next": "12.0.9",
     "next-optimized-images": "^2.6.2",
     "react": "17.0.2",
