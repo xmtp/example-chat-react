@@ -31,10 +31,6 @@ const Layout: React.FC = ({ children }) => {
     disconnect: disconnectXmtp,
   } = useXmtp()
   const router = useRouter()
-  const [recipientWalletAddress, setRecipientWalletAddress] =
-    useState<string>('')
-  const recipientWalletAddressUrlParam = router.query
-    .recipientWalletAddr as string
   const {
     signer,
     connect: connectWallet,
@@ -49,10 +45,6 @@ const Layout: React.FC = ({ children }) => {
     return ref.current
   }
   const prevSigner = usePrevious(signer)
-
-  useEffect(() => {
-    setRecipientWalletAddress(recipientWalletAddressUrlParam || '')
-  }, [recipientWalletAddressUrlParam])
 
   useEffect(() => {
     if (!signer && prevSigner) {
@@ -83,10 +75,9 @@ const Layout: React.FC = ({ children }) => {
             <HamburgerMenu setSidebarOpen={setSidebarOpen} />
             <TopRightLayout>
               <RecipientInput
-                {...{
-                  recipientWalletAddress,
-                  setRecipientWalletAddress,
-                  router,
+                initialAddress={router.query.recipientWalletAddr as string}
+                onSubmit={async (address: string) => {
+                  router.push(`/dm/${address}`)
                 }}
               />
               <UserMenu
