@@ -52,30 +52,16 @@ export const WalletProvider = ({
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
   const [address, setAddress] = useState<string>()
 
-  const resolveName = async (name: string) =>
-    (await provider?.resolveName(name)) || undefined
+  const resolveName = useCallback(
+    async (name: string) => (await provider?.resolveName(name)) || undefined,
+    [provider]
+  )
 
-  const lookupAddress = async (address: string) =>
-    (await provider?.lookupAddress(address)) || undefined
-
-  const connect = async () => {
-    if (!web3Modal) throw new Error('web3Modal not initialized')
-    try {
-      const instance = await web3Modal.connect()
-      if (!instance) return
-      instance.on('accountsChanged', handleAccountsChanged)
-      const provider = new ethers.providers.Web3Provider(instance)
-      const signer = provider.getSigner()
-      setSigner(signer)
-      setAddress(await signer.getAddress())
-      return signer
-    } catch (e) {
-      // TODO: better error handling/surfacing here.
-      // Note that web3Modal.connect throws an error when the user closes the
-      // modal, as "User closed modal"
-      console.log('error', e)
-    }
-  }
+  const lookupAddress = useCallback(
+    async (address: string) =>
+      (await provider?.lookupAddress(address)) || undefined,
+    [provider]
+  )
 
   const disconnect = useCallback(async () => {
     if (!web3Modal) return
@@ -97,6 +83,25 @@ export const WalletProvider = ({
     },
     [address, disconnect]
   )
+
+  const connect = useCallback(async () => {
+    if (!web3Modal) throw new Error('web3Modal not initialized')
+    try {
+      const instance = await web3Modal.connect()
+      if (!instance) return
+      instance.on('accountsChanged', handleAccountsChanged)
+      const provider = new ethers.providers.Web3Provider(instance)
+      const signer = provider.getSigner()
+      setSigner(signer)
+      setAddress(await signer.getAddress())
+      return signer
+    } catch (e) {
+      // TODO: better error handling/surfacing here.
+      // Note that web3Modal.connect throws an error when the user closes the
+      // modal, as "User closed modal"
+      console.log('error', e)
+    }
+  }, [web3Modal, handleAccountsChanged])
 
   useEffect(() => {
     const infuraId =
