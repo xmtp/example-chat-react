@@ -18,6 +18,10 @@ class AppDocument extends Document {
         <Head>
           <meta name="description" content="Chat via XMTP" />
           <link rel="icon" href="/favicon.ico" />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
+            rel="stylesheet"
+          />
         </Head>
         <body className="h-full">
           <Main />
