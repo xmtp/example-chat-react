@@ -73,10 +73,13 @@ const Conversation: NextPage = () => {
     streamMessages()
   }, [conversation, scrollToMessagesEndRef])
 
-  const handleSend = async (message: string) => {
-    if (!conversation) return
-    await conversation.send(message)
-  }
+  const handleSend = useCallback(
+    async (message: string) => {
+      if (!conversation) return
+      await conversation.send(message)
+    },
+    [conversation]
+  )
 
   if (!recipientWalletAddr) {
     return <div />

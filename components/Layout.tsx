@@ -65,6 +65,13 @@ const Layout: React.FC = ({ children }) => {
     connect()
   }, [signer, prevSigner, connectXmtp, disconnectXmtp])
 
+  const handleSubmit = useCallback(
+    async (address: string) => {
+      router.push(`/dm/${address}`)
+    },
+    [router]
+  )
+
   return (
     <>
       <Head>
@@ -82,9 +89,7 @@ const Layout: React.FC = ({ children }) => {
             <TopRightLayout>
               <RecipientInput
                 initialAddress={router.query.recipientWalletAddr as string}
-                onSubmit={async (address: string) => {
-                  router.push(`/dm/${address}`)
-                }}
+                onSubmit={handleSubmit}
               />
               <UserMenu
                 onConnect={handleConnect}
