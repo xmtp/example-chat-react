@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from 'react'
 import { classNames } from '../../helpers'
 import messageComposerStyles from '../../styles/MessageComposer.module.scss'
-import Image from 'next/image'
+import upArrowGreen from '../../public/up-arrow-green.svg'
+import upArrowGrey from '../../public/up-arrow-grey.svg'
 import { ConversationViewProps } from './ConversationView'
 
 type MessageComposerProps = Pick<ConversationViewProps, 'handleSend'>
@@ -64,8 +65,8 @@ const MessageComposer = ({ handleSend }: MessageComposerProps): JSX.Element => {
           required
         />
         <button type="submit" className={messageComposerStyles.arrow}>
-          <Image
-            src={message ? '/up-arrow-green.svg' : '/up-arrow-grey.svg'}
+          <img
+            src={message ? upArrowGreen : upArrowGrey}
             alt="send"
             height={32}
             width={32}

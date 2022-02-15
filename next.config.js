@@ -1,13 +1,15 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const withOptimizedImages = require('next-optimized-images')
+const optimizedImages = require('next-optimized-images')
+// // eslint-disable-next-line @typescript-eslint/no-var-requires
+// const path = require('path')
 
 /** @type {import('next').NextConfig} */
-const nextConfig = withOptimizedImages({
+const nextConfig = optimizedImages({
   reactStrictMode: true,
   images: {
-    loader: 'custom',
     disableStaticImages: true,
   },
+  handleImages: ['jpeg', 'png', 'svg'],
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback.fs = false
