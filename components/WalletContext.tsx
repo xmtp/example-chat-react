@@ -51,16 +51,37 @@ export const WalletProvider = ({
   const [signer, setSigner] = useState<Signer>()
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
   const [address, setAddress] = useState<string>()
+  const [cachedLookupAddress, setCachedLookupAddress] = useState<
+    Map<string, string | undefined>
+  >(new Map())
+  const [cachedResolveName, setCachedResolveName] = useState<
+    Map<string, string | undefined>
+  >(new Map())
 
   const resolveName = useCallback(
-    async (name: string) => (await provider?.resolveName(name)) || undefined,
-    [provider]
+    async (name: string) => {
+      if (cachedResolveName.has(name)) {
+        return cachedResolveName.get(name)
+      }
+      const address = (await provider?.resolveName(name)) || undefined
+      cachedResolveName.set(name, address)
+      setCachedResolveName(cachedResolveName)
+      return address
+    },
+    [provider, cachedResolveName]
   )
 
   const lookupAddress = useCallback(
-    async (address: string) =>
-      (await provider?.lookupAddress(address)) || undefined,
-    [provider]
+    async (address: string) => {
+      if (cachedLookupAddress.has(address)) {
+        return cachedLookupAddress.get(address)
+      }
+      const name = (await provider?.lookupAddress(address)) || undefined
+      cachedLookupAddress.set(address, name)
+      setCachedLookupAddress(cachedLookupAddress)
+      return name
+    },
+    [provider, cachedLookupAddress]
   )
 
   const disconnect = useCallback(async () => {
