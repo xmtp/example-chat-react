@@ -6,6 +6,7 @@ import { Conversation } from '@xmtp/xmtp-js/dist/types/src/conversations'
 import Blockies from 'react-blockies'
 import useConversation from '../../hooks/useConversation'
 import { Message } from '@xmtp/xmtp-js'
+import { useWallet } from '../WalletContext'
 
 type ConversationListProps = {
   conversations: Conversation[]
@@ -34,6 +35,7 @@ const ConversationTile = ({
   conversation,
   isSelected,
 }: ConversationTileProps): JSX.Element => {
+  const { lookupAddress } = useWallet()
   const { messages } = useConversation(conversation.peerAddress)
   const latestMessage = getLatestMessage(messages)
   const path = `/dm/${conversation.peerAddress}`
@@ -65,6 +67,7 @@ const ConversationTile = ({
               <Address
                 address={conversation.peerAddress}
                 className="text-black text-s font-bold place-self-start"
+                lookupAddress={lookupAddress}
               />
               <span className="text-s font-normal place-self-end text-n-300">
                 {formatDate(latestMessage?.sent)}

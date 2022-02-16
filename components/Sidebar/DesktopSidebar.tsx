@@ -27,7 +27,7 @@ const DesktopSidebar = ({
             </button>
           )}
         </div>
-        <div className="mt-5 flex-grow flex flex-col">
+        <div className="flex-grow flex flex-col">
           <nav className="flex-1 pb-4 space-y-1">
             <ConversationsList conversations={conversations} />
           </nav>
