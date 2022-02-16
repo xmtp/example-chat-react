@@ -2,6 +2,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { CogIcon } from '@heroicons/react/solid'
 import { Fragment, useCallback } from 'react'
 import { classNames } from '../helpers'
+import Blockies from 'react-blockies'
 import Address from './Address'
 import { useWallet } from './WalletContext'
 import { useXmtp } from './XmtpContext'
@@ -10,6 +11,14 @@ type UserMenuProps = {
   onConnect: () => Promise<void>
   onDisconnect: () => Promise<void>
 }
+
+type AvatarBlockProps = {
+  walletAddress: string
+}
+
+const AvatarBlock = ({ walletAddress }: AvatarBlockProps) => (
+  <Blockies seed={walletAddress} size={8} className="rounded-full mr-2" />
+)
 
 const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
   const { walletAddress } = useXmtp()
@@ -27,26 +36,34 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
         <Menu>
           {({ open }) => (
             <>
-              {/* TODO: ENS profile photo */}
-              <div className={classNames(open ? 'opacity-75' : '')}>
-                <div className="flex items-center">
-                  <div className="bg-g-100 rounded h-2 w-2 mr-1"></div>
-                  <p className="text-sm font-bold text-g-100">Connected as:</p>
+              <div
+                className={classNames(
+                  open ? 'opacity-75' : '',
+                  'flex items-center'
+                )}
+              >
+                <AvatarBlock walletAddress={walletAddress} />
+                <div>
+                  <div className="flex items-center">
+                    <div className="bg-g-100 rounded h-2 w-2 mr-1"></div>
+                    <p className="text-sm font-bold text-g-100">
+                      Connected as:
+                    </p>
+                  </div>
+                  <Address
+                    address={walletAddress}
+                    className="text-sm font-semibold text-white ml-3"
+                    lookupAddress={lookupAddress}
+                  />
                 </div>
-                <Address
-                  address={walletAddress}
-                  className="text-sm font-semibold text-white ml-3"
-                  lookupAddress={lookupAddress}
-                />
               </div>
               <div>
                 <Menu.Button className="max-w-xs flex items-center text-sm rounded-full focus:outline-none">
                   <span className="sr-only">Open user menu</span>
                   <CogIcon
                     className={classNames(
-                      open
-                        ? 'h-8 w-8 fill-white'
-                        : 'h-8 w-8 fill-n-100 hover:fill-n-200'
+                      open ? 'fill-white' : '',
+                      'h-8 w-8 fill-n-100 hover:fill-n-200'
                     )}
                     aria-hidden="true"
                   />
