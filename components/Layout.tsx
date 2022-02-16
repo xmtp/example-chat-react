@@ -71,7 +71,7 @@ const Layout: React.FC = ({ children }) => {
 
   const handleSubmit = useCallback(
     async (address: string) => {
-      router.push(`/dm/${address}`)
+      router.push(address ? `/dm/${address}` : '/')
     },
     [router]
   )
