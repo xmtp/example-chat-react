@@ -1,11 +1,9 @@
 import { classNames, truncate } from '../../helpers'
 import Link from 'next/link'
-// import { InboxInIcon } from '@heroicons/react/outline'
 import Address from '../Address'
 import { useRouter } from 'next/router'
 import { Conversation } from '@xmtp/xmtp-js/dist/types/src/conversations'
 import Blockies from 'react-blockies'
-import conversationTileStyles from '../../styles/ConversationTile.module.scss'
 import useConversation from '../../hooks/useConversation'
 import { Message } from '@xmtp/xmtp-js'
 
@@ -26,7 +24,7 @@ const getLatestMessage = (messages: Message[]): Message | null =>
   messages.length ? messages[messages.length - 1] : null
 
 const AvatarBlock = ({ peerAddress }: AvatarBlockProps) => (
-  <Blockies seed={peerAddress} size={10} />
+  <Blockies seed={peerAddress} size={10} className="rounded-full" />
 )
 
 const formatDate = (d: Date | undefined): string =>
@@ -60,9 +58,7 @@ const ConversationTile = ({
             isSelected ? 'bg-bt-200' : null
           )}
         >
-          <div className={conversationTileStyles.blockie}>
-            <AvatarBlock peerAddress={conversation.peerAddress} />
-          </div>
+          <AvatarBlock peerAddress={conversation.peerAddress} />
           <div className="text-center space-y-1 py-1 sm:text-left text w-full">
             <div className="grid-cols-2 grid">
               <Address
