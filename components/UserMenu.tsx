@@ -30,7 +30,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
               {/* TODO: ENS profile photo */}
               <div className={classNames(open ? 'opacity-75' : '')}>
                 <div className="flex items-center">
-                  <div className="bg-g-100 rounded-full h-2 w-2 mr-1"></div>
+                  <div className="bg-g-100 rounded h-2 w-2 mr-1"></div>
                   <p className="text-sm font-bold text-g-100">Connected as:</p>
                 </div>
                 <Address
@@ -44,7 +44,9 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                   <span className="sr-only">Open user menu</span>
                   <CogIcon
                     className={classNames(
-                      open ? 'h-8 w-8 fill-white' : 'h-8 w-8 fill-n-100'
+                      open
+                        ? 'h-8 w-8 fill-white'
+                        : 'h-8 w-8 fill-n-100 hover:fill-n-200'
                     )}
                     aria-hidden="true"
                   />
@@ -109,11 +111,14 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
             </p>
           </div>
           <button
-            className="max-w-xs flex items-center text-sm rounded-full focus:outline-none"
+            className="max-w-xs flex items-center text-sm rounded focus:outline-none"
             onClick={onConnect}
           >
             <span className="sr-only">Connect</span>
-            <CogIcon className="h-8 w-8 fill-n-100" aria-hidden="true" />
+            <CogIcon
+              className="h-8 w-8 fill-n-100 hover:fill-n-200"
+              aria-hidden="true"
+            />
           </button>
         </>
       )}
