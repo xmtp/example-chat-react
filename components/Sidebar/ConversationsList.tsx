@@ -1,5 +1,5 @@
-// import { classNames } from '../../helpers'
-// import Link from 'next/link'
+import { classNames, truncate } from '../../helpers'
+import Link from 'next/link'
 // import { InboxInIcon } from '@heroicons/react/outline'
 import Address from '../Address'
 import { useRouter } from 'next/router'
@@ -29,29 +29,57 @@ const AvatarBlock = ({ peerAddress }: AvatarBlockProps) => (
   <Blockies seed={peerAddress} size={10} />
 )
 
+const formatDate = (d: Date | undefined): string =>
+  d ? d.toLocaleDateString('en-US') : ''
+
 const ConversationTile = ({
   conversation,
   isSelected,
 }: ConversationTileProps): JSX.Element => {
   const { messages } = useConversation(conversation.peerAddress)
   const latestMessage = getLatestMessage(messages)
+  const path = `/dm/${conversation.peerAddress}`
   return (
-    <div className="py-2 px-2 max-w-sm mx-auto bg-white space-y-2 sm:py-2 sm:flex sm:items-center sm:space-y-0 sm:space-x-6">
-      <div className={conversationTileStyles.blockie}>
-        <AvatarBlock peerAddress={conversation.peerAddress} />
-      </div>
-      <div className="text-center space-y-2 sm:text-left">
-        <div className="space-y-0.5">
-          <Address
-            address={conversation.peerAddress}
-            className="text-black text-sm"
-          />
-          <p className="text-sm font-medium">
-            {latestMessage && latestMessage.text}
-          </p>
+    <Link href={path} key={conversation.peerAddress}>
+      <a>
+        <div
+          className={classNames(
+            'py-2',
+            'px-4',
+            'max-w-sm',
+            'mx-auto',
+            'bg-white',
+            'space-y-2',
+            'sm:py-2',
+            'sm:flex',
+            'sm:items-center',
+            'sm:space-y-0',
+            'sm:space-x-4',
+            'border-b-0',
+            'border-gray-100',
+            isSelected ? 'bg-bt-200' : null
+          )}
+        >
+          <div className={conversationTileStyles.blockie}>
+            <AvatarBlock peerAddress={conversation.peerAddress} />
+          </div>
+          <div className="text-center space-y-1 py-1 sm:text-left text w-full">
+            <div className="grid-cols-2 grid">
+              <Address
+                address={conversation.peerAddress}
+                className="text-black text-s font-bold place-self-start"
+              />
+              <span className="text-s font-normal place-self-end text-n-300">
+                {formatDate(latestMessage?.sent)}
+              </span>
+            </div>
+            <p className="text-s font-normal text-ellipsis mt-0">
+              {latestMessage && truncate(latestMessage.text, 75)}
+            </p>
+          </div>
         </div>
-      </div>
-    </div>
+      </a>
+    </Link>
   )
 }
 

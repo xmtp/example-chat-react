@@ -51,7 +51,8 @@ const useConversation = (
   useEffect(() => {
     const listMessages = async () => {
       if (!conversation) return
-      const msgs = await conversation.messages()
+      const msgs = await conversation.messages({ pageSize: 100 })
+
       dispatchMessages(msgs)
       if (onMessageCallback) {
         onMessageCallback()
