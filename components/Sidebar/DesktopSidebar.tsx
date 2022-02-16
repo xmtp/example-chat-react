@@ -3,10 +3,12 @@ import { useXmtp } from '../XmtpContext'
 import ConversationsList from './ConversationsList'
 
 type DesktopSidebarProps = {
-  onNewMessage: () => Promise<void>
+  onClickNewMessageButton: () => void
 }
 
-const DesktopSidebar = ({ onNewMessage }: DesktopSidebarProps): JSX.Element => {
+const DesktopSidebar = ({
+  onClickNewMessageButton,
+}: DesktopSidebarProps): JSX.Element => {
   const { walletAddress, conversations } = useXmtp()
 
   return (
@@ -19,7 +21,7 @@ const DesktopSidebar = ({ onNewMessage }: DesktopSidebarProps): JSX.Element => {
           {walletAddress && (
             <button
               className="inline-flex items-center h-6 px-4 py-1 my-4 bg-purple-400 border border-purple-300 text-xs font-semibold tracking-wide text-white rounded"
-              onClick={onNewMessage}
+              onClick={onClickNewMessageButton}
             >
               + New Message
             </button>

@@ -42,7 +42,7 @@ const Layout: React.FC = ({ children }) => {
     await connectWallet()
   }, [connectWallet])
 
-  const handleNewMessage = useCallback(async () => {
+  const handleNewMessageButtonClick = useCallback(() => {
     router.push('/')
   }, [router])
 
@@ -86,7 +86,7 @@ const Layout: React.FC = ({ children }) => {
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
         />
-        <DesktopSidebar onNewMessage={handleNewMessage} />
+        <DesktopSidebar onClickNewMessageButton={handleNewMessageButtonClick} />
         <RightPanelLayout>
           <TopBarLayout>
             <HamburgerMenu setSidebarOpen={setSidebarOpen} />
