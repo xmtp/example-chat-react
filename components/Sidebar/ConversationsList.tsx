@@ -55,14 +55,14 @@ const ConversationTile = ({
             'items-center',
             'space-y-0',
             'space-x-4',
-            'border-b-0',
+            'border-b-2',
             'border-gray-100',
             'hover:bg-bt-100',
             isSelected ? 'bg-bt-200' : null
           )}
         >
           <AvatarBlock peerAddress={conversation.peerAddress} />
-          <div className="py-2 sm:text-left text w-full">
+          <div className="py-4 sm:text-left text w-full">
             <div className="grid-cols-2 grid">
               <Address
                 address={conversation.peerAddress}
