@@ -31,7 +31,7 @@ const DesktopSidebar = ({
             </button>
           )}
         </div>
-        <div className="mt-5 flex-grow flex flex-col">
+        <div className="flex-grow flex flex-col">
           {walletAddress ? (
             <ConversationsPanel />
           ) : (
@@ -61,7 +61,7 @@ const NoWalletConnectedMessage = (): JSX.Element => {
 const ConversationsPanel = (): JSX.Element => {
   const { conversations } = useXmtp()
   return conversations && conversations.length > 0 ? (
-    <nav className="flex-1 px-2 pb-4 space-y-1">
+    <nav className="flex-1 pb-4 space-y-1">
       <ConversationsList conversations={conversations} />
     </nav>
   ) : (
