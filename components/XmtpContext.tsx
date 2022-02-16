@@ -19,7 +19,7 @@ type XmtpContextType = {
   disconnect: () => void
 }
 
-const XmtpContext = createContext<XmtpContextType>({
+export const XmtpContext = createContext<XmtpContextType>({
   wallet: undefined,
   walletAddress: undefined,
   client: undefined,
@@ -34,21 +34,6 @@ export const useXmtp = (): XmtpContextType => {
     throw new Error('useXmtp must be used within an XmtpProvider')
   }
   return context
-}
-
-export const useConversation = (peerAddress: string): Conversation | null => {
-  const { client } = useContext(XmtpContext)
-  const [convo, setConvo] = useState<Conversation | null>(null)
-  useEffect(() => {
-    const getConvo = async () => {
-      if (!client) {
-        return
-      }
-      setConvo(await client.conversations.newConversation(peerAddress))
-    }
-    getConvo()
-  }, [client, peerAddress])
-  return convo
 }
 
 export const XmtpProvider: React.FC = ({ children }) => {
@@ -116,17 +101,28 @@ export const XmtpProvider: React.FC = ({ children }) => {
     streamConversations()
   }, [client, walletAddress])
 
+  const [providerState, setProviderState] = useState<XmtpContextType>({
+    wallet,
+    walletAddress,
+    client,
+    conversations,
+    connect,
+    disconnect,
+  })
+
+  useEffect(() => {
+    setProviderState({
+      wallet,
+      walletAddress,
+      client,
+      conversations,
+      connect,
+      disconnect,
+    })
+  }, [wallet, walletAddress, client, conversations, connect, disconnect])
+
   return (
-    <XmtpContext.Provider
-      value={{
-        wallet,
-        walletAddress,
-        client,
-        conversations,
-        connect,
-        disconnect,
-      }}
-    >
+    <XmtpContext.Provider value={providerState}>
       {children}
     </XmtpContext.Provider>
   )
