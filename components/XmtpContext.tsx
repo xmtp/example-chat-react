@@ -40,7 +40,6 @@ export const XmtpProvider: React.FC = ({ children }) => {
   const [wallet, setWallet] = useState<Signer>()
   const [walletAddress, setWalletAddress] = useState<string>()
   const [client, setClient] = useState<Client>()
-  const [providerState, setProviderState] = useState<XmtpContextType>({})
   const [conversations, dispatchConversations] = useReducer(
     (state: Conversation[], newConvos: Conversation[] | undefined) => {
       if (newConvos === undefined) {
@@ -101,6 +100,15 @@ export const XmtpProvider: React.FC = ({ children }) => {
     }
     streamConversations()
   }, [client, walletAddress])
+
+  const [providerState, setProviderState] = useState<XmtpContextType>({
+    wallet,
+    walletAddress,
+    client,
+    conversations,
+    connect,
+    disconnect,
+  })
 
   useEffect(() => {
     setProviderState({
