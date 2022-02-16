@@ -62,7 +62,7 @@ const ConversationTile = ({
           )}
         >
           <AvatarBlock peerAddress={conversation.peerAddress} />
-          <div className="space-y-1 py-1 sm:text-left text w-full">
+          <div className="py-2 sm:text-left text w-full">
             <div className="grid-cols-2 grid">
               <Address
                 address={conversation.peerAddress}
