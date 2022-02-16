@@ -1,26 +1,63 @@
-import { classNames } from '../../helpers'
-import Link from 'next/link'
-import { InboxInIcon } from '@heroicons/react/outline'
+// import { classNames } from '../../helpers'
+// import Link from 'next/link'
+// import { InboxInIcon } from '@heroicons/react/outline'
 import Address from '../Address'
 import { useRouter } from 'next/router'
 import { Conversation } from '@xmtp/xmtp-js/dist/types/src/conversations'
+import Blockies from 'react-blockies'
+import conversationTileStyles from '../../styles/ConversationTile.module.scss'
+import useConversation from '../../hooks/useConversation'
+import { Message } from '@xmtp/xmtp-js'
 
 type ConversationListProps = {
   conversations: Conversation[]
 }
 
-const ConversationsList = ({
-  conversations,
-}: ConversationListProps): JSX.Element => {
-  const router = useRouter()
+type ConversationTileProps = {
+  conversation: Conversation
+  isSelected: boolean
+}
 
+type AvatarBlockProps = {
+  peerAddress: string
+}
+
+const getLatestMessage = (messages: Message[]): Message | null =>
+  messages.length ? messages[messages.length - 1] : null
+
+const AvatarBlock = ({ peerAddress }: AvatarBlockProps) => (
+  <Blockies seed={peerAddress} size={10} />
+)
+
+const ConversationTile = ({
+  conversation,
+  isSelected,
+}: ConversationTileProps): JSX.Element => {
+  const { messages } = useConversation(conversation.peerAddress)
+  const latestMessage = getLatestMessage(messages)
   return (
-    <>
-      {conversations &&
-        conversations.map((convo) => {
-          const path = `/dm/${convo.peerAddress}`
-          const isCurrentPath = router.pathname == path
-          return (
+    <div className="py-2 px-2 max-w-sm mx-auto bg-white space-y-2 sm:py-2 sm:flex sm:items-center sm:space-y-0 sm:space-x-6">
+      <div className={conversationTileStyles.blockie}>
+        <AvatarBlock peerAddress={conversation.peerAddress} />
+      </div>
+      <div className="text-center space-y-2 sm:text-left">
+        <div className="space-y-0.5">
+          <Address
+            address={conversation.peerAddress}
+            className="text-black text-sm"
+          />
+          <p className="text-sm font-medium">
+            {latestMessage && latestMessage.text}
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * 
+return (
             <Link href={path} key={convo.peerAddress}>
               <a
                 className={classNames(
@@ -42,6 +79,28 @@ const ConversationsList = ({
                 <Address address={convo.peerAddress} />
               </a>
             </Link>
+          )
+        })
+ * @returns 
+ */
+
+const ConversationsList = ({
+  conversations,
+}: ConversationListProps): JSX.Element => {
+  const router = useRouter()
+
+  return (
+    <>
+      {conversations &&
+        conversations.map((convo) => {
+          const isSelected =
+            router.query.recipientWalletAddr == convo.peerAddress
+          return (
+            <ConversationTile
+              key={convo.peerAddress}
+              conversation={convo}
+              isSelected={isSelected}
+            />
           )
         })}
     </>

@@ -19,7 +19,7 @@ type XmtpContextType = {
   disconnect: () => void
 }
 
-const XmtpContext = createContext<XmtpContextType>({
+export const XmtpContext = createContext<XmtpContextType>({
   wallet: undefined,
   walletAddress: undefined,
   client: undefined,
@@ -36,25 +36,11 @@ export const useXmtp = (): XmtpContextType => {
   return context
 }
 
-export const useConversation = (peerAddress: string): Conversation | null => {
-  const { client } = useContext(XmtpContext)
-  const [convo, setConvo] = useState<Conversation | null>(null)
-  useEffect(() => {
-    const getConvo = async () => {
-      if (!client) {
-        return
-      }
-      setConvo(await client.conversations.newConversation(peerAddress))
-    }
-    getConvo()
-  }, [client, peerAddress])
-  return convo
-}
-
 export const XmtpProvider: React.FC = ({ children }) => {
   const [wallet, setWallet] = useState<Signer>()
   const [walletAddress, setWalletAddress] = useState<string>()
   const [client, setClient] = useState<Client>()
+  const [providerState, setProviderState] = useState<XmtpContextType>({})
   const [conversations, dispatchConversations] = useReducer(
     (state: Conversation[], newConvos: Conversation[] | undefined) => {
       if (newConvos === undefined) {
@@ -116,17 +102,19 @@ export const XmtpProvider: React.FC = ({ children }) => {
     streamConversations()
   }, [client, walletAddress])
 
+  useEffect(() => {
+    setProviderState({
+      wallet,
+      walletAddress,
+      client,
+      conversations,
+      connect,
+      disconnect,
+    })
+  }, [wallet, walletAddress, client, conversations, connect, disconnect])
+
   return (
-    <XmtpContext.Provider
-      value={{
-        wallet,
-        walletAddress,
-        client,
-        conversations,
-        connect,
-        disconnect,
-      }}
-    >
+    <XmtpContext.Provider value={providerState}>
       {children}
     </XmtpContext.Provider>
   )

@@ -10,12 +10,13 @@
   "dependencies": {
     "@headlessui/react": "^1.4.3",
     "@heroicons/react": "^1.0.5",
-    "@xmtp/xmtp-js": "^1.1.0",
+    "@xmtp/xmtp-js": "^1.2.0",
     "ethers": "^5.5.3",
     "imagemin-svgo": "^9.0.0",
     "next": "12.0.9",
     "next-optimized-images": "^2.6.2",
     "react": "17.0.2",
+    "react-blockies": "^1.4.1",
     "react-dom": "17.0.2",
     "react-emoji-render": "^1.2.4"
   },
