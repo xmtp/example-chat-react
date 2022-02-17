@@ -1,20 +1,22 @@
-import { classNames, truncate } from '../../helpers'
+import { classNames, truncate } from '../helpers'
 import Link from 'next/link'
-import Address from '../Address'
+import Address from './Address'
 import { useRouter } from 'next/router'
 import { Conversation } from '@xmtp/xmtp-js/dist/types/src/conversations'
 import Blockies from 'react-blockies'
-import useConversation from '../../hooks/useConversation'
+import useConversation from '../hooks/useConversation'
 import { Message } from '@xmtp/xmtp-js'
-import { useWallet } from '../WalletContext'
+import { useWallet } from './WalletContext'
 
-type ConversationListProps = {
+type ConversationsListProps = {
   conversations: Conversation[]
+  onClickConversationTile?: () => void
 }
 
 type ConversationTileProps = {
   conversation: Conversation
   isSelected: boolean
+  onClick?: () => void
 }
 
 type AvatarBlockProps = {
@@ -34,6 +36,7 @@ const formatDate = (d: Date | undefined): string =>
 const ConversationTile = ({
   conversation,
   isSelected,
+  onClick,
 }: ConversationTileProps): JSX.Element => {
   const { lookupAddress } = useWallet()
   const { messages } = useConversation(conversation.peerAddress)
@@ -41,12 +44,12 @@ const ConversationTile = ({
   const path = `/dm/${conversation.peerAddress}`
   return (
     <Link href={path} key={conversation.peerAddress}>
-      <a>
+      <a onClick={onClick}>
         <div
           className={classNames(
             'py-2',
             'px-4',
-            'max-w-sm',
+            'md:max-w-sm',
             'mx-auto',
             'bg-white',
             'space-y-2',
@@ -85,7 +88,8 @@ const ConversationTile = ({
 
 const ConversationsList = ({
   conversations,
-}: ConversationListProps): JSX.Element => {
+  onClickConversationTile,
+}: ConversationsListProps): JSX.Element => {
   const router = useRouter()
 
   return (
@@ -99,6 +103,7 @@ const ConversationsList = ({
               key={convo.peerAddress}
               conversation={convo}
               isSelected={isSelected}
+              onClick={onClickConversationTile}
             />
           )
         })}

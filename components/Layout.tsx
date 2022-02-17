@@ -3,13 +3,14 @@ import { useXmtp } from './XmtpContext'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { useWallet } from './WalletContext'
-import { DesktopSidebar, MobileSidebar } from './Sidebar'
+import Stack from './Stack'
+import MobileSidebar from './MobileSidebar'
 import RecipientInput from './RecipientInput'
 import UserMenu from './UserMenu'
-import HamburgerMenu from './HamburgerMenu'
+import BackArrow from './BackArrow'
 
 const TopBarLayout: React.FC = ({ children }) => (
-  <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white shadow">
+  <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white shadow items-center">
     {children}
   </div>
 )
@@ -19,7 +20,9 @@ const TopRightLayout: React.FC = ({ children }) => (
 )
 
 const RightPanelLayout: React.FC = ({ children }) => (
-  <div className="md:pl-84 flex flex-col flex-1 h-screen">{children}</div>
+  <div className="hidden md:pl-84 md:flex md:flex-col md:flex-1 md:h-screen">
+    {children}
+  </div>
 )
 
 const Layout: React.FC = ({ children }) => {
@@ -43,8 +46,13 @@ const Layout: React.FC = ({ children }) => {
   }, [connectWallet])
 
   const handleNewMessageButtonClick = useCallback(() => {
+    setSidebarOpen(true)
     router.push('/')
   }, [router])
+
+  const handleConversationTileClick = () => {
+    setSidebarOpen(true)
+  }
 
   const usePrevious = <T,>(value: T): T | undefined => {
     const ref = useRef<T>()
@@ -82,16 +90,27 @@ const Layout: React.FC = ({ children }) => {
         <title>Chat via XMTP</title>
       </Head>
       <div>
+        <Stack
+          onClickNewMessageButton={handleNewMessageButtonClick}
+          onClickConversationTile={handleConversationTileClick}
+        >
+          <UserMenu onConnect={handleConnect} onDisconnect={handleDisconnect} />
+        </Stack>
         <MobileSidebar
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
-        />
-        <DesktopSidebar onClickNewMessageButton={handleNewMessageButtonClick}>
-          <UserMenu onConnect={handleConnect} onDisconnect={handleDisconnect} />
-        </DesktopSidebar>
+        >
+          <TopBarLayout>
+            <BackArrow setSidebarOpen={setSidebarOpen} />
+            <RecipientInput
+              initialAddress={router.query.recipientWalletAddr as string}
+              onSubmit={handleSubmit}
+            />
+          </TopBarLayout>
+          {children}
+        </MobileSidebar>
         <RightPanelLayout>
           <TopBarLayout>
-            <HamburgerMenu setSidebarOpen={setSidebarOpen} />
             <TopRightLayout>
               <RecipientInput
                 initialAddress={router.query.recipientWalletAddr as string}

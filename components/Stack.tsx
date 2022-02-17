@@ -1,22 +1,24 @@
 import Link from 'next/link'
 import { LinkIcon } from '@heroicons/react/outline'
 import { ChatIcon } from '@heroicons/react/outline'
-import { useXmtp } from '../XmtpContext'
+import { useXmtp } from './XmtpContext'
 import ConversationsList from './ConversationsList'
 
-type DesktopSidebarProps = {
+type StackProps = {
   onClickNewMessageButton: () => void
+  onClickConversationTile?: () => void
   children?: React.ReactNode
 }
 
-const DesktopSidebar = ({
+const Stack = ({
   onClickNewMessageButton,
+  onClickConversationTile,
   children,
-}: DesktopSidebarProps): JSX.Element => {
+}: StackProps): JSX.Element => {
   const { walletAddress } = useXmtp()
 
   return (
-    <section className="hidden md:flex md:w-84 md:flex-col md:fixed md:inset-y-0">
+    <section className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
       <div className="flex flex-col flex-grow border-r border-gray-200 bg-white overflow-y-auto">
         <div className="h-14 bg-p-600 flex items-center justify-between flex-shrink-0 px-4">
           <Link href="/" passHref={true}>
@@ -33,7 +35,9 @@ const DesktopSidebar = ({
         </div>
         <div className="flex-grow flex flex-col">
           {walletAddress ? (
-            <ConversationsPanel />
+            <ConversationsPanel
+              onClickConversationTile={onClickConversationTile}
+            />
           ) : (
             <NoWalletConnectedMessage />
           )}
@@ -58,11 +62,20 @@ const NoWalletConnectedMessage = (): JSX.Element => {
   )
 }
 
-const ConversationsPanel = (): JSX.Element => {
+type ConversationsPanelProps = {
+  onClickConversationTile?: () => void
+}
+
+const ConversationsPanel = ({
+  onClickConversationTile,
+}: ConversationsPanelProps): JSX.Element => {
   const { conversations } = useXmtp()
   return conversations && conversations.length > 0 ? (
     <nav className="flex-1 pb-4 space-y-1">
-      <ConversationsList conversations={conversations} />
+      <ConversationsList
+        conversations={conversations}
+        onClickConversationTile={onClickConversationTile}
+      />
     </nav>
   ) : (
     <NoConversationsMessage />
@@ -83,4 +96,4 @@ const NoConversationsMessage = (): JSX.Element => {
   )
 }
 
-export default DesktopSidebar
+export default Stack
