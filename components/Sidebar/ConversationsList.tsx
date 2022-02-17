@@ -66,14 +66,14 @@ const ConversationTile = ({
             <div className="grid-cols-2 grid">
               <Address
                 address={conversation.peerAddress}
-                className="text-black text-s font-bold place-self-start"
+                className="text-black text-sm font-bold place-self-start"
                 lookupAddress={lookupAddress}
               />
-              <span className="text-s font-normal place-self-end text-n-300">
+              <span className="text-sm font-normal place-self-end text-n-300">
                 {formatDate(latestMessage?.sent)}
               </span>
             </div>
-            <p className="text-s font-normal text-ellipsis mt-0">
+            <p className="text-sm font-normal text-ellipsis mt-0">
               {latestMessage && truncate(latestMessage.text, 75)}
             </p>
           </div>
