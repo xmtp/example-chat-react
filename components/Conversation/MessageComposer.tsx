@@ -20,8 +20,8 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
       if (!message) {
         return
       }
-      await onSend(message)
       setMessage('')
+      await onSend(message)
     },
     [onSend, message]
   )

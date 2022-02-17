@@ -1,40 +1,8 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useReducer,
-  useState,
-} from 'react'
+import { useCallback, useEffect, useReducer, useState } from 'react'
 import { Client } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
 import { Conversation } from '@xmtp/xmtp-js/dist/types/src/conversations'
-
-type XmtpContextType = {
-  wallet: Signer | undefined
-  walletAddress: string | undefined
-  client: Client | undefined
-  conversations: Conversation[]
-  connect: (wallet: Signer) => void
-  disconnect: () => void
-}
-
-export const XmtpContext = createContext<XmtpContextType>({
-  wallet: undefined,
-  walletAddress: undefined,
-  client: undefined,
-  conversations: [],
-  connect: () => undefined,
-  disconnect: () => undefined,
-})
-
-export const useXmtp = (): XmtpContextType => {
-  const context = useContext(XmtpContext)
-  if (context === undefined) {
-    throw new Error('useXmtp must be used within an XmtpProvider')
-  }
-  return context
-}
+import { XmtpContext, XmtpContextType } from '../contexts/xmtp'
 
 export const XmtpProvider: React.FC = ({ children }) => {
   const [wallet, setWallet] = useState<Signer>()
@@ -128,4 +96,4 @@ export const XmtpProvider: React.FC = ({ children }) => {
   )
 }
 
-export default XmtpContext
+export default XmtpProvider

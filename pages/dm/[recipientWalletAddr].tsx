@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useCallback, useRef } from 'react'
-import { useXmtp } from '../../components/XmtpContext'
+import useXmtp from '../../hooks/useXmtp'
 import useConversation from '../../hooks/useConversation'
 import { ConversationView } from '../../components/Conversation'
 
@@ -20,7 +20,7 @@ const Conversation: NextPage = () => {
     scrollToMessagesEndRef
   )
 
-  if (!recipientWalletAddr) {
+  if (!recipientWalletAddr || !walletAddress) {
     return <div />
   }
 

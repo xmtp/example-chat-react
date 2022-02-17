@@ -1,7 +1,7 @@
 import { SearchIcon } from '@heroicons/react/outline'
 import { useCallback } from 'react'
 import AddressInput from './AddressInput'
-import { useWallet } from './WalletContext'
+import useWallet from '../hooks/useWallet'
 
 type RecipientInputProps = {
   initialAddress: string | undefined
