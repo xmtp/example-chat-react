@@ -4,8 +4,8 @@ import { Fragment, useCallback } from 'react'
 import { classNames } from '../helpers'
 import Blockies from 'react-blockies'
 import Address from './Address'
-import { useWallet } from './WalletContext'
-import { useXmtp } from './XmtpContext'
+import useWallet from '../hooks/useWallet'
+import useXmtp from '../hooks/useXmtp'
 
 type UserMenuProps = {
   onConnect: () => Promise<void>

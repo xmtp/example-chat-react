@@ -1,6 +1,6 @@
 import { XmtpProvider } from '../components/XmtpContext'
 import Layout from '../components/Layout'
-import { WalletProvider } from './WalletContext'
+import { WalletProvider } from './WalletProvider'
 
 type AppProps = {
   children?: React.ReactNode

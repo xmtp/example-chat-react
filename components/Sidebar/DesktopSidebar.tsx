@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { LinkIcon } from '@heroicons/react/outline'
 import { ChatIcon } from '@heroicons/react/outline'
-import { useXmtp } from '../XmtpContext'
+import useXmtp from '../../hooks/useXmtp'
 import ConversationsList from './ConversationsList'
 
 type DesktopSidebarProps = {

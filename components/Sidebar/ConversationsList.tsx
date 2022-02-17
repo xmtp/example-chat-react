@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { Conversation } from '@xmtp/xmtp-js/dist/types/src/conversations'
 import useConversation from '../../hooks/useConversation'
 import { Message } from '@xmtp/xmtp-js'
-import { useWallet } from '../WalletContext'
+import useWallet from '../../hooks/useWallet'
 import Avatar from '../Avatar'
 
 type ConversationListProps = {

@@ -5,7 +5,7 @@ import MessageComposer from './MessageComposer'
 import Avatar from '../Avatar'
 import { classNames, formatTime } from '../../helpers'
 import Address from '../Address'
-import { useWallet } from '../WalletContext'
+import useWallet from '../../hooks/useWallet'
 
 export type ConversationViewProps = {
   messages: Message[]
@@ -29,6 +29,7 @@ const SenderAddressPill = ({
   userIsSender,
 }: SenderAddressPillProps): JSX.Element => {
   const { lookupAddress } = useWallet()
+
   return (
     <Address
       className={classNames(

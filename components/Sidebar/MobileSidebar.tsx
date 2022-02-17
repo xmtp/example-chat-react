@@ -2,7 +2,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 import Link from 'next/link'
 import { Fragment } from 'react'
-import { useXmtp } from '../XmtpContext'
+import useXmtp from '../../hooks/useXmtp'
 import ConversationsList from './ConversationsList'
 
 type MobileSidebarProps = {
