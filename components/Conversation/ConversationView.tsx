@@ -74,26 +74,24 @@ const ConversationView = ({
   onSend,
   messagesEndRef,
 }: ConversationViewProps): JSX.Element => (
-  <div className="flex flex-col flex-1 h-screen">
-    <main className="flex-grow flex bg-white">
-      <div className="pb-0 self-end">
-        <div className="w-full flex flex-col">
-          <div className="relative w-full px-6 pt-6 pb-14 overflow-y-auto flex">
-            <div className="w-full">
-              {messages?.map((msg: Message) => {
-                const isSender = msg.senderAddress === walletAddress
-                return (
-                  <MessageTile message={msg} key={msg.id} isSender={isSender} />
-                )
-              })}
-              <div ref={messagesEndRef} />
-            </div>
+  <main className="flex flex-col flex-1 bg-white h-screen">
+    <div className="flex-grow flex">
+      <div className="pb-0 w-full flex flex-col self-end">
+        <div className="relative w-full bg-white px-6 pt-6 overflow-y-auto flex">
+          <div className="w-full">
+            {messages?.map((msg: Message) => {
+              const isSender = msg.senderAddress === walletAddress
+              return (
+                <MessageTile message={msg} key={msg.id} isSender={isSender} />
+              )
+            })}
+            <div ref={messagesEndRef} />
           </div>
         </div>
       </div>
-    </main>
+    </div>
     {walletAddress && <MessageComposer onSend={onSend} />}
-  </div>
+  </main>
 )
 
 export default ConversationView
