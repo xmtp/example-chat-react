@@ -25,6 +25,12 @@ module.exports = {
           200: '#EDEFFF',
           300: '#E1E4FF',
         },
+        g: {
+          100: '#61E979',
+        },
+        l: {
+          300: '#FC4F37',
+        },
         n: {
           100: '#c2c6d2',
           200: '#989ca7',
@@ -41,6 +47,9 @@ module.exports = {
           500: '#5a2895',
           600: '#31006e',
         },
+        y: {
+          100: '#f5e33e',
+        },
       },
       fontFamily: {
         sans: ['Inter', ...fontFamily.sans],
@@ -48,9 +57,9 @@ module.exports = {
       },
       fontSize: {
         xs: '10px',
-        s: '12px',
-        m: '14px',
-        l: '16px',
+        sm: '12px',
+        md: '14px',
+        lg: '16px',
         xl: '20px',
       },
     },
