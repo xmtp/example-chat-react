@@ -78,14 +78,14 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="origin-bottom-right absolute right-0 bottom-12 mb-4 w-40 rounded-md shadow-lg bg-white divide-y-2 divide-n-20 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <Menu.Items className="origin-bottom-right absolute right-0 bottom-12 mb-4 w-40 rounded-md shadow-lg bg-white divide-y-2 divide-zinc-50 ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="px-1 py-1 ">
                     <Menu.Item>
                       {({ active }) => (
                         <a
                           onClick={onClickCopy}
                           className={classNames(
-                            active ? 'bg-n-20' : '',
+                            active ? 'bg-zinc-50' : '',
                             'block rounded-md px-2 py-2 text-sm text-n-600 text-right font-normal cursor-pointer'
                           )}
                         >
@@ -100,7 +100,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                         <a
                           onClick={onDisconnect}
                           className={classNames(
-                            active ? 'bg-n-20 cursor-pointer' : '',
+                            active ? 'bg-zinc-50 cursor-pointer' : '',
                             'block rounded-md px-2 py-2 text-sm text-l-300 text-right font-semibold'
                           )}
                         >
