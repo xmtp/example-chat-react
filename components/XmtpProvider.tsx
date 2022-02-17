@@ -96,4 +96,4 @@ export const XmtpProvider: React.FC = ({ children }) => {
   )
 }
 
-export default XmtpContext
+export default XmtpProvider

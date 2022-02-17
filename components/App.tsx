@@ -1,4 +1,4 @@
-import { XmtpProvider } from '../components/XmtpContext'
+import XmtpProvider from './XmtpProvider'
 import Layout from '../components/Layout'
 import { WalletProvider } from './WalletProvider'
 
