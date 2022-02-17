@@ -5,6 +5,7 @@ import MessageComposer from './MessageComposer'
 import Avatar from '../Avatar'
 import { classNames, formatTime } from '../../helpers'
 import Address from '../Address'
+import { useWallet } from '../WalletContext'
 
 export type ConversationViewProps = {
   messages: Message[]
@@ -26,23 +27,27 @@ type SenderAddressPillProps = {
 const SenderAddressPill = ({
   senderAddress,
   userIsSender,
-}: SenderAddressPillProps): JSX.Element => (
-  <Address
-    className={classNames(
-      'rounded-2xl',
-      'border',
-      'border-2',
-      'border-gray-100',
-      'text-md',
-      'mr-2',
-      'px-3',
-      'py-1',
-      'font-bold',
-      userIsSender ? 'bg-bt-100 text-b-600' : 'bg-zinc-50'
-    )}
-    address={senderAddress}
-  ></Address>
-)
+}: SenderAddressPillProps): JSX.Element => {
+  const { lookupAddress } = useWallet()
+  return (
+    <Address
+      className={classNames(
+        'rounded-2xl',
+        'border',
+        'border-2',
+        'border-gray-100',
+        'text-md',
+        'mr-2',
+        'px-3',
+        'py-1',
+        'font-bold',
+        userIsSender ? 'bg-bt-100 text-b-600' : 'bg-zinc-50'
+      )}
+      address={senderAddress}
+      lookupAddress={lookupAddress}
+    ></Address>
+  )
+}
 
 const MessageTile = ({ message, isSender }: MessageTileProps): JSX.Element => (
   <div className="flex items-start mx-auto mb-4">
