@@ -1,47 +1,12 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { ethers, Signer } from 'ethers'
 import Web3Modal, { IProviderOptions, providers } from 'web3modal'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import WalletLink from 'walletlink'
+import { WalletContext } from '../contexts/wallet'
 
 const cachedLookupAddress = new Map<string, string | undefined>()
 const cachedResolveName = new Map<string, string | undefined>()
-
-type WalletContextType = {
-  provider: ethers.providers.Web3Provider | undefined
-  signer: Signer | undefined
-  address: string | undefined
-  web3Modal: Web3Modal | undefined
-  resolveName: (name: string) => Promise<string | undefined>
-  lookupAddress: (address: string) => Promise<string | undefined>
-  connect: () => Promise<Signer | undefined>
-  disconnect: () => Promise<void>
-}
-
-const WalletContext = createContext<WalletContextType>({
-  provider: undefined,
-  signer: undefined,
-  address: undefined,
-  web3Modal: undefined,
-  resolveName: async () => undefined,
-  lookupAddress: async () => undefined,
-  connect: async () => undefined,
-  disconnect: async () => undefined,
-})
-
-export const useWallet = (): WalletContextType => {
-  const context = useContext(WalletContext)
-  if (context === undefined) {
-    throw new Error('useWallet must be used within an WalletProvider')
-  }
-  return context
-}
 
 type WalletProviderProps = {
   children?: React.ReactNode
@@ -197,5 +162,3 @@ export const WalletProvider = ({
     </WalletContext.Provider>
   )
 }
-
-export default WalletContext

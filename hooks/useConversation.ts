@@ -1,6 +1,6 @@
 import { Conversation, Message, Stream } from '@xmtp/xmtp-js'
 import { useContext, useCallback, useState, useReducer, useEffect } from 'react'
-import { XmtpContext } from '../components/XmtpContext'
+import { XmtpContext } from '../contexts/xmtp'
 
 type MessageDeduper = (message: Message) => boolean
 const buildMessageDeduper = (state: Message[]): MessageDeduper => {
