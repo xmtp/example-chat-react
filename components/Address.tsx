@@ -28,7 +28,7 @@ const Address = ({
   }, [address, lookupAddress])
 
   return (
-    <span className={classNames(className || '')} title={address}>
+    <span className={classNames(className || '', 'font-mono')} title={address}>
       {name || shortAddress(address)}
     </span>
   )

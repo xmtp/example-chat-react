@@ -3,7 +3,7 @@ import React, { MutableRefObject } from 'react'
 import Emoji from 'react-emoji-render'
 import MessageComposer from './MessageComposer'
 import Avatar from '../Avatar'
-import { classNames, formatDate } from '../../helpers'
+import { classNames, formatTime } from '../../helpers'
 import Address from '../Address'
 
 export type ConversationViewProps = {
@@ -29,38 +29,42 @@ const SenderAddressPill = ({
 }: SenderAddressPillProps): JSX.Element => (
   <Address
     className={classNames(
-      'rounded-lg',
+      'rounded-2xl',
       'border',
       'border-2',
       'border-gray-100',
-      'bg-white',
-      'text-m',
-      'p-2',
-      userIsSender ? 'bg-bt-100 text-b-600' : null
+      'text-md',
+      'mr-2',
+      'px-3',
+      'py-1',
+      'font-bold',
+      userIsSender ? 'bg-bt-100 text-b-600' : 'bg-zinc-50'
     )}
     address={senderAddress}
   ></Address>
 )
 
 const MessageTile = ({ message, isSender }: MessageTileProps): JSX.Element => (
-  <div className="flex justify-start">
+  <div className="flex items-start mx-auto mb-4">
     <Avatar peerAddress={message.senderAddress as string} />
-    <div>
-      <SenderAddressPill
-        senderAddress={message.senderAddress as string}
-        userIsSender={isSender}
-      />
-      <span className="text-s font-normal place-self-end text-n-300">
-        {formatDate(message.sent)}
+    <div className="ml-2">
+      <div>
+        <SenderAddressPill
+          senderAddress={message.senderAddress as string}
+          userIsSender={isSender}
+        />
+        <span className="text-sm font-normal place-self-end text-n-300 text-md uppercase">
+          {formatTime(message.sent)}
+        </span>
+      </div>
+      <span className="block text-md px-2 mt-2 text-black font-normal">
+        {message.error ? (
+          `Error: ${message.error?.message}`
+        ) : (
+          <Emoji text={message.text || ''} />
+        )}
       </span>
     </div>
-    <span className="block">
-      {message.error ? (
-        `Error: ${message.error?.message}`
-      ) : (
-        <Emoji text={message.text || ''} />
-      )}
-    </span>
   </div>
 )
 
@@ -70,12 +74,12 @@ const ConversationView = ({
   onSend,
   messagesEndRef,
 }: ConversationViewProps): JSX.Element => (
-  <div className="flex flex-col flex-1 h-screen bg-white">
-    <main className="flex-grow">
-      <div className="pb-6">
+  <div className="flex flex-col flex-1 h-screen">
+    <main className="flex-grow flex bg-white">
+      <div className="pb-0 self-end">
         <div className="w-full flex flex-col">
-          <div className="relative w-full p-6 overflow-y-auto flex">
-            <div className="space-y-2 w-full">
+          <div className="relative w-full px-6 pt-6 pb-14 overflow-y-auto flex">
+            <div className="w-full">
               {messages?.map((msg: Message) => {
                 const isSender = msg.senderAddress === walletAddress
                 return (
