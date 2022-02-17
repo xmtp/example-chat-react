@@ -10,7 +10,6 @@ import { useWallet } from './WalletContext'
 
 type ConversationsListProps = {
   conversations: Conversation[]
-  onClickConversationTile?: () => void
 }
 
 type ConversationTileProps = {
@@ -88,7 +87,6 @@ const ConversationTile = ({
 
 const ConversationsList = ({
   conversations,
-  onClickConversationTile,
 }: ConversationsListProps): JSX.Element => {
   const router = useRouter()
 
@@ -103,7 +101,6 @@ const ConversationsList = ({
               key={convo.peerAddress}
               conversation={convo}
               isSelected={isSelected}
-              onClick={onClickConversationTile}
             />
           )
         })}
