@@ -10,3 +10,6 @@ export const truncate = (
   }
   return str
 }
+
+export const formatDate = (d: Date | undefined): string =>
+  d ? d.toLocaleDateString('en-US') : ''

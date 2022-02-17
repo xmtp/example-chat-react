@@ -12,7 +12,7 @@ const DesktopSidebar = ({
   const { walletAddress, conversations } = useXmtp()
 
   return (
-    <section className="hidden md:flex md:w-84 md:flex-col md:fixed md:inset-y-0">
+    <aside className="hidden md:flex md:w-84 md:flex-col md:fixed md:inset-y-0 bg-zinc-50">
       <div className="flex flex-col flex-grow border-r border-gray-200 bg-white overflow-y-auto">
         <div className="h-14 bg-p-600 flex items-center justify-between flex-shrink-0 px-4">
           <Link href="/" passHref={true}>
@@ -33,7 +33,7 @@ const DesktopSidebar = ({
           </nav>
         </div>
       </div>
-    </section>
+    </aside>
   )
 }
 
