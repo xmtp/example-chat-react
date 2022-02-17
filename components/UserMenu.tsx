@@ -63,7 +63,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                   <CogIcon
                     className={classNames(
                       open ? 'fill-white' : '',
-                      'h-8 w-8 fill-n-100 hover:fill-n-200'
+                      'h-4 w-4 fill-n-100 hover:fill-n-200'
                     )}
                     aria-hidden="true"
                   />
@@ -133,7 +133,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
           >
             <span className="sr-only">Connect</span>
             <CogIcon
-              className="h-8 w-8 fill-n-100 hover:fill-n-200"
+              className="h-4 w-4 fill-n-100 hover:fill-n-200"
               aria-hidden="true"
             />
           </button>
