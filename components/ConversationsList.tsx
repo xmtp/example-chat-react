@@ -35,6 +35,7 @@ const ConversationTile = ({
       <a onClick={onClick}>
         <div
           className={classNames(
+            'h-20',
             'py-2',
             'px-4',
             'md:max-w-sm',
