@@ -15,7 +15,7 @@ const MessageDetailView = ({
   return (
     <>
       <Transition.Root show={show} as={Fragment}>
-        <div className="fixed inset-0 flex md:hidden">
+        <div className="inset-0 flex md:hidden">
           <Transition.Child
             as={Fragment}
             enter="transition ease-in-out duration-300 transform"
