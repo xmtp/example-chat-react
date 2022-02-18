@@ -49,6 +49,7 @@ module.exports = {
         },
         y: {
           100: '#f5e33e',
+          200: '#c7b902',
         },
       },
       fontFamily: {

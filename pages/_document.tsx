@@ -19,7 +19,7 @@ class AppDocument extends Document {
           <meta name="description" content="Chat via XMTP" />
           <link rel="icon" href="/favicon.ico" />
           <link
-            href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700|Inconsolata&display=swap"
+            href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700|Inconsolata:400,600,700&display=swap"
             rel="stylesheet"
           />
         </Head>
