@@ -13,7 +13,7 @@ import BackArrow from './BackArrow'
 
 const NavigationColumnLayout: React.FC = ({ children }) => (
   <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
-    <div className="flex flex-col flex-grow border-r border-gray-200 bg-white overflow-y-auto">
+    <div className="flex flex-col flex-grow md:border-r md:border-gray-200 bg-white overflow-y-auto">
       {children}
     </div>
   </aside>
