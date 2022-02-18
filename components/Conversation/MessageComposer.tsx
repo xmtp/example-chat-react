@@ -34,6 +34,7 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
         'flex-shrink-0',
         'flex',
         'h-16',
+        'bg-white',
 
         messageComposerStyles.container
       )}

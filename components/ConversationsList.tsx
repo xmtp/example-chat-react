@@ -1,20 +1,21 @@
-import { classNames, truncate, formatDate } from '../../helpers'
+import { classNames, truncate, formatDate } from '../helpers'
 import Link from 'next/link'
-import Address from '../Address'
+import Address from './Address'
 import { useRouter } from 'next/router'
 import { Conversation } from '@xmtp/xmtp-js/dist/types/src/conversations'
-import useConversation from '../../hooks/useConversation'
+import useConversation from '../hooks/useConversation'
 import { Message } from '@xmtp/xmtp-js'
-import useWallet from '../../hooks/useWallet'
-import Avatar from '../Avatar'
+import useWallet from '../hooks/useWallet'
+import Avatar from './Avatar'
 
-type ConversationListProps = {
+type ConversationsListProps = {
   conversations: Conversation[]
 }
 
 type ConversationTileProps = {
   conversation: Conversation
   isSelected: boolean
+  onClick?: () => void
 }
 
 const getLatestMessage = (messages: Message[]): Message | null =>
@@ -23,6 +24,7 @@ const getLatestMessage = (messages: Message[]): Message | null =>
 const ConversationTile = ({
   conversation,
   isSelected,
+  onClick,
 }: ConversationTileProps): JSX.Element => {
   const { lookupAddress } = useWallet()
   const { messages } = useConversation(conversation.peerAddress)
@@ -30,12 +32,12 @@ const ConversationTile = ({
   const path = `/dm/${conversation.peerAddress}`
   return (
     <Link href={path} key={conversation.peerAddress}>
-      <a>
+      <a onClick={onClick}>
         <div
           className={classNames(
             'py-2',
             'px-4',
-            'max-w-sm',
+            'md:max-w-sm',
             'mx-auto',
             'bg-white',
             'space-y-2',
@@ -74,7 +76,7 @@ const ConversationTile = ({
 
 const ConversationsList = ({
   conversations,
-}: ConversationListProps): JSX.Element => {
+}: ConversationsListProps): JSX.Element => {
   const router = useRouter()
 
   return (

@@ -1,15 +1,35 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import useXmtp from '../hooks/useXmtp'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
+import Link from 'next/link'
 import useWallet from '../hooks/useWallet'
-import { DesktopSidebar, MobileSidebar } from './Sidebar'
+import { NavigationView, MessageDetailView } from './Views'
 import RecipientInput from './RecipientInput'
+import NewMessageButton from './NewMessageButton'
+import NavigationPanel from './NavigationPanel'
 import UserMenu from './UserMenu'
-import HamburgerMenu from './HamburgerMenu'
+import BackArrow from './BackArrow'
+
+const NavigationColumnLayout: React.FC = ({ children }) => (
+  <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
+    <div className="flex flex-col flex-grow md:border-r md:border-gray-200 bg-white overflow-y-auto">
+      {children}
+    </div>
+  </aside>
+)
+
+const NavigationHeaderLayout: React.FC = ({ children }) => (
+  <div className="h-14 bg-p-600 flex items-center justify-between flex-shrink-0 px-4">
+    <Link href="/" passHref={true}>
+      <img className="h-8 w-auto" src="/xmtp-icon.png" alt="XMTP" />
+    </Link>
+    {children}
+  </div>
+)
 
 const TopBarLayout: React.FC = ({ children }) => (
-  <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white shadow">
+  <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white shadow items-center">
     {children}
   </div>
 )
@@ -18,13 +38,45 @@ const TopRightLayout: React.FC = ({ children }) => (
   <div className="flex-1 px-4 flex justify-between">{children}</div>
 )
 
-const RightPanelLayout: React.FC = ({ children }) => (
-  <div className="md:pl-84 flex flex-col flex-1 h-screen">{children}</div>
-)
+const MessageDetailLayout: React.FC = ({ children }) => {
+  const router = useRouter()
+  const initialAddress = router.query.recipientWalletAddr as string
+
+  const handleSubmit = useCallback(
+    async (address: string) => {
+      router.push(address ? `/dm/${address}` : '/dm/')
+    },
+    [router]
+  )
+
+  const handleBackArrowClick = useCallback(() => {
+    router.push('/')
+  }, [router])
+
+  return (
+    <>
+      <TopBarLayout>
+        <TopRightLayout>
+          <div className="md:hidden">
+            <BackArrow onClick={handleBackArrowClick} />
+          </div>
+          <RecipientInput
+            initialAddress={initialAddress}
+            onSubmit={handleSubmit}
+          />
+        </TopRightLayout>
+      </TopBarLayout>
+      {children}
+    </>
+  )
+}
 
 const Layout: React.FC = ({ children }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const { connect: connectXmtp, disconnect: disconnectXmtp } = useXmtp()
+  const {
+    connect: connectXmtp,
+    disconnect: disconnectXmtp,
+    walletAddress,
+  } = useXmtp()
   const router = useRouter()
   const {
     signer,
@@ -43,7 +95,7 @@ const Layout: React.FC = ({ children }) => {
   }, [connectWallet])
 
   const handleNewMessageButtonClick = useCallback(() => {
-    router.push('/')
+    router.push('/dm/')
   }, [router])
 
   const usePrevious = <T,>(value: T): T | undefined => {
@@ -69,38 +121,35 @@ const Layout: React.FC = ({ children }) => {
     connect()
   }, [signer, prevSigner, connectXmtp, disconnectXmtp])
 
-  const handleSubmit = useCallback(
-    async (address: string) => {
-      router.push(address ? `/dm/${address}` : '/')
-    },
-    [router]
-  )
-
   return (
     <>
       <Head>
         <title>Chat via XMTP</title>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1"
+        />
       </Head>
       <div>
-        <MobileSidebar
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
-        <DesktopSidebar onClickNewMessageButton={handleNewMessageButtonClick}>
-          <UserMenu onConnect={handleConnect} onDisconnect={handleDisconnect} />
-        </DesktopSidebar>
-        <RightPanelLayout>
-          <TopBarLayout>
-            <HamburgerMenu setSidebarOpen={setSidebarOpen} />
-            <TopRightLayout>
-              <RecipientInput
-                initialAddress={router.query.recipientWalletAddr as string}
-                onSubmit={handleSubmit}
-              />
-            </TopRightLayout>
-          </TopBarLayout>
-          {children}
-        </RightPanelLayout>
+        <NavigationView>
+          <NavigationColumnLayout>
+            <NavigationHeaderLayout>
+              {walletAddress && (
+                <NewMessageButton
+                  onClickNewMessageButton={handleNewMessageButtonClick}
+                />
+              )}
+            </NavigationHeaderLayout>
+            <NavigationPanel />
+            <UserMenu
+              onConnect={handleConnect}
+              onDisconnect={handleDisconnect}
+            />
+          </NavigationColumnLayout>
+        </NavigationView>
+        <MessageDetailView>
+          <MessageDetailLayout>{children}</MessageDetailLayout>
+        </MessageDetailView>
       </div>
     </>
   )
