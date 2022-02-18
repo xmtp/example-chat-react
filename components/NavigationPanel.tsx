@@ -4,7 +4,7 @@ import useXmtp from '../hooks/useXmtp'
 import ConversationsList from './ConversationsList'
 
 const NavigationPanel = (): JSX.Element => {
-  const walletAddress = useXmtp()
+  const { walletAddress } = useXmtp()
   return (
     <div className="flex-grow flex flex-col">
       {walletAddress ? <ConversationsPanel /> : <NoWalletConnectedMessage />}
