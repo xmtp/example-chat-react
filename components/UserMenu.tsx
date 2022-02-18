@@ -43,7 +43,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                 )}
               >
                 <AvatarBlock walletAddress={walletAddress} />
-                <div>
+                <div className="flex flex-col">
                   <div className="flex items-center">
                     <div className="bg-g-100 rounded h-2 w-2 mr-1"></div>
                     <p className="text-sm font-bold text-g-100">
@@ -123,9 +123,12 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                 You are not connected.
               </p>
             </div>
-            <p className="text-sm font-normal text-y-100 ml-3">
-              Sign in with your wallet
-            </p>
+
+            <a onClick={onConnect}>
+              <p className="text-sm font-normal text-y-100 hover:text-y-200 ml-3 cursor-pointer">
+                Sign in with your wallet
+              </p>
+            </a>
           </div>
           <button
             className="max-w-xs flex items-center text-sm rounded focus:outline-none"
