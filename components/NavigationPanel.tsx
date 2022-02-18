@@ -1,46 +1,14 @@
-import Link from 'next/link'
 import { LinkIcon } from '@heroicons/react/outline'
 import { ChatIcon } from '@heroicons/react/outline'
-import useXmtp from '../../hooks/useXmtp'
+import useXmtp from '../hooks/useXmtp'
 import ConversationsList from './ConversationsList'
 
-type DesktopSidebarProps = {
-  onClickNewMessageButton: () => void
-  children?: React.ReactNode
-}
-
-const DesktopSidebar = ({
-  onClickNewMessageButton,
-  children,
-}: DesktopSidebarProps): JSX.Element => {
+const NavigationPanel = (): JSX.Element => {
   const { walletAddress } = useXmtp()
-
   return (
-    <aside className="hidden md:flex md:w-84 md:flex-col md:fixed md:inset-y-0 bg-zinc-50">
-      <div className="flex flex-col flex-grow border-r border-gray-200 bg-white overflow-y-auto">
-        <div className="h-14 bg-p-600 flex items-center justify-between flex-shrink-0 px-4">
-          <Link href="/" passHref={true}>
-            <img className="h-8 w-auto" src="/xmtp-icon.png" alt="XMTP" />
-          </Link>
-          {walletAddress && (
-            <button
-              className="inline-flex items-center h-6 px-4 py-1 my-4 bg-p-400 border border-p-300 hover:bg-p-300 focus:ring-2 focus:ring-offset-2 focus:ring-n-100 focus:ring-offset-p-600 focus:border-n-100 text-xs font-semibold tracking-wide text-white rounded"
-              onClick={onClickNewMessageButton}
-            >
-              + New Message
-            </button>
-          )}
-        </div>
-        <div className="flex-grow flex flex-col">
-          {walletAddress ? (
-            <ConversationsPanel />
-          ) : (
-            <NoWalletConnectedMessage />
-          )}
-        </div>
-        {children}
-      </div>
-    </aside>
+    <div className="flex-grow flex flex-col">
+      {walletAddress ? <ConversationsPanel /> : <NoWalletConnectedMessage />}
+    </div>
   )
 }
 
@@ -83,4 +51,4 @@ const NoConversationsMessage = (): JSX.Element => {
   )
 }
 
-export default DesktopSidebar
+export default NavigationPanel
