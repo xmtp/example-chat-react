@@ -80,7 +80,7 @@ const ConversationView = ({
   onSend,
   messagesEndRef,
 }: ConversationViewProps): JSX.Element => (
-  <main className="flex flex-col flex-1 bg-white h-screen">
+  <main className="flex flex-col flex-1 bg-white">
     <div className="flex-grow flex">
       <div className="pb-0 w-full flex flex-col self-end">
         <div className="relative w-full bg-white px-6 pt-6 overflow-y-auto flex">
