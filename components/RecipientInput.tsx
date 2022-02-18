@@ -28,7 +28,7 @@ const RecipientInput = ({
   return (
     <div className="flex-1 flex">
       <form
-        className="w-full flex ml-4 md:ml-0"
+        className="w-full flex ml-2 md:ml-0"
         action="#"
         method="GET"
         onSubmit={handleSubmit}
@@ -36,8 +36,8 @@ const RecipientInput = ({
         <label htmlFor="recipient-field" className="sr-only">
           Recipient
         </label>
-        <div className="relative w-full text-gray-400 focus-within:text-gray-600">
-          <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none text-sm">
+        <div className="relative w-full text-n-400 focus-within:text-n-600">
+          <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none text-sm text-black font-semibold">
             To:
           </div>
           <AddressInput

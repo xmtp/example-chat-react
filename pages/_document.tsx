@@ -17,6 +17,10 @@ class AppDocument extends Document {
       <Html className="h-full bg-gray-100">
         <Head>
           <meta name="description" content="Chat via XMTP" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1"
+          ></meta>
           <link rel="icon" href="/favicon.ico" />
           <link
             href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700|Inconsolata&display=swap"
