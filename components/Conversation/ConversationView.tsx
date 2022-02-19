@@ -35,14 +35,13 @@ const SenderAddressPill = ({
       className={classNames(
         'rounded-2xl',
         'border',
-        'border-2',
-        'border-gray-100',
         'text-md',
         'mr-2',
-        'px-3',
+        'px-2',
         'py-1',
         'font-bold',
-        userIsSender ? 'bg-bt-100 text-b-600' : 'bg-zinc-50'
+        userIsSender ? 'bg-bt-100 text-b-600' : 'bg-zinc-50',
+        userIsSender ? 'border-bt-300' : 'border-gray-300'
       )}
       address={senderAddress}
       lookupAddress={lookupAddress}
