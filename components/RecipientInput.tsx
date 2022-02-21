@@ -41,7 +41,7 @@ const RecipientInput = ({
   return (
     <div className="flex-1 flex-col flex justify-center h-14 bg-zinc-50 md:border md:border-gray-200 pt-1 md:rounded-lg md:px-4 md:mx-4 md:mt-4">
       <form
-        className="w-full flex ml-2 md:ml-0"
+        className="w-full flex pl-2 md:pl-0"
         action="#"
         method="GET"
         onSubmit={handleSubmit}
