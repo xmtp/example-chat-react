@@ -72,7 +72,7 @@ const RecipientInput = ({
         </div>
       </form>
       {!recipientAddress ? (
-        <div className="text-sm leading-[21px] text-n-300 ml-8">
+        <div className="text-sm leading-[21px] text-n-300 ml-8 pl-2 md:pl-0 ">
           Please enter a wallet address
         </div>
       ) : (
