@@ -2,13 +2,11 @@ import { Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { useRouter } from 'next/router'
 
-type MessageDetailViewProps = {
+type ConversationViewProps = {
   children?: React.ReactNode
 }
 
-const MessageDetailView = ({
-  children,
-}: MessageDetailViewProps): JSX.Element => {
+const ConversationView = ({ children }: ConversationViewProps): JSX.Element => {
   const router = useRouter()
   const show = router.pathname !== '/'
 
@@ -40,4 +38,4 @@ const MessageDetailView = ({
   )
 }
 
-export default MessageDetailView
+export default ConversationView

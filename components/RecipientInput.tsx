@@ -1,42 +1,12 @@
 import { useCallback, useState } from 'react'
-import Address from './Address'
 import AddressInput from './AddressInput'
+import AddressPill from './AddressPill'
 import useWallet from '../hooks/useWallet'
 import useXmtp from '../hooks/useXmtp'
-import { classNames } from '../helpers'
-
-type RecipientAddressPillProps = {
-  recipientAddress: string
-  userIsSender: boolean
-}
 
 type RecipientInputProps = {
   initialAddress: string | undefined
   onSubmit: (address: string) => Promise<void>
-}
-
-const RecipientAddressPill = ({
-  recipientAddress,
-  userIsSender,
-}: RecipientAddressPillProps): JSX.Element => {
-  const { lookupAddress } = useWallet()
-
-  return (
-    <Address
-      className={classNames(
-        'rounded-2xl',
-        'border',
-        'text-md',
-        'px-2',
-        'py-1',
-        'font-bold',
-        userIsSender ? 'bg-bt-100 text-b-600' : 'bg-zinc-50',
-        userIsSender ? 'border-bt-300' : 'border-gray-300'
-      )}
-      address={recipientAddress}
-      lookupAddress={lookupAddress}
-    ></Address>
-  )
 }
 
 const RecipientInput = ({
@@ -96,10 +66,7 @@ const RecipientInput = ({
             </>
           ) : (
             <div className="block pl-6 pr-3">
-              <RecipientAddressPill
-                recipientAddress={recipientAddress}
-                userIsSender={isSender}
-              />
+              <AddressPill address={recipientAddress} userIsSender={isSender} />
             </div>
           )}
         </div>

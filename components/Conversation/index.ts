@@ -1,1 +1,2 @@
-export { default as ConversationView } from './ConversationView'
+export { default as MessagesList } from './MessagesList'
+export { default as MessageComposer } from './MessageComposer'

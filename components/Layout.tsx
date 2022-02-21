@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import useWallet from '../hooks/useWallet'
-import { NavigationView, MessageDetailView } from './Views'
+import { NavigationView, ConversationView } from './Views'
 import RecipientInput from './RecipientInput'
 import NewMessageButton from './NewMessageButton'
 import NavigationPanel from './NavigationPanel'
@@ -34,7 +34,7 @@ const TopBarLayout: React.FC = ({ children }) => (
   </div>
 )
 
-const MessageDetailLayout: React.FC = ({ children }) => {
+const ConversationLayout: React.FC = ({ children }) => {
   const router = useRouter()
   const initialAddress = router.query.recipientWalletAddr as string
 
@@ -141,9 +141,9 @@ const Layout: React.FC = ({ children }) => {
             />
           </NavigationColumnLayout>
         </NavigationView>
-        <MessageDetailView>
-          <MessageDetailLayout>{children}</MessageDetailLayout>
-        </MessageDetailView>
+        <ConversationView>
+          <ConversationLayout>{children}</ConversationLayout>
+        </ConversationView>
       </div>
     </>
   )
