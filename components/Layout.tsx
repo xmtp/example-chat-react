@@ -5,7 +5,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import useWallet from '../hooks/useWallet'
 import { NavigationView, ConversationView } from './Views'
-import RecipientInput from './RecipientInput'
+import { RecipientControl } from './Conversation'
 import NewMessageButton from './NewMessageButton'
 import NavigationPanel from './NavigationPanel'
 import UserMenu from './UserMenu'
@@ -36,7 +36,7 @@ const TopBarLayout: React.FC = ({ children }) => (
 
 const ConversationLayout: React.FC = ({ children }) => {
   const router = useRouter()
-  const initialAddress = router.query.recipientWalletAddr as string
+  const recipientWalletAddress = router.query.recipientWalletAddr as string
 
   const handleSubmit = useCallback(
     async (address: string) => {
@@ -55,8 +55,8 @@ const ConversationLayout: React.FC = ({ children }) => {
         <div className="md:hidden flex items-center ml-3">
           <BackArrow onClick={handleBackArrowClick} />
         </div>
-        <RecipientInput
-          initialAddress={initialAddress}
+        <RecipientControl
+          recipientWalletAddress={recipientWalletAddress}
           onSubmit={handleSubmit}
         />
       </TopBarLayout>

@@ -1,46 +1,64 @@
-import React from "react";
-import { render, fireEvent } from "@testing-library/react";
-import { waitFor } from "@testing-library/dom";
-import AddressInput from "./AddressInput";
-import assert from "assert";
+import React from 'react'
+import { render, fireEvent } from '@testing-library/react'
+import { waitFor } from '@testing-library/dom'
+import AddressInput from './AddressInput'
+import assert from 'assert'
 
-describe("AddressInput", () => {
-  it("renders no initial value", () => {
-    const { container } = render(<AddressInput />);
-    expect(container.querySelector("input")).toHaveAttribute("value", "");
-  });
+describe('AddressInput', () => {
+  it('renders empty input when there is no recipient address', () => {
+    const { container } = render(<AddressInput />)
+    expect(container.querySelector('input')).toHaveAttribute('value', '')
+    expect(container.querySelector('div > span')).toBeFalsy()
+  })
 
-  it("renders initial value", () => {
-    const { container } = render(<AddressInput initialValue={"0xfoo"} />);
-    expect(container.querySelector("input")).toHaveAttribute("value", "0xfoo");
-  });
-
-  it("renders resolved initial value", async () => {
+  it('renders address pill when there is a recipient address', () => {
     const { container } = render(
-      <AddressInput
-        initialValue={"foo.eth"}
-        resolveName={async (name: string) =>
-          name === "foo.eth" ? "0xfoo" : undefined
-        }
-      />
-    );
-    const input = container.querySelector("input");
-    await waitFor(() => expect(input).toHaveAttribute("value", "0xfoo"));
-  });
+      <AddressInput recipientWalletAddress="0xfoo" />
+    )
+    expect(container.querySelector('div > span')).toBeVisible()
+    expect(container.querySelector('input')).toBeFalsy()
+  })
 
-  it("renders resolved changed value", async () => {
-    const { container } = render(
+  it('renders address pill for resolved input value', async () => {
+    const rerenderWithInputValue = (value: string) =>
+      rerender(
+        <AddressInput
+          recipientWalletAddress={value}
+          resolveName={async (name: string) =>
+            name === 'foo.eth' ? '0xfoo' : undefined
+          }
+          lookupAddress={async (address: string) =>
+            address === '0xfoo' ? 'foo.eth' : undefined
+          }
+          setFindingNameOrAddress={(findingNameOrAddress: boolean) =>
+            findingNameOrAddress
+          }
+          submitAddress={(address: string) => address}
+        />
+      )
+    const { container, rerender } = render(
       <AddressInput
-        initialValue="0xbar"
         resolveName={async (name: string) =>
-          name === "foo.eth" ? "0xfoo" : undefined
+          name === 'foo.eth' ? '0xfoo' : undefined
         }
+        lookupAddress={async (address: string) =>
+          address === '0xfoo' ? 'foo.eth' : undefined
+        }
+        setFindingNameOrAddress={(findingNameOrAddress: boolean) =>
+          findingNameOrAddress
+        }
+        submitAddress={rerenderWithInputValue}
       />
-    );
-    const input = container.querySelector("input");
-    assert.ok(input);
-    expect(input).toHaveAttribute("value", "0xbar");
-    fireEvent.change(input, { target: { value: "foo.eth" } });
-    await waitFor(() => expect(input).toHaveAttribute("value", "0xfoo"));
-  });
-});
+    )
+    const input = container.querySelector('input')
+    assert.ok(input)
+    expect(input).toHaveAttribute('value', '')
+    expect(container.querySelector('div > span')).toBeFalsy()
+    fireEvent.change(input, { target: { value: 'foo.eth' } })
+    expect(input).toHaveAttribute('value', 'foo.eth')
+    await waitFor(() =>
+      expect(container.querySelector('div > span')).toBeVisible()
+    )
+    expect(container.querySelector('input')).toBeFalsy()
+  })
+})

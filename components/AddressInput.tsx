@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react'
+import AddressPill from './AddressPill'
+import useXmtp from '../hooks/useXmtp'
 
 type AddressInputProps = {
-  initialValue?: string
+  recipientWalletAddress?: string
   id?: string
   name?: string
   className?: string
   placeholder?: string
   resolveName?: (name: string) => Promise<string | undefined>
   lookupAddress?: (address: string) => Promise<string | undefined>
-  setResolving?: (resolving: boolean) => void
+  setFindingNameOrAddress?: (findingNameOrAddress: boolean) => void
   submitAddress?: (address: string) => void
   setRecipientAddress?: (address: string) => void
 }
@@ -18,30 +20,38 @@ function classNames(...classes: string[]) {
 }
 
 const AddressInput = ({
-  initialValue,
+  recipientWalletAddress,
   id,
   name,
   className,
   placeholder,
   resolveName,
   lookupAddress,
-  setResolving,
+  setFindingNameOrAddress,
   submitAddress,
 }: AddressInputProps): JSX.Element => {
-  const [value, setValue] = useState<string>(initialValue || '')
+  const [value, setValue] = useState<string>(recipientWalletAddress || '')
+  const { walletAddress } = useXmtp()
 
   useEffect(() => {
     const setResolvedAddress = async () => {
-      if (resolveName && lookupAddress && setResolving && submitAddress) {
+      if (
+        resolveName &&
+        lookupAddress &&
+        setFindingNameOrAddress &&
+        submitAddress
+      ) {
         if (value.endsWith('.eth')) {
-          setResolving(true)
+          setFindingNameOrAddress(true)
           const address = await resolveName(value)
-          setResolving(false)
+          setFindingNameOrAddress(false)
           if (address) {
             submitAddress(address)
           }
         } else if (value.startsWith('0x') && value.length === 42) {
+          setFindingNameOrAddress(true)
           const name = await lookupAddress(value)
+          setFindingNameOrAddress(false)
           if (name) {
             submitAddress(value)
           }
@@ -49,7 +59,13 @@ const AddressInput = ({
       }
     }
     setResolvedAddress()
-  }, [value, resolveName, lookupAddress, setResolving, submitAddress])
+  }, [
+    value,
+    resolveName,
+    lookupAddress,
+    setFindingNameOrAddress,
+    submitAddress,
+  ])
 
   const onAddressChange = async (event: React.SyntheticEvent) => {
     const data = event.target as typeof event.target & {
@@ -58,15 +74,28 @@ const AddressInput = ({
     setValue(data.value.trim())
   }
 
+  const isSender = recipientWalletAddress === walletAddress
+
   return (
-    <input
-      id={id}
-      name={name}
-      className={classNames(className || '')}
-      placeholder={placeholder}
-      onChange={onAddressChange}
-      value={value}
-    />
+    <>
+      {recipientWalletAddress ? (
+        <div className="block pl-6 pr-3 pb-[1px]">
+          <AddressPill
+            address={recipientWalletAddress || ''}
+            userIsSender={isSender}
+          />
+        </div>
+      ) : (
+        <input
+          id={id}
+          name={name}
+          className={classNames(className || '')}
+          placeholder={placeholder}
+          onChange={onAddressChange}
+          value={value}
+        />
+      )}
+    </>
   )
 }
 
