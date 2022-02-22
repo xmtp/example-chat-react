@@ -50,7 +50,7 @@ const useConversation = (
       setLoading(false)
     }
     listMessages()
-  }, [conversation, dispatchMessages, onMessageCallback])
+  }, [conversation, dispatchMessages, onMessageCallback, setLoading])
 
   useEffect(() => {
     const streamMessages = async () => {

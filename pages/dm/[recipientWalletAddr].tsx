@@ -4,6 +4,7 @@ import { useCallback, useRef } from 'react'
 import useXmtp from '../../hooks/useXmtp'
 import useConversation from '../../hooks/useConversation'
 import { ConversationView } from '../../components/Conversation'
+import Loader from '../../components/Loader'
 
 const Conversation: NextPage = () => {
   const router = useRouter()
@@ -15,13 +16,22 @@ const Conversation: NextPage = () => {
     ;(messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
   }, [messagesEndRef])
 
-  const { messages, sendMessage } = useConversation(
+  const { messages, sendMessage, loading } = useConversation(
     recipientWalletAddr,
     scrollToMessagesEndRef
   )
 
   if (!recipientWalletAddr || !walletAddress) {
     return <div />
+  }
+  if (loading && !messages?.length) {
+    return (
+      <Loader
+        headingText="Loading content..."
+        subHeadingText="Please wait a moment"
+        isLoading
+      />
+    )
   }
 
   return (
