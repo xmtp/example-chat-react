@@ -35,7 +35,7 @@ export const Loader = ({
   subHeadingText,
   isLoading,
 }: StyledLoaderProps): JSX.Element => (
-  <div className="grid place-items-center h-full">
+  <div className="grid place-items-center h-screen md:h-full">
     <div className="columns-1 text-center">
       <Spinner isLoading={isLoading} />
       <div className="font-bold text-lg">{headingText}</div>
