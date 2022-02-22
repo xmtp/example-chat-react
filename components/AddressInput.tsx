@@ -30,7 +30,7 @@ const AddressInput = ({
   setFindingNameOrAddress,
   submitAddress,
 }: AddressInputProps): JSX.Element => {
-  const [value, setValue] = useState<string>(recipientWalletAddress || '')
+  const [value, setValue] = useState<string>('')
   const { walletAddress } = useXmtp()
 
   useEffect(() => {
@@ -58,13 +58,16 @@ const AddressInput = ({
         }
       }
     }
-    setResolvedAddress()
+    if (!recipientWalletAddress) {
+      setResolvedAddress()
+    }
   }, [
     value,
     resolveName,
     lookupAddress,
     setFindingNameOrAddress,
     submitAddress,
+    recipientWalletAddress,
   ])
 
   const onAddressChange = async (event: React.SyntheticEvent) => {
