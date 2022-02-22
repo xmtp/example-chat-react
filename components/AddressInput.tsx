@@ -47,6 +47,7 @@ const AddressInput = ({
           setFindingNameOrAddress(false)
           if (address) {
             submitAddress(address)
+            setValue('')
           }
         } else if (value.startsWith('0x') && value.length === 42) {
           setFindingNameOrAddress(true)
@@ -54,6 +55,7 @@ const AddressInput = ({
           setFindingNameOrAddress(false)
           if (name) {
             submitAddress(value)
+            setValue('')
           }
         }
       }
