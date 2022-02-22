@@ -13,6 +13,7 @@ export type XmtpContextType = {
   walletAddress: string | undefined
   client: Client | undefined
   conversations: Conversation[]
+  loadingConversations: boolean
   getMessages: (peerAddress: string) => Message[]
   dispatchMessages?: Dispatch<MessageStoreEvent>
   connect: (wallet: Signer) => void
@@ -24,6 +25,7 @@ export const XmtpContext = createContext<XmtpContextType>({
   walletAddress: undefined,
   client: undefined,
   conversations: [],
+  loadingConversations: false,
   getMessages: () => [],
   connect: () => undefined,
   disconnect: () => undefined,

@@ -11,6 +11,7 @@ const useConversation = (
   const { client, getMessages, dispatchMessages } = useContext(XmtpContext)
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [stream, setStream] = useState<Stream<Message>>()
+  const [loading, setLoading] = useState<boolean>(false)
   useEffect(() => {
     const getConvo = async () => {
       if (!client) {
@@ -34,6 +35,7 @@ const useConversation = (
     const listMessages = async () => {
       if (!conversation) return
       console.log('Listing messages for peer address', conversation.peerAddress)
+      setLoading(true)
       const msgs = await conversation.messages({ pageSize: 100 })
       if (dispatchMessages) {
         dispatchMessages({
@@ -45,6 +47,7 @@ const useConversation = (
       if (onMessageCallback) {
         onMessageCallback()
       }
+      setLoading(false)
     }
     listMessages()
   }, [conversation, dispatchMessages, onMessageCallback])
@@ -80,6 +83,7 @@ const useConversation = (
 
   return {
     conversation,
+    loading,
     messages: getMessages(peerAddress),
     sendMessage: handleSend,
   }

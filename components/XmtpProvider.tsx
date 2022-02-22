@@ -10,6 +10,8 @@ export const XmtpProvider: React.FC = ({ children }) => {
   const [walletAddress, setWalletAddress] = useState<string>()
   const [client, setClient] = useState<Client>()
   const { getMessages, dispatchMessages } = useMessageStore()
+  const [loadingConversations, setLoadingConversations] =
+    useState<boolean>(false)
   const [conversations, dispatchConversations] = useReducer(
     (state: Conversation[], newConvos: Conversation[] | undefined) => {
       if (newConvos === undefined) {
@@ -53,10 +55,12 @@ export const XmtpProvider: React.FC = ({ children }) => {
     const listConversations = async () => {
       if (!client) return
       console.log('Listing conversations')
+      setLoadingConversations(true)
       const convos = await client.conversations.list()
       convos.forEach((convo: Conversation) => {
         dispatchConversations([convo])
       })
+      setLoadingConversations(false)
     }
     listConversations()
   }, [client, walletAddress])
@@ -77,6 +81,7 @@ export const XmtpProvider: React.FC = ({ children }) => {
     walletAddress,
     client,
     conversations,
+    loadingConversations,
     getMessages,
     dispatchMessages,
     connect,
@@ -89,6 +94,7 @@ export const XmtpProvider: React.FC = ({ children }) => {
       walletAddress,
       client,
       conversations,
+      loadingConversations,
       getMessages,
       dispatchMessages,
       connect,
@@ -99,6 +105,7 @@ export const XmtpProvider: React.FC = ({ children }) => {
     walletAddress,
     client,
     conversations,
+    loadingConversations,
     getMessages,
     dispatchMessages,
     connect,
