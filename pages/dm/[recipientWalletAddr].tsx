@@ -27,7 +27,7 @@ const Conversation: NextPage = () => {
   if (loading && !messages?.length) {
     return (
       <Loader
-        headingText="Loading content..."
+        headingText="Loading messages..."
         subHeadingText="Please wait a moment"
         isLoading
       />

@@ -32,7 +32,7 @@ const ConversationsPanel = (): JSX.Element => {
   if (loadingConversations && !conversations?.length) {
     return (
       <Loader
-        headingText="Fetching messages..."
+        headingText="Loading conversations..."
         subHeadingText="Please wait a moment"
         isLoading
       />
