@@ -38,8 +38,8 @@ export const Loader = ({
   <div className="grid place-items-center h-screen md:h-full">
     <div className="columns-1 text-center">
       <Spinner isLoading={isLoading} />
-      <div className="font-bold text-lg">{headingText}</div>
-      <div className="font-normal text-base">{subHeadingText}</div>
+      <div className="text-lg text-n-300 font-bold">{headingText}</div>
+      <div className="text-md text-n-200 font-normal">{subHeadingText}</div>
     </div>
   </div>
 )

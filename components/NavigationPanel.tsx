@@ -38,6 +38,7 @@ const ConversationsPanel = (): JSX.Element => {
       />
     )
   }
+
   return conversations && conversations.length > 0 ? (
     <nav className="flex-1 pb-4 space-y-1">
       <ConversationsList conversations={conversations} />
