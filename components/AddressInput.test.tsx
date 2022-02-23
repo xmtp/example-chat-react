@@ -30,8 +30,8 @@ describe('AddressInput', () => {
           lookupAddress={async (address: string) =>
             address === '0xfoo' ? 'foo.eth' : undefined
           }
-          setFindingNameOrAddress={(findingNameOrAddress: boolean) =>
-            findingNameOrAddress
+          setRecipientInputMode={(RecipientInputMode: number) =>
+            RecipientInputMode
           }
           submitAddress={(address: string) => address}
         />
@@ -44,8 +44,8 @@ describe('AddressInput', () => {
         lookupAddress={async (address: string) =>
           address === '0xfoo' ? 'foo.eth' : undefined
         }
-        setFindingNameOrAddress={(findingNameOrAddress: boolean) =>
-          findingNameOrAddress
+        setRecipientInputMode={(RecipientInputMode: number) =>
+          RecipientInputMode
         }
         submitAddress={rerenderWithInputValue}
       />
