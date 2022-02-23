@@ -2,6 +2,13 @@ import { useEffect, useState } from 'react'
 import AddressPill from './AddressPill'
 import useXmtp from '../hooks/useXmtp'
 
+const RecipientInputMode = {
+  InvalidEntry: 0,
+  ValidEntry: 1,
+  FindingEntry: 2,
+  Submitted: 3,
+}
+
 type AddressInputProps = {
   recipientWalletAddress?: string
   id?: string
@@ -10,7 +17,7 @@ type AddressInputProps = {
   placeholder?: string
   resolveName?: (name: string) => Promise<string | undefined>
   lookupAddress?: (address: string) => Promise<string | undefined>
-  setFindingNameOrAddress?: (findingNameOrAddress: boolean) => void
+  setRecipientInputMode?: (recipientInputMode: number) => void
   submitAddress?: (address: string) => void
   setRecipientAddress?: (address: string) => void
 }
@@ -27,7 +34,7 @@ const AddressInput = ({
   placeholder,
   resolveName,
   lookupAddress,
-  setFindingNameOrAddress,
+  setRecipientInputMode,
   submitAddress,
 }: AddressInputProps): JSX.Element => {
   const [value, setValue] = useState<string>('')
@@ -38,25 +45,29 @@ const AddressInput = ({
       if (
         resolveName &&
         lookupAddress &&
-        setFindingNameOrAddress &&
+        setRecipientInputMode &&
         submitAddress
       ) {
         if (value.endsWith('.eth')) {
-          setFindingNameOrAddress(true)
+          setRecipientInputMode(RecipientInputMode.FindingEntry)
           const address = await resolveName(value)
-          setFindingNameOrAddress(false)
           if (address) {
             submitAddress(address)
             setValue('')
+            setRecipientInputMode(RecipientInputMode.Submitted)
           }
         } else if (value.startsWith('0x') && value.length === 42) {
-          setFindingNameOrAddress(true)
+          setRecipientInputMode(RecipientInputMode.FindingEntry)
           const name = await lookupAddress(value)
-          setFindingNameOrAddress(false)
           if (name) {
             submitAddress(value)
             setValue('')
+            setRecipientInputMode(RecipientInputMode.Submitted)
+          } else {
+            setRecipientInputMode(RecipientInputMode.ValidEntry)
           }
+        } else {
+          setRecipientInputMode(RecipientInputMode.InvalidEntry)
         }
       }
     }
@@ -67,7 +78,7 @@ const AddressInput = ({
     value,
     resolveName,
     lookupAddress,
-    setFindingNameOrAddress,
+    setRecipientInputMode,
     submitAddress,
     recipientWalletAddress,
   ])
