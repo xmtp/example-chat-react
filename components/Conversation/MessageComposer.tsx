@@ -1,8 +1,9 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { classNames } from '../../helpers'
 import messageComposerStyles from '../../styles/MessageComposer.module.scss'
 import upArrowGreen from '../../public/up-arrow-green.svg'
 import upArrowGrey from '../../public/up-arrow-grey.svg'
+import { useRouter } from 'next/router'
 
 type MessageComposerProps = {
   onSend: (msg: string) => Promise<void>
@@ -10,10 +11,15 @@ type MessageComposerProps = {
 
 const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
   const [message, setMessage] = useState('')
+  const router = useRouter()
+
+  useEffect(() => setMessage(''), [router.query.recipientWalletAddr])
+
   const onMessageChange = useCallback(
     (e: React.FormEvent<HTMLInputElement>) => setMessage(e.currentTarget.value),
     []
   )
+
   const onSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
