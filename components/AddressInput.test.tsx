@@ -4,61 +4,57 @@ import { waitFor } from '@testing-library/dom'
 import AddressInput from './AddressInput'
 import assert from 'assert'
 
+const lookupAddress = async (address: string) =>
+  address === '0xfoo' ? 'foo.eth' : undefined
+
 describe('AddressInput', () => {
-  it('renders empty input when there is no recipient address', () => {
+  it('renders no initial value', () => {
     const { container } = render(<AddressInput />)
     expect(container.querySelector('input')).toHaveAttribute('value', '')
-    expect(container.querySelector('div > span')).toBeFalsy()
   })
 
-  it('renders address pill when there is a recipient address', () => {
+  it('renders initial value', () => {
     const { container } = render(
-      <AddressInput recipientWalletAddress="0xfoo" />
+      <AddressInput recipientWalletAddress={'0xfoo'} />
     )
-    expect(container.querySelector('div > span')).toBeVisible()
-    expect(container.querySelector('input')).toBeFalsy()
+    expect(container.querySelector('input')).toHaveAttribute('value', '0xfoo')
   })
 
-  it('renders address pill for resolved input value', async () => {
+  it('renders lookup for initial value', async () => {
+    const { container } = render(
+      <AddressInput
+        recipientWalletAddress={'0xfoo'}
+        lookupAddress={lookupAddress}
+      />
+    )
+    const input = container.querySelector('input')
+    await waitFor(() => expect(input).toHaveAttribute('value', 'foo.eth'))
+  })
+
+  it('renders lookup for changed value', async () => {
     const rerenderWithInputValue = (value: string) =>
       rerender(
         <AddressInput
           recipientWalletAddress={value}
-          resolveName={async (name: string) =>
-            name === 'foo.eth' ? '0xfoo' : undefined
-          }
-          lookupAddress={async (address: string) =>
-            address === '0xfoo' ? 'foo.eth' : undefined
-          }
-          setRecipientInputMode={(RecipientInputMode: number) =>
-            RecipientInputMode
-          }
-          submitAddress={(address: string) => address}
+          lookupAddress={lookupAddress}
         />
       )
     const { container, rerender } = render(
       <AddressInput
-        resolveName={async (name: string) =>
-          name === 'foo.eth' ? '0xfoo' : undefined
-        }
-        lookupAddress={async (address: string) =>
-          address === '0xfoo' ? 'foo.eth' : undefined
-        }
-        setRecipientInputMode={(RecipientInputMode: number) =>
-          RecipientInputMode
-        }
-        submitAddress={rerenderWithInputValue}
+        recipientWalletAddress={'0xbar'}
+        lookupAddress={lookupAddress}
+        onInputChange={async (event: React.SyntheticEvent) => {
+          const data = event.target as typeof event.target & {
+            value: string
+          }
+          rerenderWithInputValue(data.value)
+        }}
       />
     )
     const input = container.querySelector('input')
     assert.ok(input)
-    expect(input).toHaveAttribute('value', '')
-    expect(container.querySelector('div > span')).toBeFalsy()
-    fireEvent.change(input, { target: { value: 'foo.eth' } })
-    expect(input).toHaveAttribute('value', 'foo.eth')
-    await waitFor(() =>
-      expect(container.querySelector('div > span')).toBeVisible()
-    )
-    expect(container.querySelector('input')).toBeFalsy()
+    expect(input).toHaveAttribute('value', '0xbar')
+    fireEvent.change(input, { target: { value: '0xfoo' } })
+    await waitFor(() => expect(input).toHaveAttribute('value', 'foo.eth'))
   })
 })

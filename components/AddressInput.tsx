@@ -1,13 +1,5 @@
-import { useEffect, useState } from 'react'
-import AddressPill from './AddressPill'
+import React, { useEffect, useState } from 'react'
 import useXmtp from '../hooks/useXmtp'
-
-const RecipientInputMode = {
-  InvalidEntry: 0,
-  ValidEntry: 1,
-  FindingEntry: 2,
-  Submitted: 3,
-}
 
 type AddressInputProps = {
   recipientWalletAddress?: string
@@ -15,11 +7,8 @@ type AddressInputProps = {
   name?: string
   className?: string
   placeholder?: string
-  resolveName?: (name: string) => Promise<string | undefined>
   lookupAddress?: (address: string) => Promise<string | undefined>
-  setRecipientInputMode?: (recipientInputMode: number) => void
-  submitAddress?: (address: string) => void
-  setRecipientAddress?: (address: string) => void
+  onInputChange?: (e: React.SyntheticEvent) => Promise<void>
 }
 
 function classNames(...classes: string[]) {
@@ -32,86 +21,75 @@ const AddressInput = ({
   name,
   className,
   placeholder,
-  resolveName,
   lookupAddress,
-  setRecipientInputMode,
-  submitAddress,
+  onInputChange,
 }: AddressInputProps): JSX.Element => {
-  const [value, setValue] = useState<string>('')
   const { walletAddress } = useXmtp()
+  const [value, setValue] = useState<string>(recipientWalletAddress || '')
 
   useEffect(() => {
-    const setResolvedAddress = async () => {
-      if (
-        resolveName &&
-        lookupAddress &&
-        setRecipientInputMode &&
-        submitAddress
-      ) {
-        if (value.endsWith('.eth')) {
-          setRecipientInputMode(RecipientInputMode.FindingEntry)
-          const address = await resolveName(value)
-          if (address) {
-            submitAddress(address)
-            setValue('')
-            setRecipientInputMode(RecipientInputMode.Submitted)
-          }
-        } else if (value.startsWith('0x') && value.length === 42) {
-          setRecipientInputMode(RecipientInputMode.FindingEntry)
-          const name = await lookupAddress(value)
-          if (name) {
-            submitAddress(value)
-            setValue('')
-            setRecipientInputMode(RecipientInputMode.Submitted)
-          } else {
-            setRecipientInputMode(RecipientInputMode.ValidEntry)
-          }
-        } else {
-          setRecipientInputMode(RecipientInputMode.InvalidEntry)
+    const setLookupValue = async () => {
+      if (!lookupAddress) return
+      if (recipientWalletAddress) {
+        const name = await lookupAddress(recipientWalletAddress)
+        setValue(name || recipientWalletAddress)
+      } else if (value.startsWith('0x') && value.length === 42) {
+        const name = await lookupAddress(value)
+        if (name) {
+          setValue(name)
         }
       }
     }
-    if (!recipientWalletAddress) {
-      setResolvedAddress()
-    }
-  }, [
-    value,
-    resolveName,
-    lookupAddress,
-    setRecipientInputMode,
-    submitAddress,
-    recipientWalletAddress,
-  ])
+    setLookupValue()
+  }, [value, recipientWalletAddress, lookupAddress])
 
-  const onAddressChange = async (event: React.SyntheticEvent) => {
-    const data = event.target as typeof event.target & {
-      value: string
-    }
-    setValue(data.value.trim())
-  }
+  const userIsSender = recipientWalletAddress === walletAddress
 
-  const isSender = recipientWalletAddress === walletAddress
+  const recipientPillInputStyle = classNames(
+    'absolute',
+    'top-[3px]',
+    'rounded-2xl',
+    'px-2',
+    'border',
+    'text-md',
+    'ml-6',
+    '-mt-1',
+    'focus:outline-none',
+    'focus:ring-0',
+    'font-bold',
+    'font-mono',
+    'overflow-visible',
+    'text-center',
+    'font-mono',
+    'text-transparent',
+    userIsSender ? 'bg-bt-100' : 'bg-zinc-50',
+    userIsSender ? 'border-bt-300' : 'border-gray-300'
+  )
 
   return (
-    <>
-      {recipientWalletAddress ? (
-        <div className="block pl-6 pr-3 pb-[1px]">
-          <AddressPill
-            address={recipientWalletAddress || ''}
-            userIsSender={isSender}
-          />
-        </div>
-      ) : (
-        <input
-          id={id}
-          name={name}
-          className={classNames(className || '')}
-          placeholder={placeholder}
-          onChange={onAddressChange}
-          value={value}
-        />
+    <div className="relative mb-5">
+      {recipientWalletAddress && (
+        <span className={recipientPillInputStyle}>{value}</span>
       )}
-    </>
+      <input
+        id={id}
+        name={name}
+        className={classNames(
+          className || '',
+          'absolute top-0 left-0',
+          userIsSender ? '!text-b-600' : ''
+        )}
+        placeholder={placeholder}
+        onChange={async (event: React.SyntheticEvent) => {
+          const data = event.target as typeof event.target & {
+            value: string
+          }
+          setValue(data.value.trim())
+          onInputChange && onInputChange(event)
+        }}
+        value={value}
+      />
+    </div>
   )
 }
 

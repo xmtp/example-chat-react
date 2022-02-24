@@ -1,7 +1,7 @@
 import { useCallback, useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import AddressInput from '../AddressInput'
 import useWallet from '../../hooks/useWallet'
-
 type RecipientInputProps = {
   recipientWalletAddress: string | undefined
   onSubmit: (address: string) => Promise<void>
@@ -19,29 +19,66 @@ const RecipientControl = ({
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
   const { resolveName, lookupAddress } = useWallet()
+  const router = useRouter()
   const [recipientInputMode, setRecipientInputMode] = useState(
     RecipientInputMode.InvalidEntry
   )
+  const [hasName, setHasName] = useState(false)
+
+  useEffect(() => {
+    const handleAddressLookup = async (address: string) => {
+      const name = await lookupAddress(address)
+      setHasName(!!name)
+    }
+    if (recipientWalletAddress) {
+      setRecipientInputMode(RecipientInputMode.Submitted)
+      handleAddressLookup(recipientWalletAddress)
+    } else {
+      setRecipientInputMode(RecipientInputMode.InvalidEntry)
+    }
+  }, [recipientWalletAddress, setRecipientInputMode, lookupAddress, setHasName])
 
   const handleSubmit = useCallback(
-    async (e: React.SyntheticEvent) => {
+    async (e: React.SyntheticEvent, value?: string) => {
       e.preventDefault()
       const data = e.target as typeof e.target & {
         recipient: { value: string }
       }
-      if (!data.recipient) return
-      onSubmit(data.recipient.value)
+      const recipientValue = value || data.recipient.value
+      if (recipientValue.endsWith('eth')) {
+        setRecipientInputMode(RecipientInputMode.FindingEntry)
+        const address = await resolveName(recipientValue)
+        if (address) {
+          onSubmit(address)
+          setRecipientInputMode(RecipientInputMode.Submitted)
+        }
+      } else if (
+        recipientValue.startsWith('0x') &&
+        recipientValue.length === 42
+      ) {
+        onSubmit(recipientValue)
+        setRecipientInputMode(RecipientInputMode.Submitted)
+      }
     },
-    [onSubmit]
+    [onSubmit, setRecipientInputMode, resolveName]
   )
 
-  useEffect(() => {
-    if (recipientWalletAddress) {
-      setRecipientInputMode(RecipientInputMode.Submitted)
+  const handleInputChange = async (e: React.SyntheticEvent) => {
+    const data = e.target as typeof e.target & {
+      value: string
+    }
+    if (router.pathname !== '/dm') {
+      router.push('/dm')
+    }
+    if (
+      data.value.endsWith('.eth') ||
+      (data.value.startsWith('0x') && data.value.length === 42)
+    ) {
+      handleSubmit(e, data.value)
     } else {
       setRecipientInputMode(RecipientInputMode.InvalidEntry)
     }
-  }, [recipientWalletAddress, setRecipientInputMode])
+  }
 
   return (
     <div className="flex-1 flex-col flex justify-center h-14 bg-zinc-50 md:border md:border-gray-200 pt-1 md:rounded-lg md:px-4 md:mx-4 md:mt-4">
@@ -59,22 +96,20 @@ const RecipientControl = ({
             To:
           </div>
           <AddressInput
+            recipientWalletAddress={recipientWalletAddress}
             id="recipient-field"
             className="block w-full pl-8 pr-3 bg-transparent caret-n-600 text-n-600 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent text-md font-mono font-bold"
             name="recipient"
-            recipientWalletAddress={recipientWalletAddress}
-            resolveName={resolveName}
             lookupAddress={lookupAddress}
-            setRecipientInputMode={setRecipientInputMode}
-            submitAddress={onSubmit}
+            onInputChange={handleInputChange}
           />
           <button type="submit" className="hidden" />
         </div>
       </form>
 
       {recipientInputMode === RecipientInputMode.Submitted ? (
-        <div className="text-md text-n-300 font-mono ml-10 pl-[1px] md:ml-8">
-          {recipientWalletAddress}
+        <div className="text-md text-n-300 font-mono ml-10 md:ml-8">
+          {hasName ? recipientWalletAddress : <br />}
         </div>
       ) : (
         <div className="text-sm leading-[21px] text-n-300 ml-8 pl-2 md:pl-0 ">
