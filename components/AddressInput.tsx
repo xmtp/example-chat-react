@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
+import useXmtp from '../hooks/useXmtp'
 
 type AddressInputProps = {
-  initialValue?: string
+  recipientWalletAddress?: string
   id?: string
   name?: string
   className?: string
   placeholder?: string
-  resolveName?: (name: string) => Promise<string | undefined>
+  lookupAddress?: (address: string) => Promise<string | undefined>
+  onInputChange?: (e: React.SyntheticEvent) => Promise<void>
 }
 
 function classNames(...classes: string[]) {
@@ -14,41 +16,86 @@ function classNames(...classes: string[]) {
 }
 
 const AddressInput = ({
-  initialValue,
+  recipientWalletAddress,
   id,
   name,
   className,
   placeholder,
-  resolveName,
+  lookupAddress,
+  onInputChange,
 }: AddressInputProps): JSX.Element => {
-  const [value, setValue] = useState<string>(initialValue || '')
+  const { walletAddress } = useXmtp()
+  const [value, setValue] = useState<string>(recipientWalletAddress || '')
 
   useEffect(() => {
-    const setResolvedValue = async () => {
-      if (resolveName && value.endsWith('.eth')) {
-        const address = await resolveName(value)
-        if (address) {
-          setValue(address)
+    const setLookupValue = async () => {
+      if (!lookupAddress) return
+      if (recipientWalletAddress) {
+        const name = await lookupAddress(recipientWalletAddress)
+        setValue(name || recipientWalletAddress)
+      } else if (value.startsWith('0x') && value.length === 42) {
+        const name = await lookupAddress(value)
+        if (name) {
+          setValue(name)
         }
       }
     }
-    setResolvedValue()
-  }, [value, resolveName])
+    setLookupValue()
+  }, [value, recipientWalletAddress, lookupAddress])
+
+  const userIsSender = recipientWalletAddress === walletAddress
+
+  const recipientPillInputStyle = classNames(
+    'absolute',
+    'top-[3px]',
+    'rounded-2xl',
+    'px-2',
+    'border',
+    'text-md',
+    'ml-6',
+    '-mt-1',
+    'focus:outline-none',
+    'focus:ring-0',
+    'font-bold',
+    'font-mono',
+    'overflow-visible',
+    'text-center',
+    'font-mono',
+    'text-transparent',
+    'select-none',
+    userIsSender ? 'bg-bt-100' : 'bg-zinc-50',
+    userIsSender ? 'border-bt-300' : 'border-gray-300'
+  )
+
+  const onAddressChange = useCallback(
+    async (event: React.SyntheticEvent) => {
+      const data = event.target as typeof event.target & {
+        value: string
+      }
+      setValue(data.value.trim())
+      onInputChange && onInputChange(event)
+    },
+    [onInputChange]
+  )
 
   return (
-    <input
-      id={id}
-      name={name}
-      className={classNames(className || '')}
-      placeholder={placeholder}
-      onChange={async (event: React.SyntheticEvent) => {
-        const data = event.target as typeof event.target & {
-          value: string
-        }
-        setValue(data.value.trim())
-      }}
-      value={value}
-    />
+    <div className="relative mb-5">
+      {recipientWalletAddress && (
+        <span className={recipientPillInputStyle}>{value}</span>
+      )}
+      <input
+        id={id}
+        name={name}
+        className={classNames(
+          className || '',
+          'absolute top-0 left-0',
+          userIsSender ? '!text-b-600' : ''
+        )}
+        placeholder={placeholder}
+        onChange={onAddressChange}
+        value={value}
+      />
+    </div>
   )
 }
 
