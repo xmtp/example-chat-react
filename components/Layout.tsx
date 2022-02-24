@@ -35,6 +35,7 @@ const TopBarLayout: React.FC = ({ children }) => (
 )
 
 const ConversationLayout: React.FC = ({ children }) => {
+  const { walletAddress } = useXmtp()
   const router = useRouter()
   const recipientWalletAddress = router.query.recipientWalletAddr as string
 
@@ -55,10 +56,12 @@ const ConversationLayout: React.FC = ({ children }) => {
         <div className="md:hidden flex items-center ml-3">
           <BackArrow onClick={handleBackArrowClick} />
         </div>
-        <RecipientControl
-          recipientWalletAddress={recipientWalletAddress}
-          onSubmit={handleSubmit}
-        />
+        {walletAddress && (
+          <RecipientControl
+            recipientWalletAddress={recipientWalletAddress}
+            onSubmit={handleSubmit}
+          />
+        )}
       </TopBarLayout>
       {children}
     </>
