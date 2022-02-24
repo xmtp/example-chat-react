@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import useXmtp from '../hooks/useXmtp'
 
 type AddressInputProps = {
@@ -62,8 +62,20 @@ const AddressInput = ({
     'text-center',
     'font-mono',
     'text-transparent',
+    'select-none',
     userIsSender ? 'bg-bt-100' : 'bg-zinc-50',
     userIsSender ? 'border-bt-300' : 'border-gray-300'
+  )
+
+  const onAddressChange = useCallback(
+    async (event: React.SyntheticEvent) => {
+      const data = event.target as typeof event.target & {
+        value: string
+      }
+      setValue(data.value.trim())
+      onInputChange && onInputChange(event)
+    },
+    [onInputChange]
   )
 
   return (
@@ -80,13 +92,7 @@ const AddressInput = ({
           userIsSender ? '!text-b-600' : ''
         )}
         placeholder={placeholder}
-        onChange={async (event: React.SyntheticEvent) => {
-          const data = event.target as typeof event.target & {
-            value: string
-          }
-          setValue(data.value.trim())
-          onInputChange && onInputChange(event)
-        }}
+        onChange={onAddressChange}
         value={value}
       />
     </div>
