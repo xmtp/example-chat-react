@@ -44,12 +44,14 @@ const RecipientControl = ({
       const data = e.target as typeof e.target & {
         recipient: { value: string }
       }
+      const input = e.target as HTMLInputElement
       const recipientValue = value || data.recipient.value
       if (recipientValue.endsWith('eth')) {
         setRecipientInputMode(RecipientInputMode.FindingEntry)
         const address = await resolveName(recipientValue)
         if (address) {
           onSubmit(address)
+          input.blur()
           setRecipientInputMode(RecipientInputMode.Submitted)
         }
       } else if (
@@ -57,6 +59,7 @@ const RecipientControl = ({
         recipientValue.length === 42
       ) {
         onSubmit(recipientValue)
+        input.blur()
         setRecipientInputMode(RecipientInputMode.Submitted)
       }
     },
