@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import useXmtp from '../hooks/useXmtp'
+import { classNames } from '../helpers'
 
 type AddressInputProps = {
   recipientWalletAddress?: string
@@ -9,10 +10,6 @@ type AddressInputProps = {
   placeholder?: string
   lookupAddress?: (address: string) => Promise<string | undefined>
   onInputChange?: (e: React.SyntheticEvent) => Promise<void>
-}
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
 }
 
 const AddressInput = ({
@@ -25,7 +22,20 @@ const AddressInput = ({
   onInputChange,
 }: AddressInputProps): JSX.Element => {
   const { walletAddress } = useXmtp()
+  const inputElement = useRef(null)
   const [value, setValue] = useState<string>(recipientWalletAddress || '')
+
+  const focusInputElementRef = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(inputElement.current as any)?.focus()
+  }, [inputElement])
+
+  useEffect(() => {
+    if (!recipientWalletAddress) {
+      focusInputElementRef()
+    }
+    setValue('')
+  }, [focusInputElementRef, recipientWalletAddress])
 
   useEffect(() => {
     const setLookupValue = async () => {
@@ -94,6 +104,7 @@ const AddressInput = ({
         placeholder={placeholder}
         onChange={onAddressChange}
         value={value}
+        ref={inputElement}
       />
     </div>
   )
