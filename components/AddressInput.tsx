@@ -33,8 +33,8 @@ const AddressInput = ({
   useEffect(() => {
     if (!recipientWalletAddress) {
       focusInputElementRef()
+      setValue('')
     }
-    setValue('')
   }, [focusInputElementRef, recipientWalletAddress])
 
   useEffect(() => {
@@ -90,7 +90,7 @@ const AddressInput = ({
 
   return (
     <div className="relative mb-5">
-      {recipientWalletAddress && (
+      {recipientWalletAddress && value && (
         <span className={recipientPillInputStyle}>{value}</span>
       )}
       <input
