@@ -4,12 +4,13 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import useWallet from '../hooks/useWallet'
-import { NavigationView, MessageDetailView } from './Views'
-import RecipientInput from './RecipientInput'
+import { NavigationView, ConversationView } from './Views'
+import { RecipientControl } from './Conversation'
 import NewMessageButton from './NewMessageButton'
 import NavigationPanel from './NavigationPanel'
 import UserMenu from './UserMenu'
 import BackArrow from './BackArrow'
+import Loader from './Loader'
 
 const NavigationColumnLayout: React.FC = ({ children }) => (
   <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
@@ -29,18 +30,14 @@ const NavigationHeaderLayout: React.FC = ({ children }) => (
 )
 
 const TopBarLayout: React.FC = ({ children }) => (
-  <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white shadow items-center">
+  <div className="sticky top-0 z-10 flex-shrink-0 flex bg-zinc-50 border-b border-gray-200 md:bg-white md:border-0">
     {children}
   </div>
 )
 
-const TopRightLayout: React.FC = ({ children }) => (
-  <div className="flex-1 px-4 flex justify-between">{children}</div>
-)
-
-const MessageDetailLayout: React.FC = ({ children }) => {
+const ConversationLayout: React.FC = ({ children }) => {
   const router = useRouter()
-  const initialAddress = router.query.recipientWalletAddr as string
+  const recipientWalletAddress = router.query.recipientWalletAddr as string
 
   const handleSubmit = useCallback(
     async (address: string) => {
@@ -56,15 +53,13 @@ const MessageDetailLayout: React.FC = ({ children }) => {
   return (
     <>
       <TopBarLayout>
-        <TopRightLayout>
-          <div className="md:hidden">
-            <BackArrow onClick={handleBackArrowClick} />
-          </div>
-          <RecipientInput
-            initialAddress={initialAddress}
-            onSubmit={handleSubmit}
-          />
-        </TopRightLayout>
+        <div className="md:hidden flex items-center ml-3">
+          <BackArrow onClick={handleBackArrowClick} />
+        </div>
+        <RecipientControl
+          recipientWalletAddress={recipientWalletAddress}
+          onSubmit={handleSubmit}
+        />
       </TopBarLayout>
       {children}
     </>
@@ -76,6 +71,7 @@ const Layout: React.FC = ({ children }) => {
     connect: connectXmtp,
     disconnect: disconnectXmtp,
     walletAddress,
+    client,
   } = useXmtp()
   const router = useRouter()
   const {
@@ -134,7 +130,7 @@ const Layout: React.FC = ({ children }) => {
         <NavigationView>
           <NavigationColumnLayout>
             <NavigationHeaderLayout>
-              {walletAddress && (
+              {walletAddress && client && (
                 <NewMessageButton
                   onClickNewMessageButton={handleNewMessageButtonClick}
                 />
@@ -147,9 +143,18 @@ const Layout: React.FC = ({ children }) => {
             />
           </NavigationColumnLayout>
         </NavigationView>
-        <MessageDetailView>
-          <MessageDetailLayout>{children}</MessageDetailLayout>
-        </MessageDetailView>
+        <ConversationView>
+          {walletAddress &&
+            (client ? (
+              <ConversationLayout>{children}</ConversationLayout>
+            ) : (
+              <Loader
+                headingText="Awaiting signatures..."
+                subHeadingText="Use your wallet to sign"
+                isLoading
+              />
+            ))}
+        </ConversationView>
       </div>
     </>
   )
