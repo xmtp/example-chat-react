@@ -6,11 +6,10 @@ import useConversation from '../../hooks/useConversation'
 import { MessagesList, MessageComposer } from '../../components/Conversation'
 import Loader from '../../components/Loader'
 
-
 const Conversation: NextPage = () => {
   const router = useRouter()
   const recipientWalletAddr = router.query.recipientWalletAddr as string
-  const { walletAddress } = useXmtp()
+  const { walletAddress, client } = useXmtp()
   const messagesEndRef = useRef(null)
   const scrollToMessagesEndRef = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,7 +21,7 @@ const Conversation: NextPage = () => {
     scrollToMessagesEndRef
   )
 
-  if (!recipientWalletAddr || !walletAddress) {
+  if (!recipientWalletAddr || !walletAddress || !client) {
     return <div />
   }
   if (loading && !messages?.length) {
