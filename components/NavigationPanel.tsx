@@ -28,7 +28,16 @@ const NoWalletConnectedMessage = (): JSX.Element => {
 }
 
 const ConversationsPanel = (): JSX.Element => {
-  const { conversations, loadingConversations } = useXmtp()
+  const { conversations, loadingConversations, client } = useXmtp()
+  if (!client) {
+    return (
+      <Loader
+        headingText="Awaiting signatures..."
+        subHeadingText="Use your wallet to sign"
+        isLoading
+      />
+    )
+  }
   if (loadingConversations && !conversations?.length) {
     return (
       <Loader

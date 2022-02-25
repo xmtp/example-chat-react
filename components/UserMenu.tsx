@@ -8,8 +8,8 @@ import useWallet from '../hooks/useWallet'
 import useXmtp from '../hooks/useXmtp'
 
 type UserMenuProps = {
-  onConnect: () => Promise<void>
-  onDisconnect: () => Promise<void>
+  onConnect?: () => Promise<void>
+  onDisconnect?: () => Promise<void>
 }
 
 type AvatarBlockProps = {
@@ -20,8 +20,37 @@ const AvatarBlock = ({ walletAddress }: AvatarBlockProps) => (
   <Blockies seed={walletAddress} size={8} className="rounded-full mr-2" />
 )
 
+const NotConnected = ({ onConnect }: UserMenuProps): JSX.Element => {
+  return (
+    <>
+      <div>
+        <div className="flex items-center">
+          <div className="bg-y-100 rounded-full h-2 w-2 mr-1"></div>
+          <p className="text-sm font-bold text-y-100">You are not connected.</p>
+        </div>
+
+        <a onClick={onConnect}>
+          <p className="text-sm font-normal text-y-100 hover:text-y-200 ml-3 cursor-pointer">
+            Sign in with your wallet
+          </p>
+        </a>
+      </div>
+      <button
+        className="max-w-xs flex items-center text-sm rounded focus:outline-none"
+        onClick={onConnect}
+      >
+        <span className="sr-only">Connect</span>
+        <CogIcon
+          className="h-4 w-4 fill-n-100 hover:fill-n-200"
+          aria-hidden="true"
+        />
+      </button>
+    </>
+  )
+}
+
 const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
-  const { walletAddress } = useXmtp()
+  const { walletAddress, client } = useXmtp()
   const { lookupAddress } = useWallet()
 
   const onClickCopy = useCallback(() => {
@@ -42,20 +71,38 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                   'flex items-center'
                 )}
               >
-                <AvatarBlock walletAddress={walletAddress} />
-                <div className="flex flex-col">
-                  <div className="flex items-center">
-                    <div className="bg-g-100 rounded h-2 w-2 mr-1"></div>
-                    <p className="text-sm font-bold text-g-100">
-                      Connected as:
-                    </p>
-                  </div>
-                  <Address
-                    address={walletAddress}
-                    className="text-sm font-semibold text-white ml-3"
-                    lookupAddress={lookupAddress}
-                  />
-                </div>
+                {client ? (
+                  <>
+                    <AvatarBlock walletAddress={walletAddress} />
+                    <div className="flex flex-col">
+                      <div className="flex items-center">
+                        <div className="bg-g-100 rounded h-2 w-2 mr-1"></div>
+                        <p className="text-sm font-bold text-g-100">
+                          Connected as:
+                        </p>
+                      </div>
+                      <Address
+                        address={walletAddress}
+                        className="text-sm font-semibold text-white ml-3"
+                        lookupAddress={lookupAddress}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex flex-col">
+                      <div className="flex items-center">
+                        <div className="bg-p-100 rounded h-2 w-2 mr-1"></div>
+                        <p className="text-sm font-bold text-p-100">
+                          Connecting...
+                        </p>
+                      </div>
+                      <p className="text-sm font-normal text-p-100 ml-3">
+                        Verifying your wallet
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
               <div>
                 <Menu.Button className="max-w-xs flex items-center text-sm rounded-full focus:outline-none">
@@ -115,32 +162,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
           )}
         </Menu>
       ) : (
-        <>
-          <div>
-            <div className="flex items-center">
-              <div className="bg-y-100 rounded-full h-2 w-2 mr-1"></div>
-              <p className="text-sm font-bold text-y-100">
-                You are not connected.
-              </p>
-            </div>
-
-            <a onClick={onConnect}>
-              <p className="text-sm font-normal text-y-100 hover:text-y-200 ml-3 cursor-pointer">
-                Sign in with your wallet
-              </p>
-            </a>
-          </div>
-          <button
-            className="max-w-xs flex items-center text-sm rounded focus:outline-none"
-            onClick={onConnect}
-          >
-            <span className="sr-only">Connect</span>
-            <CogIcon
-              className="h-4 w-4 fill-n-100 hover:fill-n-200"
-              aria-hidden="true"
-            />
-          </button>
-        </>
+        <NotConnected onConnect={onConnect} />
       )}
     </div>
   )

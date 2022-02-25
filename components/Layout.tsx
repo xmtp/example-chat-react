@@ -10,6 +10,7 @@ import NewMessageButton from './NewMessageButton'
 import NavigationPanel from './NavigationPanel'
 import UserMenu from './UserMenu'
 import BackArrow from './BackArrow'
+import Loader from './Loader'
 
 const NavigationColumnLayout: React.FC = ({ children }) => (
   <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
@@ -35,7 +36,6 @@ const TopBarLayout: React.FC = ({ children }) => (
 )
 
 const ConversationLayout: React.FC = ({ children }) => {
-  const { walletAddress } = useXmtp()
   const router = useRouter()
   const recipientWalletAddress = router.query.recipientWalletAddr as string
 
@@ -56,12 +56,10 @@ const ConversationLayout: React.FC = ({ children }) => {
         <div className="md:hidden flex items-center ml-3">
           <BackArrow onClick={handleBackArrowClick} />
         </div>
-        {walletAddress && (
-          <RecipientControl
-            recipientWalletAddress={recipientWalletAddress}
-            onSubmit={handleSubmit}
-          />
-        )}
+        <RecipientControl
+          recipientWalletAddress={recipientWalletAddress}
+          onSubmit={handleSubmit}
+        />
       </TopBarLayout>
       {children}
     </>
@@ -73,6 +71,7 @@ const Layout: React.FC = ({ children }) => {
     connect: connectXmtp,
     disconnect: disconnectXmtp,
     walletAddress,
+    client,
   } = useXmtp()
   const router = useRouter()
   const {
@@ -127,7 +126,7 @@ const Layout: React.FC = ({ children }) => {
         <NavigationView>
           <NavigationColumnLayout>
             <NavigationHeaderLayout>
-              {walletAddress && <NewMessageButton />}
+              {walletAddress && client && <NewMessageButton />}
             </NavigationHeaderLayout>
             <NavigationPanel />
             <UserMenu
@@ -137,7 +136,16 @@ const Layout: React.FC = ({ children }) => {
           </NavigationColumnLayout>
         </NavigationView>
         <ConversationView>
-          <ConversationLayout>{children}</ConversationLayout>
+          {walletAddress &&
+            (client ? (
+              <ConversationLayout>{children}</ConversationLayout>
+            ) : (
+              <Loader
+                headingText="Awaiting signatures..."
+                subHeadingText="Use your wallet to sign"
+                isLoading
+              />
+            ))}
         </ConversationView>
       </div>
     </>
