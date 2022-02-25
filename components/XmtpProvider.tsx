@@ -40,8 +40,9 @@ export const XmtpProvider: React.FC = ({ children }) => {
   const disconnect = useCallback(async () => {
     setWallet(undefined)
     setWalletAddress(undefined)
+    setClient(undefined)
     dispatchConversations(undefined)
-  }, [setWallet, setWalletAddress, dispatchConversations])
+  }, [setWallet, setWalletAddress, setClient, dispatchConversations])
 
   useEffect(() => {
     const initClient = async () => {
