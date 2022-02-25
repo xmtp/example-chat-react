@@ -90,10 +90,6 @@ const Layout: React.FC = ({ children }) => {
     await connectWallet()
   }, [connectWallet])
 
-  const handleNewMessageButtonClick = useCallback(() => {
-    router.push('/dm/')
-  }, [router])
-
   const usePrevious = <T,>(value: T): T | undefined => {
     const ref = useRef<T>()
     useEffect(() => {
@@ -130,11 +126,7 @@ const Layout: React.FC = ({ children }) => {
         <NavigationView>
           <NavigationColumnLayout>
             <NavigationHeaderLayout>
-              {walletAddress && client && (
-                <NewMessageButton
-                  onClickNewMessageButton={handleNewMessageButtonClick}
-                />
-              )}
+              {walletAddress && client && <NewMessageButton />}
             </NavigationHeaderLayout>
             <NavigationPanel />
             <UserMenu
