@@ -8,6 +8,7 @@ import { NavigationView, ConversationView } from './Views'
 import { RecipientControl } from './Conversation'
 import NewMessageButton from './NewMessageButton'
 import NavigationPanel from './NavigationPanel'
+import InfoPanel from './InfoPanel'
 import UserMenu from './UserMenu'
 import BackArrow from './BackArrow'
 import Loader from './Loader'
@@ -128,7 +129,7 @@ const Layout: React.FC = ({ children }) => {
             <NavigationHeaderLayout>
               {walletAddress && client && <NewMessageButton />}
             </NavigationHeaderLayout>
-            <NavigationPanel />
+            <NavigationPanel onConnect={handleConnect} />
             <UserMenu
               onConnect={handleConnect}
               onDisconnect={handleDisconnect}
@@ -136,8 +137,8 @@ const Layout: React.FC = ({ children }) => {
           </NavigationColumnLayout>
         </NavigationView>
         <ConversationView>
-          {walletAddress &&
-            (client ? (
+          {walletAddress ? (
+            client ? (
               <ConversationLayout>{children}</ConversationLayout>
             ) : (
               <Loader
@@ -145,7 +146,10 @@ const Layout: React.FC = ({ children }) => {
                 subHeadingText="Use your wallet to sign"
                 isLoading
               />
-            ))}
+            )
+          ) : (
+            <InfoPanel />
+          )}
         </ConversationView>
       </div>
     </>
