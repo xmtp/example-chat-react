@@ -148,7 +148,7 @@ const Layout: React.FC = ({ children }) => {
               />
             )
           ) : (
-            <InfoPanel />
+            <InfoPanel onConnect={handleConnect} />
           )}
         </ConversationView>
       </div>
