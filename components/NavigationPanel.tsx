@@ -48,11 +48,11 @@ const ConnectButton = ({ onConnect }: ConnectButtonProps): JSX.Element => {
   return (
     <button
       onClick={onConnect}
-      className="rounded border border-l-300 bg-zinc-50 hover:bg-zinc-100 mx-auto my-4"
+      className="rounded border border-l-300 mx-auto my-4 text-l-300 hover:text-white hover:bg-l-400 hover:border-l-400 hover:fill-white focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-n-100 focus-visible:outline-none active:bg-l-500 active:border-l-500 active:text-l-100 active:ring-0"
     >
-      <div className="flex items-center justify-center text-xs text-l-300 font-semibold px-4 py-1">
+      <div className="flex items-center justify-center text-xs font-semibold px-4 py-1">
         Connect your wallet
-        <ArrowSmRightIcon className="h-4 fill-l-300" />
+        <ArrowSmRightIcon className="h-4" />
       </div>
     </button>
   )

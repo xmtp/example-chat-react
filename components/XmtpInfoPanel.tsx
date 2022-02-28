@@ -1,5 +1,6 @@
 import packageJson from '../package.json'
-
+import useXmtp from '../hooks/useXmtp'
+import { classNames } from '../helpers'
 import {
   LinkIcon,
   BookOpenIcon,
@@ -8,14 +9,15 @@ import {
   ArrowSmRightIcon,
 } from '@heroicons/react/solid'
 
-type InfoRowProps = {
+type XmtpInfoRowProps = {
   icon: JSX.Element
   headingText: string
   subHeadingText: string
   onClick?: (() => void) | (() => Promise<void>)
+  disabled?: boolean
 }
 
-type InfoPanelProps = {
+type XmtpInfoPanelProps = {
   onConnect?: () => Promise<void>
 }
 
@@ -24,31 +26,39 @@ const InfoRow = ({
   headingText,
   subHeadingText,
   onClick,
-}: InfoRowProps): JSX.Element => (
-  <div className="flex py-4 border border-x-0 border-y-zinc-50 justify-between items-stretch">
-    <div className="h-10 w-10 bg-l-300 rounded-lg text-white p-2">{icon}</div>
-    <div className="ml-3 flex-col justify-center text-md flex-1">
-      <a onClick={onClick} className="font-semibold text-n-600 cursor-pointer">
-        {headingText}
-      </a>
-      <div className="text-n-300">{subHeadingText}</div>
-    </div>
-    <button
-      onClick={onClick}
-      className="w-10 flex justify-end items-center pr-2 cursor-pointer"
+  disabled,
+}: XmtpInfoRowProps): JSX.Element => (
+  <a
+    onClick={disabled ? undefined : onClick}
+    className={disabled ? 'cursor-auto' : 'cursor-pointer'}
+  >
+    <div
+      className={classNames(
+        disabled ? 'opacity-40' : '',
+        'flex py-4 border border-x-0 border-y-zinc-50 justify-between items-stretch text-left'
+      )}
     >
-      <ChevronRightIcon className="h-5" />
-    </button>
-  </div>
+      <div className="h-10 w-10 bg-l-300 rounded-lg text-white p-2">{icon}</div>
+      <div className="ml-3 flex-col justify-center text-md flex-1">
+        <div className="font-semibold text-n-600">{headingText}</div>
+        <div className="text-n-300">{subHeadingText}</div>
+      </div>
+      <div className="w-10 flex justify-end items-center pr-2">
+        <ChevronRightIcon className="h-5" />
+      </div>
+    </div>
+  </a>
 )
 
-const InfoPanel = ({ onConnect }: InfoPanelProps): JSX.Element => {
+const XmtpInfoPanel = ({ onConnect }: XmtpInfoPanelProps): JSX.Element => {
+  const { walletAddress, client } = useXmtp()
   const InfoRows = [
     {
       icon: <LinkIcon />,
       headingText: 'Connect your wallet',
       subHeadingText: 'Verify your wallet to start using the XMTP protocol',
       onClick: onConnect,
+      disabled: !!walletAddress && !client,
     },
     {
       icon: <BookOpenIcon />,
@@ -85,6 +95,7 @@ const InfoPanel = ({ onConnect }: InfoPanelProps): JSX.Element => {
               headingText={info.headingText}
               subHeadingText={info.subHeadingText}
               onClick={info.onClick}
+              disabled={info.disabled}
             />
           )
         })}
@@ -104,4 +115,4 @@ const InfoPanel = ({ onConnect }: InfoPanelProps): JSX.Element => {
   )
 }
 
-export default InfoPanel
+export default XmtpInfoPanel

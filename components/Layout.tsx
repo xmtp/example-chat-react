@@ -8,10 +8,9 @@ import { NavigationView, ConversationView } from './Views'
 import { RecipientControl } from './Conversation'
 import NewMessageButton from './NewMessageButton'
 import NavigationPanel from './NavigationPanel'
-import InfoPanel from './InfoPanel'
+import XmtpInfoPanel from './XmtpInfoPanel'
 import UserMenu from './UserMenu'
 import BackArrow from './BackArrow'
-import Loader from './Loader'
 
 const NavigationColumnLayout: React.FC = ({ children }) => (
   <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
@@ -137,18 +136,10 @@ const Layout: React.FC = ({ children }) => {
           </NavigationColumnLayout>
         </NavigationView>
         <ConversationView>
-          {walletAddress ? (
-            client ? (
-              <ConversationLayout>{children}</ConversationLayout>
-            ) : (
-              <Loader
-                headingText="Awaiting signatures..."
-                subHeadingText="Use your wallet to sign"
-                isLoading
-              />
-            )
+          {walletAddress && client ? (
+            <ConversationLayout>{children}</ConversationLayout>
           ) : (
-            <InfoPanel onConnect={handleConnect} />
+            <XmtpInfoPanel onConnect={handleConnect} />
           )}
         </ConversationView>
       </div>
