@@ -1,5 +1,7 @@
 {
   "name": "chat",
+  "version": "0.0.1",
+  "description": "Example chat application using xmtp-js client",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -7,6 +9,16 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest"
+  },
+  "author": "XMTP Labs <eng@xmtp.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/xmtp/chat",
+  "repository": {
+    "type": "git",
+    "url": "https:git@github.com:xmtp/chat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xmtp/chat/issues"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.3",
