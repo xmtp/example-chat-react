@@ -53,6 +53,8 @@ const RecipientControl = ({
           onSubmit(address)
           input.blur()
           setRecipientInputMode(RecipientInputMode.Submitted)
+        } else {
+          setRecipientInputMode(RecipientInputMode.InvalidEntry)
         }
       } else if (
         recipientValue.startsWith('0x') &&
