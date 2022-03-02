@@ -15,7 +15,13 @@ As `@xmtp/xmtp-js` has not yet been published to `npm`, installing this applicat
 
 ## Getting Started
 
-Install:
+Add your Infura ID to a `.env` file in the project's root. If you do not have an Infura ID, you can follow [these instructions](https://blog.infura.io/getting-started-with-infura-28e41844cc89/) to get one. _Early access developers may skip this step and use XMTP Labs' Infura ID, which is preconfigured in the application. Please be courteous and only use our ID for light testing._
+
+```
+NEXT_PUBLIC_INFURA_ID={YOUR_INFURA_ID}
+```
+
+Next, install the package:
 
 ```bash
 npm install
