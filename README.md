@@ -66,4 +66,4 @@ This limitation will be resolved soon through remote storage of private identiti
 
 The client will throw an error when attempting to lookup an address that does not have an identity broadcast on the XMTP network.
 
-This limitation will be mitigated very soon by the example application's UI, and resolved soon via improvements to the `xmtp-js` library that will allow encrypted messages to be created even if the recipient wallet has not yet created its keys.
+This limitation will be mitigated very soon by the example application's UI, and resolved soon via improvements to the `xmtp-js` library that will allow messages to be created even if the intended recipient has not yet generated its keys.
