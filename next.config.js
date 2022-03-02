@@ -1,6 +1,10 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const optimizedImages = require('next-optimized-images')
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig = optimizedImages({
   reactStrictMode: true,
+  handleImages: ['svg'],
   webpack: (config, { isServer }) => {
     if (!isServer) {
       // Fixes npm packages that depend on `fs` module
@@ -9,6 +13,6 @@ const nextConfig = {
     }
     return config
   },
-}
+})
 
 module.exports = nextConfig
