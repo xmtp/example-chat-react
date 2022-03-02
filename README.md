@@ -46,7 +46,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 In order to use the application's chat functionality, the connected wallet must provide two signatures:
 
 1. A one-time signature that is used to generate the wallet's private XMTP identity
-2. A signature that is used to initialize the XMTP client with that identity
+2. A signature that is used on application start-up to initialize the XMTP client with that identity
 
 ### Chat Conversations
 
