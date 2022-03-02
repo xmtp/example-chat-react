@@ -86,9 +86,9 @@ const RecipientControl = ({
   }
 
   return (
-    <div className="flex-1 flex-col flex justify-center h-14 bg-zinc-50 md:border md:border-gray-200 pt-1 md:rounded-lg md:px-4 md:mx-4 md:mt-4">
+    <div className="flex-1 flex-col flex h-14 bg-zinc-50 md:border md:border-gray-200 md:rounded-lg md:px-4 md:mx-4 md:mt-4 md:pb-1">
       <form
-        className="w-full flex pl-2 md:pl-0"
+        className="w-full flex pl-2 md:pl-0 h-full pt-1"
         action="#"
         method="GET"
         onSubmit={handleSubmit}
@@ -97,13 +97,13 @@ const RecipientControl = ({
           Recipient
         </label>
         <div className="relative w-full text-n-300 focus-within:text-n-600">
-          <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none text-sm font-semibold">
+          <div className="absolute top-1 left-0 flex items-center pointer-events-none text-md md:text-sm font-medium md:font-semibold">
             To:
           </div>
           <AddressInput
             recipientWalletAddress={recipientWalletAddress}
             id="recipient-field"
-            className="block w-full pl-8 pr-3 bg-transparent caret-n-600 text-n-600 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent text-md font-mono font-bold"
+            className="block w-[95%] pl-7 pr-3 pt-[3px] md:pt-[2px] md:pt-[1px] bg-transparent caret-n-600 text-n-600 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent text-lg font-mono"
             name="recipient"
             lookupAddress={lookupAddress}
             onInputChange={handleInputChange}
@@ -113,11 +113,11 @@ const RecipientControl = ({
       </form>
 
       {recipientInputMode === RecipientInputMode.Submitted ? (
-        <div className="text-md text-n-300 font-mono ml-10 md:ml-8">
+        <div className="text-md text-n-300 text-sm font-mono ml-10 md:ml-8 pb-1 md:pb-[1px]">
           {hasName ? recipientWalletAddress : <br />}
         </div>
       ) : (
-        <div className="text-sm leading-[21px] text-n-300 ml-8 pl-2 md:pl-0 ">
+        <div className="text-sm md:text-xs text-n-300 ml-[29px] pl-2 md:pl-0 pb-1 md:pb-[3px]">
           {recipientInputMode === RecipientInputMode.FindingEntry &&
             'Finding ENS domain...'}
           {recipientInputMode === RecipientInputMode.InvalidEntry &&

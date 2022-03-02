@@ -41,7 +41,7 @@ const NotConnected = ({ onConnect }: UserMenuProps): JSX.Element => {
       >
         <span className="sr-only">Connect</span>
         <CogIcon
-          className="h-4 w-4 fill-n-100 hover:fill-n-200"
+          className="h-6 w-6 md:h-5 md:w-5 fill-n-100 hover:fill-n-200"
           aria-hidden="true"
         />
       </button>
@@ -60,7 +60,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
   }, [walletAddress])
 
   return (
-    <div className="flex bg-n-500 items-center justify-between rounded-lg h-14 m-4 px-4 drop-shadow-xl">
+    <div className="flex bg-n-500 items-center justify-between rounded-lg h-14 m-4 mb-5 md:mb-4 px-4 drop-shadow-xl">
       {walletAddress ? (
         <Menu>
           {({ open }) => (
@@ -83,25 +83,23 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                       </div>
                       <Address
                         address={walletAddress}
-                        className="text-sm font-semibold text-white ml-3"
+                        className="text-md leading-4 font-semibold text-white ml-3"
                         lookupAddress={lookupAddress}
                       />
                     </div>
                   </>
                 ) : (
-                  <>
-                    <div className="flex flex-col">
-                      <div className="flex items-center">
-                        <div className="bg-p-100 rounded h-2 w-2 mr-1"></div>
-                        <p className="text-sm font-bold text-p-100">
-                          Connecting...
-                        </p>
-                      </div>
-                      <p className="text-sm font-normal text-p-100 ml-3">
-                        Verifying your wallet
+                  <div className="h-14 flex flex-col flex-1 justify-center">
+                    <div className="flex items-center">
+                      <div className="bg-p-100 rounded h-2 w-2 mr-1"></div>
+                      <p className="text-sm font-bold text-p-100">
+                        Connecting...
                       </p>
                     </div>
-                  </>
+                    <p className="text-sm font-normal text-p-100 ml-3">
+                      Verifying your wallet
+                    </p>
+                  </div>
                 )}
               </div>
               <div>
@@ -110,7 +108,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                   <CogIcon
                     className={classNames(
                       open ? 'fill-white' : '',
-                      'h-4 w-4 fill-n-100 hover:fill-n-200'
+                      'h-6 w-6 md:h-5 md:w-5 fill-n-100 hover:fill-n-200'
                     )}
                     aria-hidden="true"
                   />

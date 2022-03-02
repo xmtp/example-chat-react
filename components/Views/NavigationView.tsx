@@ -13,15 +13,15 @@ const NavigationView = ({ children }: NavigationViewProps): JSX.Element => {
   return (
     <>
       <Transition.Root show={show} as={Fragment}>
-        <div className="fixed inset-0 flex md:hidden">
+        <div className="fixed inset-0 flex bg-white md:hidden">
           <Transition.Child
             as={Fragment}
-            enter="transition ease-in-out duration-200 transform"
-            enterFrom="-translate-x-full md:translate-x-0"
+            enter="transition ease-in-out duration-300 transform"
+            enterFrom="-translate-x-full"
             enterTo="translate-x-0"
-            leave="transition ease-in-out duration-200 transform"
+            leave="transition ease-in-out duration-300 transform"
             leaveFrom="translate-x-0"
-            leaveTo="-translate-x-full md:translate-x-0"
+            leaveTo="-translate-x-full"
           >
             <div className="relative flex-1 flex flex-col w-full bg-white">
               {children}

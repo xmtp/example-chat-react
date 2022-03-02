@@ -77,7 +77,8 @@ const XmtpInfoPanel = ({ onConnect }: XmtpInfoPanelProps): JSX.Element => {
   ]
 
   return (
-    <div className="m-auto w-[464px]">
+    // The info panel is only shown in desktop layouts.
+    <div className="hidden md:block m-auto w-[464px]">
       <div className="pb-6">
         <div className="text-xl text-n-600 font-semibold mb-1">
           Welcome to the web3 communication protocol
