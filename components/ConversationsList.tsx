@@ -58,14 +58,24 @@ const ConversationTile = ({
             <div className="grid-cols-2 grid">
               <Address
                 address={conversation.peerAddress}
-                className="text-black text-sm font-bold place-self-start"
+                className="text-black text-md md:text-sm font-bold place-self-start"
                 lookupAddress={lookupAddress}
               />
-              <span className="text-sm font-normal place-self-end text-n-300">
+              <span
+                className={classNames(
+                  'text-sm font-normal place-self-end',
+                  isSelected ? 'text-n-500' : 'text-n-300'
+                )}
+              >
                 {formatDate(latestMessage?.sent)}
               </span>
             </div>
-            <p className="text-sm font-normal text-ellipsis mt-0">
+            <p
+              className={classNames(
+                'text-sm font-normal text-ellipsis mt-0',
+                isSelected ? 'text-n-500' : 'text-n-300'
+              )}
+            >
               {latestMessage && truncate(latestMessage.text, 75)}
             </p>
           </div>

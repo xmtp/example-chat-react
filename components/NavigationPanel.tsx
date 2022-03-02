@@ -33,9 +33,14 @@ const NoWalletConnectedMessage: React.FC = ({ children }) => {
   return (
     <div className="flex flex-col flex-grow justify-center">
       <div className="flex flex-col items-center px-4 text-center">
-        <LinkIcon className="h-8 w-8 mb-1 stroke-n-300" aria-hidden="true" />
-        <p className="text-lg text-n-300 font-bold">No wallet connected</p>
-        <p className="text-md text-n-200 font-normal">
+        <LinkIcon
+          className="h-8 w-8 mb-1 stroke-n-200 md:stroke-n-300"
+          aria-hidden="true"
+        />
+        <p className="text-xl md:text-lg text-n-200 md:text-n-300 font-bold">
+          No wallet connected
+        </p>
+        <p className="text-lx md:text-md text-n-200 font-normal">
           Please connect a wallet to begin
         </p>
       </div>
@@ -92,10 +97,15 @@ const NoConversationsMessage = (): JSX.Element => {
   return (
     <div className="flex flex-col flex-grow justify-center">
       <div className="flex flex-col items-center px-4 text-center">
-        <ChatIcon className="h-8 w-8 mb-1 stroke-n-300" aria-hidden="true" />
-        <p className="text-lg text-n-300 font-bold">You have no messages</p>
-        <p className="text-md text-n-200 font-normal">
-          You have no messages in this wallet
+        <ChatIcon
+          className="h-8 w-8 mb-1 stroke-n-200 md:stroke-n-300"
+          aria-hidden="true"
+        />
+        <p className="text-xl md:text-lg text-n-200 md:text-n-300 font-bold">
+          Your message list is empty
+        </p>
+        <p className="text-lx md:text-md text-n-200 font-normal">
+          There are no messages in this wallet
         </p>
       </div>
     </div>

@@ -57,20 +57,18 @@ const AddressInput = ({
 
   const recipientPillInputStyle = classNames(
     'absolute',
-    'top-[3px]',
+    'top-[4px] md:top-[3px]',
+    'left-[26px] md:left-[23px]',
     'rounded-2xl',
-    'px-2',
+    'px-[5px] md:px-2',
     'border',
     'text-md',
-    'ml-6',
-    '-mt-1',
     'focus:outline-none',
     'focus:ring-0',
     'font-bold',
     'font-mono',
     'overflow-visible',
     'text-center',
-    'font-mono',
     'text-transparent',
     'select-none',
     userIsSender ? 'bg-bt-100' : 'bg-zinc-50',
@@ -99,12 +97,14 @@ const AddressInput = ({
         className={classNames(
           className || '',
           'absolute top-0 left-0',
-          userIsSender ? '!text-b-600' : ''
+          userIsSender ? '!text-b-600' : '',
+          recipientWalletAddress ? '!text-md font-bold top-[2px] left-1' : ''
         )}
         placeholder={placeholder}
         onChange={onAddressChange}
         value={value}
         ref={inputElement}
+        autoComplete="off"
       />
     </div>
   )

@@ -35,7 +35,7 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
     <div
       className={classNames(
         'sticky',
-        'bottom-0',
+        'bottom-6 md:bottom-0',
         'z-10',
         'flex-shrink-0',
         'flex',
@@ -64,7 +64,8 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
           className={classNames(
             'block',
             'w-full',
-            'sm:text-sm',
+            'text-md',
+            'md:text-sm',
             messageComposerStyles.input
           )}
           name="message"
