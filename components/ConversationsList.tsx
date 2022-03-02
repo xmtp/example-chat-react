@@ -58,7 +58,7 @@ const ConversationTile = ({
             <div className="grid-cols-2 grid">
               <Address
                 address={conversation.peerAddress}
-                className="text-black text-md md:text-sm font-bold place-self-start"
+                className="text-black text-md font-bold place-self-start"
                 lookupAddress={lookupAddress}
               />
               <span
