@@ -58,12 +58,12 @@ const ConversationTile = ({
             <div className="grid-cols-2 grid">
               <Address
                 address={conversation.peerAddress}
-                className="text-black text-md font-bold place-self-start"
+                className="text-black text-lg md:text-md font-bold place-self-start"
                 lookupAddress={lookupAddress}
               />
               <span
                 className={classNames(
-                  'text-sm font-normal place-self-end',
+                  'text-lg md:text-sm font-normal place-self-end',
                   isSelected ? 'text-n-500' : 'text-n-300'
                 )}
               >
@@ -72,7 +72,7 @@ const ConversationTile = ({
             </div>
             <p
               className={classNames(
-                'text-sm font-normal text-ellipsis mt-0',
+                'text-[13px] md:text-sm font-normal text-ellipsis mt-0',
                 isSelected ? 'text-n-500' : 'text-n-300'
               )}
             >

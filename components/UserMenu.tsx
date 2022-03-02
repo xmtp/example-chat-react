@@ -60,7 +60,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
   }, [walletAddress])
 
   return (
-    <div className="flex bg-n-500 items-center justify-between rounded-lg h-14 m-4 mb-10 md:mb-4 px-4 drop-shadow-xl">
+    <div className="flex bg-n-500 items-center justify-between rounded-lg h-14 m-4 mb-5 md:mb-4 px-4 drop-shadow-xl">
       {walletAddress ? (
         <Menu>
           {({ open }) => (
