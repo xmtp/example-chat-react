@@ -23,7 +23,7 @@
   "dependencies": {
     "@headlessui/react": "^1.4.3",
     "@heroicons/react": "^1.0.5",
-    "@xmtp/xmtp-js": "github:xmtp/xmtp-js",
+    "@xmtp/xmtp-js": "github:xmtp/xmtp-js#v1.3.3",
     "ethers": "^5.5.3",
     "imagemin-svgo": "^9.0.0",
     "next": "12.0.9",
