@@ -50,10 +50,14 @@ The application utilizes the `xmtp-js` [Conversations](https://github.com/xmtp/x
 
 The application's functionality is limited in two major ways by current work-in-progress on the `xmtp-js` client.
 
-#### Wallets cannot be used with multiple browsers
+#### Wallets cannot yet be used with multiple browsers
 
 The client stores the wallet's private identity in the browser's local storage. New browsers or incognito sessions will not have access to this and will create a new identity for the wallet. Once multiple identities are broadcast to the network, past messages cannot be retrieved, and neither message receipt or delivery can be guaranteed.
 
-#### Messages cannot be directed to wallets that have not used XMTP
+This limitation will be resolved soon through remote storage of private identities on the network.
 
-The client will throw an error when attempting to lookup an address that does not have an identity broadcast on the XMTP network. This will be addressed very soon in the example application's UI, and soon via improvements to the `xmtp-js` library that will allow encrypted messages to be created even if the recipient wallet has not yet created its keys.
+#### Messages cannot yet be directed to wallets that have not used XMTP
+
+The client will throw an error when attempting to lookup an address that does not have an identity broadcast on the XMTP network.
+
+This limitation will be mitigated very soon by the example application's UI, and resolved soon via improvements to the `xmtp-js` library that will allow encrypted messages to be created even if the recipient wallet has not yet created its keys.
