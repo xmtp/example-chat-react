@@ -1,6 +1,6 @@
 {
-  "name": "chat",
-  "version": "0.0.1",
+  "name": "xmtp-react-chat-example",
+  "version": "1.0.0",
   "description": "Example chat application using xmtp-js client",
   "private": true,
   "scripts": {
@@ -12,13 +12,13 @@
   },
   "author": "XMTP Labs <eng@xmtp.com>",
   "license": "MIT",
-  "homepage": "https://github.com/xmtp/chat",
+  "homepage": "https://github.com/xmtp/example-chat-react",
   "repository": {
     "type": "git",
-    "url": "https:git@github.com:xmtp/chat.git"
+    "url": "https:git@github.com:xmtp/example-chat-react.git"
   },
   "bugs": {
-    "url": "https://github.com/xmtp/chat/issues"
+    "url": "https://github.com/xmtp/example-chat-react/issues"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.3",
