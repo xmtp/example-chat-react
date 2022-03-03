@@ -9,5 +9,6 @@ if [[ -z "$XMTP_GH_TOKEN" ]]; then
   echo "Not replacing package.json"
   exit 0
 else
+  echo "Replacing repo in package.json"
   sed -i '' "s/github:xmtp\/xmtp-js/git+https:\/\/$XMTP_GH_TOKEN:x-oauth-basic@github.com\/xmtp\/xmtp-js.git/g" package.json
 fi
