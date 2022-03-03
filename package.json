@@ -1,5 +1,5 @@
 {
-  "name": "XMTP React Chat Example",
+  "name": "xmtp-react-chat-example",
   "version": "1.0.0",
   "description": "Example chat application using xmtp-js client",
   "private": true,
