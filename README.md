@@ -11,7 +11,7 @@ It is maintained by [XMTP Labs](https://xmtp.com) and distributed under MIT Lice
 ## Disclaimer
 The XMTP protocol is in the early stages of development. This software is being provided for evaluation, feedback, and community contribution. It has not undergone a formal security audit and is not intended for production applications. Significant breaking revisions should be expected.
 
-As the `@xmtp/xmtp-js` module used by this application has not yet been published, you'll need a personal access token in order to install it from `npm`. You may request one [here](https://xmtp.typeform.com/join-waitlist) alongside access to the [`xmtp/xmtp-js`](https://github.com/xmtp/xmtp-js) GitHub repo.
+As the `@xmtp/xmtp-js` module is published privately, you'll need a personal access token in order to install it from `npm`. You may request one [here](https://xmtp.typeform.com/join-waitlist) alongside access to the [`xmtp/xmtp-js`](https://github.com/xmtp/xmtp-js) GitHub repo.
 
 ## Getting Started
 
