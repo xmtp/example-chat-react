@@ -11,17 +11,30 @@ It is maintained by [XMTP Labs](https://xmtp.com) and distributed under MIT Lice
 ## Disclaimer
 The XMTP protocol is in the early stages of development. This software is being provided for evaluation, feedback, and community contribution. It has not undergone a formal security audit and is not intended for production applications. Significant breaking revisions should be expected.
 
-As `@xmtp/xmtp-js` has not yet been published to `npm`, installing this application requires access to the [`xmtp/xmtp-js`](https://github.com/xmtp/xmtp-js) GitHub repo. You may request access [here](https://xmtp.typeform.com/join-waitlist).
+As `@xmtp/xmtp-js` has not yet been published, installing this application requires access to the [`xmtp/xmtp-js`](https://github.com/xmtp/xmtp-js) GitHub repo and an `npm` personal access token. You may request those [here](https://xmtp.typeform.com/join-waitlist).
 
 ## Getting Started
 
-Add your Infura ID to a `.env` file in the project's root. If you do not have an Infura ID, you can follow [these instructions](https://blog.infura.io/getting-started-with-infura-28e41844cc89/) to get one. _Early access developers may skip this step and use XMTP Labs' Infura ID, which is preconfigured in the application. Please be courteous and only use our ID for light testing._
+### Configure `npm` access token
+
+Using the token you were provided, run the following in your project directory.
+
+```bash
+export NPM_TOKEN=$YOUR_NPM_TOKEN
+echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+```
+
+### Configure Infura
+
+Add your Infura ID to a `.env` file in the project's root. If you do not have an Infura ID, you can follow [these instructions](https://blog.infura.io/getting-started-with-infura-28e41844cc89/) to get one.
+
+_Early access developers may skip this step and use XMTP Labs' Infura ID, which is preconfigured in the application. Please be courteous and only use our ID for light testing._
 
 ```
 NEXT_PUBLIC_INFURA_ID={YOUR_INFURA_ID}
 ```
 
-Next, install the package:
+### Install the package
 
 ```bash
 npm install
@@ -29,7 +42,7 @@ npm install
 yarn install
 ```
 
-Then, run the development server:
+### Run the development server
 
 ```bash
 npm run dev
