@@ -1,8 +1,8 @@
 # React Chat Example
 
-![Test](https://github.com/xmtp/chat/actions/workflows/test.yml/badge.svg)
-![Lint](https://github.com/xmtp/chat/actions/workflows/lint.yml/badge.svg)
-![Build](https://github.com/xmtp/chat/actions/workflows/build.yml/badge.svg)
+![Test](https://github.com/xmtp/example-chat-react/actions/workflows/test.yml/badge.svg)
+![Lint](https://github.com/xmtp/example-chat-react/actions/workflows/lint.yml/badge.svg)
+![Build](https://github.com/xmtp/example-chat-react/actions/workflows/build.yml/badge.svg)
 
 This example chat application demonstrates the core concepts and capabilities of the XMTP Client SDK. It is built with React, [Next.js](https://nextjs.org/), and the [`xmtp-js`](https://github.com/xmtp/xmtp-js) client library. The application is capable of sending and receiving messages through the [XMTP Playnet](https://community.xmtp.org/t/how-decentralized-is-the-xmtp-network/455) environment, with no performance guarantees and [several notable limitations](#limitations) to its functionality.
 
