@@ -65,7 +65,7 @@ const DateDivider = ({ date }: { date?: Date }): JSX.Element => (
   </div>
 )
 
-const StartMessageListNotice = (): JSX.Element => (
+const ConversationBeginningNotice = (): JSX.Element => (
   <div className="flex align-items-center justify-center pb-4">
     <span className="text-gray-300 text-sm">
       This is the beginning of the conversation
@@ -85,7 +85,9 @@ const MessagesList = ({
       <div className="pb-6 md:pb-0 w-full flex flex-col self-end">
         <div className="relative w-full bg-white px-4 pt-6 overflow-y-auto flex">
           <div className="w-full">
-            {messages && messages.length ? <StartMessageListNotice /> : null}
+            {messages && messages.length ? (
+              <ConversationBeginningNotice />
+            ) : null}
             {messages?.map((msg: Message) => {
               const isSender = msg.senderAddress === walletAddress
               const tile = (
