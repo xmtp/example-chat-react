@@ -46,14 +46,14 @@ const MessageTile = ({ message, isSender }: MessageTileProps): JSX.Element => (
 
 const DateDividerBorder: React.FC = ({ children }) => (
   <>
-    <div className="grow border-solid border-t-2 border-gray-300" />
+    <div className="grow h-px bg-gray-300" />
     {children}
-    <div className="grow border-solid border-t-2 border-gray-300" />
+    <div className="grow h-px bg-gray-300" />
   </>
 )
 
 const DateDivider = ({ date }: { date?: Date }): JSX.Element => (
-  <div className="flex flex-row py-8">
+  <div className="flex align-items-center items-center py-8">
     <DateDividerBorder>
       <span className="mx-8 flex-none">{date?.toDateString()}</span>
     </DateDividerBorder>
