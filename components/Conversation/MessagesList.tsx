@@ -20,6 +20,9 @@ const isOnSameDay = (d1?: Date, d2?: Date): boolean => {
   return d1?.toDateString() === d2?.toDateString()
 }
 
+const formatDate = (d?: Date) =>
+  d?.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+
 const MessageTile = ({ message, isSender }: MessageTileProps): JSX.Element => (
   <div className="flex items-start mx-auto mb-4">
     <Avatar peerAddress={message.senderAddress as string} />
@@ -55,7 +58,9 @@ const DateDividerBorder: React.FC = ({ children }) => (
 const DateDivider = ({ date }: { date?: Date }): JSX.Element => (
   <div className="flex align-items-center items-center py-8">
     <DateDividerBorder>
-      <span className="mx-8 flex-none">{date?.toDateString()}</span>
+      <span className="mx-8 flex-none text-gray-300 text-sm">
+        {formatDate(date)}
+      </span>
     </DateDividerBorder>
   </div>
 )
