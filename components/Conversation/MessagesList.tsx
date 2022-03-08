@@ -56,12 +56,20 @@ const DateDividerBorder: React.FC = ({ children }) => (
 )
 
 const DateDivider = ({ date }: { date?: Date }): JSX.Element => (
-  <div className="flex align-items-center items-center py-8">
+  <div className="flex align-items-center items-center pb-8 pt-4">
     <DateDividerBorder>
       <span className="mx-8 flex-none text-gray-300 text-sm">
         {formatDate(date)}
       </span>
     </DateDividerBorder>
+  </div>
+)
+
+const StartMessageListNotice = (): JSX.Element => (
+  <div className="flex align-items-center justify-center pb-4">
+    <span className="text-gray-300 text-sm">
+      This is the beginning of the conversation
+    </span>
   </div>
 )
 
@@ -77,6 +85,7 @@ const MessagesList = ({
       <div className="pb-6 md:pb-0 w-full flex flex-col self-end">
         <div className="relative w-full bg-white px-4 pt-6 overflow-y-auto flex">
           <div className="w-full">
+            {messages && messages.length ? <StartMessageListNotice /> : null}
             {messages?.map((msg: Message) => {
               const isSender = msg.senderAddress === walletAddress
               const tile = (
