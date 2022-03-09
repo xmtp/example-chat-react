@@ -58,7 +58,7 @@ const DateDividerBorder: React.FC = ({ children }) => (
 const DateDivider = ({ date }: { date?: Date }): JSX.Element => (
   <div className="flex align-items-center items-center pb-8 pt-4">
     <DateDividerBorder>
-      <span className="mx-8 flex-none text-gray-300 text-sm">
+      <span className="mx-8 flex-none text-gray-300 text-sm font-bold">
         {formatDate(date)}
       </span>
     </DateDividerBorder>
