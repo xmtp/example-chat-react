@@ -51,7 +51,7 @@ const DateDividerBorder: React.FC = ({ children }) => (
   <>
     <div className="grow h-0.5 bg-gray-300/25" />
     {children}
-    <div className="grow h-px bg-gray-300" />
+    <div className="grow h-0.5 bg-gray-300/25" />
   </>
 )
 
