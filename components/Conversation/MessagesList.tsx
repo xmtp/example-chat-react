@@ -49,16 +49,16 @@ const MessageTile = ({ message, isSender }: MessageTileProps): JSX.Element => (
 
 const DateDividerBorder: React.FC = ({ children }) => (
   <>
-    <div className="grow h-px bg-gray-300" />
+    <div className="grow h-0.5 bg-gray-300/25" />
     {children}
-    <div className="grow h-px bg-gray-300" />
+    <div className="grow h-0.5 bg-gray-300/25" />
   </>
 )
 
 const DateDivider = ({ date }: { date?: Date }): JSX.Element => (
   <div className="flex align-items-center items-center pb-8 pt-4">
     <DateDividerBorder>
-      <span className="mx-11 flex-none text-gray-300 text-sm">
+      <span className="mx-11 flex-none text-gray-300 text-sm font-bold">
         {formatDate(date)}
       </span>
     </DateDividerBorder>
@@ -67,7 +67,7 @@ const DateDivider = ({ date }: { date?: Date }): JSX.Element => (
 
 const ConversationBeginningNotice = (): JSX.Element => (
   <div className="flex align-items-center justify-center pb-4">
-    <span className="text-gray-300 text-sm">
+    <span className="text-gray-300 text-sm font-semibold">
       This is the beginning of the conversation
     </span>
   </div>
