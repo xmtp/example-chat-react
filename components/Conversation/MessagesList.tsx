@@ -67,7 +67,7 @@ const DateDivider = ({ date }: { date?: Date }): JSX.Element => (
 
 const ConversationBeginningNotice = (): JSX.Element => (
   <div className="flex align-items-center justify-center pb-4">
-    <span className="text-gray-300 text-sm">
+    <span className="text-gray-300 text-sm font-semibold">
       This is the beginning of the conversation
     </span>
   </div>
