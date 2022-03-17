@@ -84,7 +84,7 @@ const RecipientControl = ({
         await completeSubmit(recipientValue, input)
       }
     },
-    [onSubmit, setRecipientInputMode, resolveName, checkIfOnNetwork]
+    [setRecipientInputMode, resolveName, completeSubmit]
   )
 
   const handleInputChange = async (e: React.SyntheticEvent) => {
