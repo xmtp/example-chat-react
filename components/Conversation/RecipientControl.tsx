@@ -35,6 +35,19 @@ const RecipientControl = ({
     [client]
   )
 
+  const completeSubmit = useCallback(
+    async (address: string, input: HTMLInputElement) => {
+      if (await checkIfOnNetwork(address)) {
+        onSubmit(address)
+        input.blur()
+        setRecipientInputMode(RecipientInputMode.Submitted)
+      } else {
+        setRecipientInputMode(RecipientInputMode.NotOnNetwork)
+      }
+    },
+    [checkIfOnNetwork, setRecipientInputMode, onSubmit]
+  )
+
   useEffect(() => {
     const handleAddressLookup = async (address: string) => {
       const name = await lookupAddress(address)
@@ -60,13 +73,7 @@ const RecipientControl = ({
         setRecipientInputMode(RecipientInputMode.FindingEntry)
         const address = await resolveName(recipientValue)
         if (address) {
-          if (await checkIfOnNetwork(address)) {
-            onSubmit(address)
-            input.blur()
-            setRecipientInputMode(RecipientInputMode.Submitted)
-          } else {
-            setRecipientInputMode(RecipientInputMode.NotOnNetwork)
-          }
+          await completeSubmit(address, input)
         } else {
           setRecipientInputMode(RecipientInputMode.InvalidEntry)
         }
@@ -74,13 +81,7 @@ const RecipientControl = ({
         recipientValue.startsWith('0x') &&
         recipientValue.length === 42
       ) {
-        if (await checkIfOnNetwork(recipientValue)) {
-          onSubmit(recipientValue)
-          input.blur()
-          setRecipientInputMode(RecipientInputMode.Submitted)
-        } else {
-          setRecipientInputMode(RecipientInputMode.NotOnNetwork)
-        }
+        await completeSubmit(recipientValue, input)
       }
     },
     [onSubmit, setRecipientInputMode, resolveName, checkIfOnNetwork]
