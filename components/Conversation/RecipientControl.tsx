@@ -2,6 +2,7 @@ import { useCallback, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import AddressInput from '../AddressInput'
 import useWallet from '../../hooks/useWallet'
+import useXmtp from '../../hooks/useXmtp'
 type RecipientInputProps = {
   recipientWalletAddress: string | undefined
   onSubmit: (address: string) => Promise<void>
@@ -12,6 +13,7 @@ const RecipientInputMode = {
   ValidEntry: 1,
   FindingEntry: 2,
   Submitted: 3,
+  NotOnNetwork: 4,
 }
 
 const RecipientControl = ({
@@ -19,11 +21,32 @@ const RecipientControl = ({
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
   const { resolveName, lookupAddress } = useWallet()
+  const { client } = useXmtp()
   const router = useRouter()
   const [recipientInputMode, setRecipientInputMode] = useState(
     RecipientInputMode.InvalidEntry
   )
   const [hasName, setHasName] = useState(false)
+
+  const checkIfOnNetwork = useCallback(
+    async (address: string): Promise<boolean> => {
+      return client?.canMessage(address) || false
+    },
+    [client]
+  )
+
+  const completeSubmit = useCallback(
+    async (address: string, input: HTMLInputElement) => {
+      if (await checkIfOnNetwork(address)) {
+        onSubmit(address)
+        input.blur()
+        setRecipientInputMode(RecipientInputMode.Submitted)
+      } else {
+        setRecipientInputMode(RecipientInputMode.NotOnNetwork)
+      }
+    },
+    [checkIfOnNetwork, setRecipientInputMode, onSubmit]
+  )
 
   useEffect(() => {
     const handleAddressLookup = async (address: string) => {
@@ -50,9 +73,7 @@ const RecipientControl = ({
         setRecipientInputMode(RecipientInputMode.FindingEntry)
         const address = await resolveName(recipientValue)
         if (address) {
-          onSubmit(address)
-          input.blur()
-          setRecipientInputMode(RecipientInputMode.Submitted)
+          await completeSubmit(address, input)
         } else {
           setRecipientInputMode(RecipientInputMode.InvalidEntry)
         }
@@ -60,12 +81,10 @@ const RecipientControl = ({
         recipientValue.startsWith('0x') &&
         recipientValue.length === 42
       ) {
-        onSubmit(recipientValue)
-        input.blur()
-        setRecipientInputMode(RecipientInputMode.Submitted)
+        await completeSubmit(recipientValue, input)
       }
     },
-    [onSubmit, setRecipientInputMode, resolveName]
+    [setRecipientInputMode, resolveName, completeSubmit]
   )
 
   const handleInputChange = async (e: React.SyntheticEvent) => {
@@ -118,6 +137,8 @@ const RecipientControl = ({
         </div>
       ) : (
         <div className="text-sm md:text-xs text-n-300 ml-[29px] pl-2 md:pl-0 pb-1 md:pb-[3px]">
+          {recipientInputMode === RecipientInputMode.NotOnNetwork &&
+            'Recipient is not on the XMTP network'}
           {recipientInputMode === RecipientInputMode.FindingEntry &&
             'Finding ENS domain...'}
           {recipientInputMode === RecipientInputMode.InvalidEntry &&
