@@ -71,13 +71,7 @@ The application utilizes the `xmtp-js` [Conversations](https://github.com/xmtp/x
 
 ### Limitations
 
-The application's functionality is limited in two major ways by current work-in-progress on the `xmtp-js` client.
-
-#### Wallets cannot yet be used with multiple browsers
-
-The client stores the wallet's private identity in the browser's local storage. New browsers or incognito sessions will not have access to this and will create a new identity for the wallet. Once multiple identities are broadcast to the network, past messages cannot be decrypted, and neither message receipt or delivery can be guaranteed. Messages that cannot be decrypted due to this condition will be displayed as "Error: no matching pre-key".
-
-This limitation will be resolved soon through remote storage of private identities on the network.
+The application's functionality is limited by current work-in-progress on the `xmtp-js` client.
 
 #### Messages cannot yet be directed to wallets that have not used XMTP
 
