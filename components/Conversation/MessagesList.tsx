@@ -40,7 +40,7 @@ const MessageTile = ({ message, isSender }: MessageTileProps): JSX.Element => (
         {message.error ? (
           `Error: ${message.error?.message}`
         ) : (
-          <Emoji text={message.text || ''} />
+          <Emoji text={message.content || ''} />
         )}
       </span>
     </div>

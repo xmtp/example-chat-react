@@ -76,7 +76,7 @@ const ConversationTile = ({
                 isSelected ? 'text-n-500' : 'text-n-300'
               )}
             >
-              {latestMessage && truncate(latestMessage.text, 75)}
+              {latestMessage && truncate(latestMessage.content, 75)}
             </p>
           </div>
         </div>
