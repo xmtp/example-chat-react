@@ -74,7 +74,7 @@ const ConversationsPanel = (): JSX.Element => {
       />
     )
   }
-  if (loadingConversations && !conversations?.length) {
+  if (loadingConversations) {
     return (
       <Loader
         headingText="Loading conversations..."
