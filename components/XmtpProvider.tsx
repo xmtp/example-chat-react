@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useReducer, useState } from 'react'
-import { Conversation } from '@xmtp/xmtp-js'
+import { Conversation, Message } from '@xmtp/xmtp-js'
 import { Client } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
 import { XmtpContext, XmtpContextType } from '../contexts/xmtp'
@@ -12,6 +12,23 @@ export const XmtpProvider: React.FC = ({ children }) => {
   const { getMessages, dispatchMessages } = useMessageStore()
   const [loadingConversations, setLoadingConversations] =
     useState<boolean>(false)
+
+  const getLatestMessage = (messages: Message[]): Message | null =>
+    messages.length ? messages[messages.length - 1] : null
+
+  const orderByLatestMessage = (
+    convoA: Conversation,
+    convoB: Conversation
+  ): number => {
+    const convoAMessages = getMessages(convoA.peerAddress)
+    const convoBMessages = getMessages(convoB.peerAddress)
+    const convoALastMessageDate =
+      getLatestMessage(convoAMessages)?.sent || new Date()
+    const convoBLastMessageDate =
+      getLatestMessage(convoBMessages)?.sent || new Date()
+    return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
+  }
+
   const [conversations, dispatchConversations] = useReducer(
     (state: Conversation[], newConvos: Conversation[] | undefined) => {
       if (newConvos === undefined) {
@@ -23,7 +40,9 @@ export const XmtpProvider: React.FC = ({ children }) => {
             return convo.peerAddress === otherConvo.peerAddress
           }) < 0 && convo.peerAddress != client?.address
       )
-      return newConvos === undefined ? [] : state.concat(newConvos)
+      return newConvos === undefined
+        ? []
+        : state.concat(newConvos).sort(orderByLatestMessage)
     },
     []
   )
