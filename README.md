@@ -4,52 +4,40 @@
 ![Lint](https://github.com/xmtp/example-chat-react/actions/workflows/lint.yml/badge.svg)
 ![Build](https://github.com/xmtp/example-chat-react/actions/workflows/build.yml/badge.svg)
 
-This example chat application demonstrates the core concepts and capabilities of the XMTP Client SDK. It is built with React, [Next.js](https://nextjs.org/), and the [`xmtp-js`](https://github.com/xmtp/xmtp-js) client library. The application is capable of sending and receiving messages through the [XMTP Playnet](https://community.xmtp.org/t/how-decentralized-is-the-xmtp-network/455) environment, with no performance guarantees and [several notable limitations](#limitations) to its functionality.
+![x-red-sm](https://user-images.githubusercontent.com/510695/163488403-1fb37e86-c673-4b48-954e-8460ae4d4b05.png)
 
-It is maintained by [XMTP Labs](https://xmtp.com) and distributed under MIT License for learning about and developing applications that utilize the XMTP decentralized communication protocol.
+**This example chat application demonstrates the core concepts and capabilities of the XMTP Client SDK.** It is built with React, [Next.js](https://nextjs.org/), and the [`xmtp-js`](https://github.com/xmtp/xmtp-js) client library. The application is capable of sending and receiving messages via the [XMTP Labs](https://xmtp.com) development network, with no performance guarantees and [notable limitations](#limitations) to its functionality.
+
+It is maintained by [XMTP Labs](https://xmtp.com) and distributed under [MIT License](./LICENSE) for learning about and developing applications that utilize the XMTP decentralized communication protocol.
+
+**All wallets and messages are forcibly deleted from the development network on Mondays.**
 
 ## Disclaimer
+
 The XMTP protocol is in the early stages of development. This software is being provided for evaluation, feedback, and community contribution. It has not undergone a formal security audit and is not intended for production applications. Significant breaking revisions should be expected.
 
-As the `@xmtp/xmtp-js` module used by this application is published privately, you'll need a personal access token in order to install it from `npm`. You may request one [here](https://xmtp.typeform.com/join-waitlist) alongside access to the [`xmtp/xmtp-js`](https://github.com/xmtp/xmtp-js) GitHub repo.
-
 ## Getting Started
-
-### Configure `npm` access token
-
-Using the token you were provided, run the following in your project directory.
-
-```bash
-export NPM_TOKEN=$YOUR_NPM_TOKEN
-echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-```
 
 ### Configure Infura
 
 Add your Infura ID to a `.env` file in the project's root. If you do not have an Infura ID, you can follow [these instructions](https://blog.infura.io/getting-started-with-infura-28e41844cc89/) to get one.
 
-_Early access developers may skip this step and use XMTP Labs' Infura ID, which is preconfigured in the application. Please be courteous and only use our ID for light testing._
-
 ```
 NEXT_PUBLIC_INFURA_ID={YOUR_INFURA_ID}
 ```
+
+_This example comes preconfigured with an Infura ID provided for demonstration purposes. If you plan to fork or host it, you must use your own Infura ID as detailed above._
 
 ### Install the package
 
 ```bash
 npm install
-# or
-yarn install
 ```
 
 ### Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-next dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
