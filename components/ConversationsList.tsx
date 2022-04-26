@@ -4,9 +4,11 @@ import Address from './Address'
 import { useRouter } from 'next/router'
 import { Conversation } from '@xmtp/xmtp-js/dist/types/src/conversations'
 import useConversation from '../hooks/useConversation'
+import { XmtpContext } from '../contexts/xmtp'
 import { Message } from '@xmtp/xmtp-js'
 import useWallet from '../hooks/useWallet'
 import Avatar from './Avatar'
+import { useContext } from 'react'
 
 type ConversationsListProps = {
   conversations: Conversation[]
@@ -25,11 +27,14 @@ const ConversationTile = ({
   conversation,
   isSelected,
   onClick,
-}: ConversationTileProps): JSX.Element => {
+}: ConversationTileProps): JSX.Element | null => {
   const { lookupAddress } = useWallet()
   const { messages } = useConversation(conversation.peerAddress)
   const latestMessage = getLatestMessage(messages)
   const path = `/dm/${conversation.peerAddress}`
+  if (!latestMessage) {
+    return null
+  }
   return (
     <Link href={path} key={conversation.peerAddress}>
       <a onClick={onClick}>
@@ -89,11 +94,23 @@ const ConversationsList = ({
   conversations,
 }: ConversationsListProps): JSX.Element => {
   const router = useRouter()
-
+  const { getMessages } = useContext(XmtpContext)
+  const orderByLatestMessage = (
+    convoA: Conversation,
+    convoB: Conversation
+  ): number => {
+    const convoAMessages = getMessages(convoA.peerAddress)
+    const convoBMessages = getMessages(convoB.peerAddress)
+    const convoALastMessageDate =
+      getLatestMessage(convoAMessages)?.sent || new Date()
+    const convoBLastMessageDate =
+      getLatestMessage(convoBMessages)?.sent || new Date()
+    return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
+  }
   return (
     <div>
       {conversations &&
-        conversations.map((convo) => {
+        conversations.sort(orderByLatestMessage).map((convo) => {
           const isSelected =
             router.query.recipientWalletAddr == convo.peerAddress
           return (
