@@ -27,13 +27,13 @@ const ConversationTile = ({
   conversation,
   isSelected,
   onClick,
-}: ConversationTileProps): JSX.Element => {
+}: ConversationTileProps): JSX.Element | null => {
   const { lookupAddress } = useWallet()
   const { messages } = useConversation(conversation.peerAddress)
   const latestMessage = getLatestMessage(messages)
   const path = `/dm/${conversation.peerAddress}`
   if (!latestMessage) {
-    return <div />
+    return null
   }
   return (
     <Link href={path} key={conversation.peerAddress}>
