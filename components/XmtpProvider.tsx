@@ -59,7 +59,7 @@ export const XmtpProvider: React.FC = ({ children }) => {
       console.log('Listing conversations')
       setLoadingConversations(true)
       const convos = await client.conversations.list()
-      convos.forEach(async (convo: Conversation) => {
+      convos.forEach((convo: Conversation) => {
         dispatchConversations([convo])
       })
       setLoadingConversations(false)

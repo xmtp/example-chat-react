@@ -94,9 +94,7 @@ const ConversationsList = ({
   conversations,
 }: ConversationsListProps): JSX.Element => {
   const router = useRouter()
-
   const { getMessages } = useContext(XmtpContext)
-
   const orderByLatestMessage = (
     convoA: Conversation,
     convoB: Conversation
@@ -109,7 +107,6 @@ const ConversationsList = ({
       getLatestMessage(convoBMessages)?.sent || new Date()
     return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
   }
-
   return (
     <div>
       {conversations &&
