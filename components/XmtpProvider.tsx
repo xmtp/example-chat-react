@@ -77,13 +77,18 @@ export const XmtpProvider: React.FC = ({ children }) => {
       console.log('Listing conversations')
       setLoadingConversations(true)
       const convos = await client.conversations.list()
-      convos.forEach((convo: Conversation) => {
+      convos.forEach(async (convo: Conversation) => {
+        const msgs = await convo.messages({ pageSize: 100 })
+        dispatchMessages({
+          peerAddress: convo.peerAddress,
+          messages: msgs,
+        })
         dispatchConversations([convo])
       })
       setLoadingConversations(false)
     }
     listConversations()
-  }, [client, walletAddress])
+  }, [client, walletAddress, dispatchMessages])
 
   useEffect(() => {
     const streamConversations = async () => {
