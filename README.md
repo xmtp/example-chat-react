@@ -20,11 +20,13 @@ The XMTP protocol is in the early stages of development. This software is being 
 
 ### Configure Infura
 
-Add your Infura ID to a `.env` file in the project's root. If you do not have an Infura ID, you can follow [these instructions](https://blog.infura.io/getting-started-with-infura-28e41844cc89/) to get one.
+Add your Infura ID to `.env.local` in the project's root.
 
 ```
 NEXT_PUBLIC_INFURA_ID={YOUR_INFURA_ID}
 ```
+
+If you do not have an Infura ID, you can follow [these instructions](https://blog.infura.io/getting-started-with-infura-28e41844cc89/) to get one.
 
 _This example comes preconfigured with an Infura ID provided for demonstration purposes. If you plan to fork or host it, you must use your own Infura ID as detailed above._
 
