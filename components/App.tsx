@@ -1,4 +1,5 @@
 import XmtpProvider from './XmtpProvider'
+import CyberConnectProvider from './CyberConnectProvider'
 import Layout from '../components/Layout'
 import { WalletProvider } from './WalletProvider'
 
@@ -10,7 +11,9 @@ function App({ children }: AppProps) {
   return (
     <WalletProvider>
       <XmtpProvider>
-        <Layout>{children}</Layout>
+        <CyberConnectProvider>
+          <Layout>{children}</Layout>
+        </CyberConnectProvider>
       </XmtpProvider>
     </WalletProvider>
   )

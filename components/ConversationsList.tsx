@@ -8,7 +8,8 @@ import { XmtpContext } from '../contexts/xmtp'
 import { Message } from '@xmtp/xmtp-js'
 import useWallet from '../hooks/useWallet'
 import Avatar from './Avatar'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import CyberConnectContext from '../contexts/cyberConnect'
 
 type ConversationsListProps = {
   conversations: Conversation[]
@@ -95,6 +96,7 @@ const ConversationsList = ({
 }: ConversationsListProps): JSX.Element => {
   const router = useRouter()
   const { getMessages } = useContext(XmtpContext)
+  const { filterBy, filterConversations } = useContext(CyberConnectContext)
   const orderByLatestMessage = (
     convoA: Conversation,
     convoB: Conversation
@@ -107,10 +109,18 @@ const ConversationsList = ({
       getLatestMessage(convoBMessages)?.sent || new Date()
     return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
   }
+
+  const [filterdConversations, setFilteredConversations] =
+    useState<ConversationsListProps>()
+
+  useEffect(() => {
+    setFilteredConversations(filterConversations(conversations))
+  }, [filterBy, conversations])
+
   return (
     <div>
-      {conversations &&
-        conversations.sort(orderByLatestMessage).map((convo) => {
+      {filterdConversations &&
+        filterdConversations.sort(orderByLatestMessage).map((convo) => {
           const isSelected =
             router.query.recipientWalletAddr == convo.peerAddress
           return (
