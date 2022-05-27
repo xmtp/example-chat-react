@@ -13,7 +13,7 @@ import {
   ApolloProvider,
   useLazyQuery,
 } from '@apollo/client'
-import { Conversations } from '@xmtp/xmtp-js/dist/types/src'
+// import { Conversations } from '@xmtp/xmtp-js/dist/types/src'
 const CYBERCONNECT_ENDPOINT = 'https://api.cybertino.io/connect/'
 
 const client = new ApolloClient({
@@ -72,10 +72,13 @@ export const CyberConnectProvider: React.FC = ({ children }) => {
       if (identity[filterBy]) {
         if (identity[filterBy].list.length === 0) return []
         const list = identity[filterBy].list.map(({ address }) =>
-          ethers.utils.getAddress(address)
+          address.toString().toLowerCase()
         )
+        console.log(list)
+
         return conversations.filter((item) => {
-          return list.includes(item.client.address)
+          const address = item.peerAddress.toString().toLowerCase()
+          return list.includes(address)
         })
       }
 

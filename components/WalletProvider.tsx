@@ -37,6 +37,9 @@ export const WalletProvider = ({
       if (cachedLookupAddress.has(address)) {
         return cachedLookupAddress.get(address)
       }
+      if (provider?.network.name === 'maticmum') {
+        return ''
+      }
       const name = (await provider?.lookupAddress(address)) || undefined
       cachedLookupAddress.set(address, name)
       return name
