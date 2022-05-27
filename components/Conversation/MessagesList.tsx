@@ -25,7 +25,13 @@ const formatDate = (d?: Date) =>
 
 const MessageTile = ({ message, isSender }: MessageTileProps): JSX.Element => (
   <div className="flex items-start mx-auto mb-4">
-    <Avatar peerAddress={message.senderAddress as string} />
+    <a
+      href={`http://localhost:3333/${message.senderAddress}`}
+      target="_blank"
+      rel="noreferrer"
+    >
+      <Avatar peerAddress={message.senderAddress as string} />
+    </a>
     <div className="ml-2">
       <div>
         <AddressPill
@@ -96,7 +102,7 @@ const MessagesList = ({
               const dateHasChanged = !isOnSameDay(lastMessageDate, msg.sent)
               lastMessageDate = msg.sent
               return dateHasChanged
-                ? [<DateDivider date={msg.sent} key={msg.id} />, tile]
+                ? [<DateDivider date={msg.sent} key={`date-${msg.id}`} />, tile]
                 : tile
             })}
             <div ref={messagesEndRef} />

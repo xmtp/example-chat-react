@@ -115,7 +115,7 @@ const ConversationsList = ({
 
   useEffect(() => {
     setFilteredConversations(filterConversations(conversations))
-  }, [filterBy, conversations])
+  }, [filterBy, conversations, filterConversations])
 
   return (
     <div>
