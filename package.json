@@ -29,6 +29,7 @@
     "ethers": "^5.5.3",
     "graphql": "^16.5.0",
     "imagemin-svgo": "^9.0.0",
+    "lit-share-modal": "^0.1.93",
     "next": "12.0.9",
     "next-optimized-images": "^2.6.2",
     "react": "17.0.2",
