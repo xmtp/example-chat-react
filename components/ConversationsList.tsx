@@ -10,6 +10,7 @@ import useWallet from '../hooks/useWallet'
 import Avatar from './Avatar'
 import { useContext, useEffect, useState } from 'react'
 import CyberConnectContext from '../contexts/cyberConnect'
+import { intersection, get, without } from 'lodash'
 
 type ConversationsListProps = {
   conversations: Conversation[]
@@ -60,11 +61,11 @@ const ConversationTile = ({
           )}
         >
           <Avatar peerAddress={conversation.peerAddress} />
-          <div className="py-4 sm:text-left text w-full">
-            <div className="grid-cols-2 grid">
+          <div className="w-full py-4 sm:text-left text">
+            <div className="grid grid-cols-2">
               <Address
                 address={conversation.peerAddress}
-                className="text-black text-lg md:text-md font-bold place-self-start"
+                className="text-lg font-bold text-black md:text-md place-self-start"
                 lookupAddress={lookupAddress}
               />
               <span
@@ -96,7 +97,8 @@ const ConversationsList = ({
 }: ConversationsListProps): JSX.Element => {
   const router = useRouter()
   const { getMessages } = useContext(XmtpContext)
-  const { filterBy, filterConversations } = useContext(CyberConnectContext)
+  const { filterBy, conditionItems, allLitValidateAddress, identity } =
+    useContext(CyberConnectContext)
   const orderByLatestMessage = (
     convoA: Conversation,
     convoB: Conversation
@@ -114,8 +116,46 @@ const ConversationsList = ({
     useState<ConversationsListProps>()
 
   useEffect(() => {
-    setFilteredConversations(filterConversations(conversations))
-  }, [filterBy, conversations, filterConversations])
+    const doFilter = (conversations) => {
+      const litAddressArr = allLitValidateAddress.map((address) =>
+        address.toString().toLowerCase()
+      )
+      if (filterBy === 'all' || filterBy === undefined) {
+        if (conditionItems.length === 0) {
+          return conversations
+        }
+        return conversations.filter((item) => {
+          const address = item.peerAddress.toString().toLowerCase()
+          return litAddressArr.includes(address)
+        })
+      }
+
+      const getAddress = (thePath) => {
+        return get(identity, thePath, []).map(({ address }) => {
+          return address.toString().toLowerCase()
+        })
+      }
+      const friends = getAddress('friends.list')
+      const followers = getAddress('followers.list')
+      const followings = getAddress('followings.list')
+      const relationMap = {
+        friends,
+        followers: without(followers, ...friends),
+        followings: without(followings, ...friends),
+      }
+
+      let list = relationMap[filterBy]
+      if (conditionItems.length > 0) {
+        list = intersection(list, litAddressArr)
+      }
+
+      return conversations.filter((item) => {
+        const address = item.peerAddress.toString().toLowerCase()
+        return list.includes(address)
+      })
+    }
+    setFilteredConversations(doFilter(conversations))
+  }, [filterBy, identity, conversations, conditionItems, allLitValidateAddress])
 
   return (
     <div>

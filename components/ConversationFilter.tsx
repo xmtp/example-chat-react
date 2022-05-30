@@ -10,7 +10,7 @@ import useCyberConnect from '../hooks/useCyberConnect'
 export default function ConversationFilter() {
   const { filterBy, updateFilterBy } = useCyberConnect()
   const items = ['friends', 'followings', 'followers', 'all']
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (!filterBy) {

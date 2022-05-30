@@ -15,8 +15,45 @@ export default function LitACLItem(props) {
     name: props.contractType,
   }
 
+  let contractAddressInput = ''
+  if (props.contractType !== 'ETH') {
+    contractAddressInput = (
+      <input
+        type="text"
+        value={props.contractAddress}
+        onChange={(e) =>
+          props.onUpdate({ key: 'contractAddress', value: e.target.value })
+        }
+        name="contractAddress"
+        placeholder="contract address"
+        className="flex-1 block mx-2 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-gray-200 disabled:cursor-not-allowed"
+      />
+    )
+  }
+
+  let tokenIdInput = ''
+  if (props.contractType === 'ERC1155') {
+    tokenIdInput = (
+      <input
+        type="text"
+        value={props.tokenId}
+        onChange={(e) =>
+          props.onUpdate({ key: 'tokenId', value: e.target.value })
+        }
+        name="tokenId"
+        placeholder="tokenId"
+        className="flex-1 block mx-2 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-gray-200 disabled:cursor-not-allowed"
+      />
+    )
+  }
+
+  let resultCount = ''
+  if (props.validateAddressArr) {
+    resultCount = <div className="px-1">{props.validateAddressArr.length}</div>
+  }
   return (
     <div className="flex items-center justify-between">
+      {resultCount}
       <div className="w-28">
         <Selector
           items={contractTypeItems}
@@ -29,17 +66,8 @@ export default function LitACLItem(props) {
           }}
         ></Selector>
       </div>
-      <input
-        type="text"
-        value={props.contractAddress}
-        onChange={(e) =>
-          props.onUpdate({ key: 'contractAddress', value: e.target.value })
-        }
-        disabled={props.contractType === 'ETH'}
-        name="contractAddress"
-        placeholder="contract address"
-        className="flex-1 block mx-2 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-gray-200 disabled:cursor-not-allowed"
-      />
+      {contractAddressInput}
+      {tokenIdInput}
       <input
         type="text"
         value={props.comparator}

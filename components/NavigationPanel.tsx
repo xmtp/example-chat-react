@@ -4,7 +4,6 @@ import { ArrowSmRightIcon } from '@heroicons/react/solid'
 import useXmtp from '../hooks/useXmtp'
 import ConversationsList from './ConversationsList'
 import ConversationFilter from './ConversationFilter'
-import ConversationCategory from './ConversationCategory'
 
 import Loader from './Loader'
 
@@ -89,7 +88,7 @@ const ConversationsPanel = (): JSX.Element => {
 
   return conversations && conversations.length > 0 ? (
     <nav className="flex-1 pb-4 space-y-1">
-      <div className="flex items-center justify-end p-1 border-b-1 border ">
+      <div className="flex items-center justify-end p-1 border border-b-1 ">
         <ConversationFilter />
       </div>
       {/* <ConversationCategory /> */}

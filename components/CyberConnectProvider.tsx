@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { ethers } from 'ethers'
+import LitJsSdk from 'lit-js-sdk'
 import useXmtp from '../hooks/useXmtp'
 import {
   CyberConnectContext,
   CyberConnectContextType,
   BooleanLogic,
+  ChainItem,
   ConditionItem,
   booleanLogicItems,
 } from '../contexts/cyberConnect'
@@ -24,15 +26,26 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
+export const chainItems = Object.keys(LitJsSdk.ALL_LIT_CHAINS).map((key) => {
+  return { id: key, name: key }
+})
+
 export const CyberConnectProvider: React.FC = ({ children }) => {
-  const [filterBy, setFilterBy] = useState<string>('Friends')
+  const [filterBy, setFilterBy] = useState<string>('friends')
+  const [allLitValidateAddress, setAllLitValidateAddress] = useState<[string]>(
+    []
+  )
+  const [chainItem, setChainItem] = useState<ChainItem>({
+    id: 'ethereum',
+    name: 'ethereum',
+  })
   const [booleanLogic, setBooleanLogic] = useState<BooleanLogic>(
     booleanLogicItems[0]
   )
   const [conditionItems, setConditionItems] = useState<ConditionItem>([])
   const [categoryBy, setCategoryBy] = useState<string>()
   const [identity, setIdentity] = useState<any>()
-  const { walletAddress, conversations } = useXmtp()
+  const { walletAddress } = useXmtp()
 
   const updateFilterBy = useCallback(
     (newFilterBy) => {
@@ -74,25 +87,7 @@ export const CyberConnectProvider: React.FC = ({ children }) => {
     },
     [setCategoryBy]
   )
-  const filterConversations = useCallback(
-    (conversations) => {
-      if (identity[filterBy]) {
-        if (identity[filterBy].list.length === 0) return []
-        const list = identity[filterBy].list.map(({ address }) =>
-          address.toString().toLowerCase()
-        )
-        console.log(list)
 
-        return conversations.filter((item) => {
-          const address = item.peerAddress.toString().toLowerCase()
-          return list.includes(address)
-        })
-      }
-
-      return conversations
-    },
-    [filterBy, identity]
-  )
   const [providerState, setProviderState] = useState<CyberConnectContextType>({
     filterBy,
     booleanLogic,
@@ -104,7 +99,10 @@ export const CyberConnectProvider: React.FC = ({ children }) => {
     updateFilterBy,
     updateCategoryBy,
     updateIdentity,
-    filterConversations,
+    chainItem,
+    setChainItem,
+    allLitValidateAddress,
+    setAllLitValidateAddress,
   })
 
   useEffect(() => {
@@ -119,7 +117,10 @@ export const CyberConnectProvider: React.FC = ({ children }) => {
       setConditionItems,
       updateCategoryBy,
       updateIdentity,
-      filterConversations,
+      chainItem,
+      setChainItem,
+      allLitValidateAddress,
+      setAllLitValidateAddress,
     })
   }, [
     filterBy,
@@ -132,7 +133,10 @@ export const CyberConnectProvider: React.FC = ({ children }) => {
     setConditionItems,
     updateCategoryBy,
     updateIdentity,
-    filterConversations,
+    chainItem,
+    setChainItem,
+    allLitValidateAddress,
+    setAllLitValidateAddress,
   ])
 
   return (
