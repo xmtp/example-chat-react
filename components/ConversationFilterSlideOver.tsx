@@ -1,26 +1,30 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useContext } from 'react'
+import CyberConnectContext from '../contexts/cyberConnect'
 import { Dialog, Transition } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 import Selector from './Selector'
 import LitACLItem from './LitACLItem'
 import { PlusCircleIcon } from '@heroicons/react/solid'
+import { booleanLogicItems } from '../contexts/cyberConnect'
+
+const defaultConditionItem = {
+  id: '',
+  contractType: 'ERC721',
+  contractAddress: '',
+  comparator: '',
+  number: '',
+}
 
 export default function ConversationFilterSlideOver(props) {
-  const booleanLogicItems = [
-    { id: 'intersection', name: 'intersection' },
-    { id: 'union', name: 'union' },
-  ]
-  const [booleanLogic, setBooleanLogic] = useState(booleanLogicItems[0])
+  const { booleanLogic, conditionItems, setBooleanLogic, setConditionItems } =
+    useContext(CyberConnectContext)
 
-  const defaultConditionItem = {
-    contractType: 'ERC721',
-    contractAddress: '',
-    comparator: '',
-    number: '',
+  const deleteItem = (id) => {
+    const items = conditionItems.filter((item) => item.id !== id)
+    setConditionItems(items)
+    console.log({ id })
   }
-  const [conditionItems, setConditionItems] = useState([
-    { ...defaultConditionItem },
-  ])
+
   const doSubmit = async (e) => {
     e.preventDefault()
     console.log({
@@ -85,31 +89,36 @@ export default function ConversationFilterSlideOver(props) {
                       <div className="flex flex-col justify-between flex-1">
                         <div className="px-4 divide-y divide-gray-200 sm:px-6">
                           <div className="pt-6 pb-5 space-y-6">
-                            {conditionItems.map((item, index) => {
-                              return (
-                                <LitACLItem
-                                  key={index}
-                                  contractType={item.contractType}
-                                  onUpdate={({ key, value }) => {
-                                    conditionItems[index][key] = value
-                                    setConditionItems([...conditionItems])
-                                  }}
-                                  onDelete={() => {
-                                    conditionItems.splice(index, 1)
-                                    setConditionItems([...conditionItems])
-                                  }}
-                                />
-                              )
-                            })}
+                            {conditionItems &&
+                              conditionItems.map((item, index) => {
+                                return (
+                                  <LitACLItem
+                                    key={item.id}
+                                    id={item.id}
+                                    contractType={item.contractType}
+                                    onUpdate={({ key, value }) => {
+                                      conditionItems[index][key] = value
+                                      setConditionItems([...conditionItems])
+                                    }}
+                                    onDelete={deleteItem}
+                                  />
+                                )
+                              })}
 
                             <div className="flex items-center justify-end">
                               <button
                                 type="button"
-                                className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-500 border border-transparent rounded-md shadow-sm hover:bg-green-700 "
                                 onClick={() =>
                                   setConditionItems([
                                     ...conditionItems,
-                                    { ...defaultConditionItem },
+                                    {
+                                      ...defaultConditionItem,
+                                      id:
+                                        Date.now() +
+                                        '' +
+                                        Math.floor(Math.random() * 100000),
+                                    },
                                   ])
                                 }
                               >
@@ -131,6 +140,8 @@ export default function ConversationFilterSlideOver(props) {
                         </div>
                       </div>
                     </div>
+
+                    {JSON.stringify(conditionItems)}
                     <div className="flex justify-end flex-shrink-0 px-4 py-4">
                       <button
                         type="button"

@@ -21,9 +21,12 @@ export default function LitACLItem(props) {
         <Selector
           items={contractTypeItems}
           selected={selected}
-          onSelected={(item) =>
+          onSelected={(item) => {
             props.onUpdate({ key: 'contractType', value: item.id })
-          }
+            if (item.id === 'ETH') {
+              props.onUpdate({ key: 'contractAddress', value: '' })
+            }
+          }}
         ></Selector>
       </div>
       <input
@@ -51,6 +54,7 @@ export default function LitACLItem(props) {
         name="number"
         type="number"
         value={props.number}
+        min="0"
         onChange={(e) =>
           props.onUpdate({ key: 'number', value: e.target.value })
         }
@@ -59,7 +63,7 @@ export default function LitACLItem(props) {
       />
       <MinusCircleIcon
         className="w-6 h-6 text-red-500 hover:cursor-pointer"
-        onClick={() => props.onDelete()}
+        onClick={() => props.onDelete(props.id)}
       />
     </div>
   )

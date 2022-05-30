@@ -4,6 +4,9 @@ import useXmtp from '../hooks/useXmtp'
 import {
   CyberConnectContext,
   CyberConnectContextType,
+  BooleanLogic,
+  ConditionItem,
+  booleanLogicItems,
 } from '../contexts/cyberConnect'
 import { GET_IDENTITY } from '../gql/GET_IDENTITY'
 
@@ -22,7 +25,11 @@ const client = new ApolloClient({
 })
 
 export const CyberConnectProvider: React.FC = ({ children }) => {
-  const [filterBy, setFilterBy] = useState<string>()
+  const [filterBy, setFilterBy] = useState<string>('Friends')
+  const [booleanLogic, setBooleanLogic] = useState<BooleanLogic>(
+    booleanLogicItems[0]
+  )
+  const [conditionItems, setConditionItems] = useState<ConditionItem>([])
   const [categoryBy, setCategoryBy] = useState<string>()
   const [identity, setIdentity] = useState<any>()
   const { walletAddress, conversations } = useXmtp()
@@ -88,8 +95,12 @@ export const CyberConnectProvider: React.FC = ({ children }) => {
   )
   const [providerState, setProviderState] = useState<CyberConnectContextType>({
     filterBy,
+    booleanLogic,
+    conditionItems,
     categoryBy,
     identity,
+    setBooleanLogic,
+    setConditionItems,
     updateFilterBy,
     updateCategoryBy,
     updateIdentity,
@@ -99,18 +110,26 @@ export const CyberConnectProvider: React.FC = ({ children }) => {
   useEffect(() => {
     setProviderState({
       filterBy,
+      booleanLogic,
+      conditionItems,
       categoryBy,
       identity,
       updateFilterBy,
+      setBooleanLogic,
+      setConditionItems,
       updateCategoryBy,
       updateIdentity,
       filterConversations,
     })
   }, [
     filterBy,
+    booleanLogic,
+    conditionItems,
     categoryBy,
     identity,
     updateFilterBy,
+    setBooleanLogic,
+    setConditionItems,
     updateCategoryBy,
     updateIdentity,
     filterConversations,
