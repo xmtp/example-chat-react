@@ -55,7 +55,7 @@ const useConversation = (
   useEffect(() => {
     const streamMessages = async () => {
       if (!conversation) return
-      const stream = conversation.streamMessages()
+      const stream = await conversation.streamMessages()
       setStream(stream)
       for await (const msg of stream) {
         if (dispatchMessages) {
