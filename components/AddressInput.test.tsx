@@ -25,6 +25,7 @@ describe('AddressInput', () => {
   })
 
   it('renders lookup for initial value', async () => {
+    let input: HTMLInputElement | null
     act(() => {
       const { container } = render(
         <AddressInput
@@ -32,12 +33,13 @@ describe('AddressInput', () => {
           lookupAddress={lookupAddress}
         />
       )
-      const input = container.querySelector('input')
-      waitFor(() => expect(input).toHaveAttribute('value', 'foo.eth'))
+      input = container.querySelector('input')
     })
+    waitFor(() => expect(input).toHaveAttribute('value', 'foo.eth'))
   })
 
   it('renders lookup for changed value', async () => {
+    let input: HTMLInputElement | null
     act(() => {
       const rerenderWithInputValue = (value: string) =>
         rerender(
@@ -58,11 +60,11 @@ describe('AddressInput', () => {
           }}
         />
       )
-      const input = container.querySelector('input')
+      input = container.querySelector('input')
       assert.ok(input)
       expect(input).toHaveAttribute('value', '0xbar')
       fireEvent.change(input, { target: { value: '0xfoo' } })
-      waitFor(() => expect(input).toHaveAttribute('value', 'foo.eth'))
     })
+    waitFor(() => expect(input).toHaveAttribute('value', 'foo.eth'))
   })
 })
