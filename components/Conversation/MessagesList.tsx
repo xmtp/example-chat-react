@@ -96,7 +96,10 @@ const MessagesList = ({
               const dateHasChanged = !isOnSameDay(lastMessageDate, msg.sent)
               lastMessageDate = msg.sent
               return dateHasChanged
-                ? [<DateDivider date={msg.sent} key={msg.id} />, tile]
+                ? [
+                    <DateDivider date={msg.sent} key={msg.sent?.toString()} />,
+                    tile,
+                  ]
                 : tile
             })}
             <div ref={messagesEndRef} />
