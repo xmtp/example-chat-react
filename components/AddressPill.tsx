@@ -30,7 +30,8 @@ const AddressPill = ({
         userIsSender ? 'bg-bt-100 text-b-600' : 'bg-zinc-50',
         userIsSender ? 'border-bt-300' : 'border-gray-300'
       )}
-      address={isHacked ? address + ' (hacked)' : address}
+      address={address}
+      hacked={isHacked}
       lookupAddress={lookupAddress}
     ></Address>
   )

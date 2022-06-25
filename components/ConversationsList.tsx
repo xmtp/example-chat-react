@@ -9,6 +9,7 @@ import { Message } from '@xmtp/xmtp-js'
 import useWallet from '../hooks/useWallet'
 import Avatar from './Avatar'
 import { useContext } from 'react'
+import useIsBurned from '../hooks/useIsBurned'
 
 type ConversationsListProps = {
   conversations: Conversation[]
@@ -32,6 +33,9 @@ const ConversationTile = ({
   const { messages } = useConversation(conversation.peerAddress)
   const latestMessage = getLatestMessage(messages)
   const path = `/dm/${conversation.peerAddress}`
+
+  const isHacked = useIsBurned(conversation.peerAddress)
+
   if (!latestMessage) {
     return null
   }
@@ -65,6 +69,7 @@ const ConversationTile = ({
                 address={conversation.peerAddress}
                 className="text-black text-lg md:text-md font-bold place-self-start"
                 lookupAddress={lookupAddress}
+                hacked={isHacked}
               />
               <span
                 className={classNames(

@@ -1,10 +1,10 @@
 import { Message } from '@xmtp/xmtp-js'
-import React, { MutableRefObject, useEffect, useState } from 'react'
+import React, { MutableRefObject } from 'react'
 import Emoji from 'react-emoji-render'
 import Avatar from '../Avatar'
 import { formatTime } from '../../helpers'
 import AddressPill from '../AddressPill'
-import axios from 'axios'
+import useIsBurned from '../../hooks/useIsBurned'
 
 export type MessageListProps = {
   messages: Message[]
@@ -80,40 +80,15 @@ const ConversationBeginningNotice = (): JSX.Element => (
   </div>
 )
 
-export type IsBurnedResponse = {
-  msg?: string
-  hacked?: boolean
-}
-
-const checkIsBurned = async (address: string, chain = 'rinkeby') => {
-  const result = await axios.get(
-    `https://burnmywallet.com/api/isBurned?address=${address}&chain=${chain}`
-  )
-  console.log('handleSearch after api call', result.data)
-
-  const data = result.data as IsBurnedResponse
-
-  return data.hacked
-}
-
 const MessagesList = ({
   messages,
   walletAddress,
   messagesEndRef,
 }: MessageListProps): JSX.Element => {
   let lastMessageDate: Date | undefined
-  const [isHacked, setIsHacked] = useState(false)
-
-  const isHackedEffect = async (senderAddress: string) => {
-    const result = await checkIsBurned(senderAddress)
-    if (result) {
-      setIsHacked(result)
-    }
-  }
-
-  useEffect(() => {
-    messages[0] && isHackedEffect(messages[0].senderAddress as string)
-  }, [])
+  const isHacked = useIsBurned(
+    messages[0] && (messages[0].senderAddress as string)
+  )
 
   return (
     <div className="flex-grow flex">
