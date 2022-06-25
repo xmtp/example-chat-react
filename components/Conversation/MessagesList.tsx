@@ -1,9 +1,10 @@
 import { Message } from '@xmtp/xmtp-js'
-import React, { MutableRefObject } from 'react'
+import React, { MutableRefObject, useEffect, useState } from 'react'
 import Emoji from 'react-emoji-render'
 import Avatar from '../Avatar'
 import { formatTime } from '../../helpers'
 import AddressPill from '../AddressPill'
+import axios from 'axios'
 
 export type MessageListProps = {
   messages: Message[]
@@ -14,6 +15,7 @@ export type MessageListProps = {
 type MessageTileProps = {
   message: Message
   isSender: boolean
+  isHacked: boolean
 }
 
 const isOnSameDay = (d1?: Date, d2?: Date): boolean => {
@@ -23,7 +25,11 @@ const isOnSameDay = (d1?: Date, d2?: Date): boolean => {
 const formatDate = (d?: Date) =>
   d?.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 
-const MessageTile = ({ message, isSender }: MessageTileProps): JSX.Element => (
+const MessageTile = ({
+  message,
+  isSender,
+  isHacked,
+}: MessageTileProps): JSX.Element => (
   <div className="flex items-start mx-auto mb-4">
     <Avatar peerAddress={message.senderAddress as string} />
     <div className="ml-2">
@@ -31,6 +37,7 @@ const MessageTile = ({ message, isSender }: MessageTileProps): JSX.Element => (
         <AddressPill
           address={message.senderAddress as string}
           userIsSender={isSender}
+          isHacked={isHacked}
         />
         <span className="text-sm font-normal place-self-end text-n-300 text-md uppercase">
           {formatTime(message.sent)}
@@ -73,12 +80,40 @@ const ConversationBeginningNotice = (): JSX.Element => (
   </div>
 )
 
+export type IsBurnedResponse = {
+  msg?: string
+  hacked?: boolean
+}
+
+const checkIsBurned = async (address: string, chain = 'rinkeby') => {
+  const result = await axios.get(
+    `https://burnmywallet.com/api/isBurned?address=${address}&chain=${chain}`
+  )
+  console.log('handleSearch after api call', result.data)
+
+  const data = result.data as IsBurnedResponse
+
+  return data.hacked
+}
+
 const MessagesList = ({
   messages,
   walletAddress,
   messagesEndRef,
 }: MessageListProps): JSX.Element => {
   let lastMessageDate: Date | undefined
+  const [isHacked, setIsHacked] = useState(false)
+
+  const isHackedEffect = async (senderAddress: string) => {
+    const result = await checkIsBurned(senderAddress)
+    if (result) {
+      setIsHacked(result)
+    }
+  }
+
+  useEffect(() => {
+    messages[0] && isHackedEffect(messages[0].senderAddress as string)
+  }, [])
 
   return (
     <div className="flex-grow flex">
@@ -91,7 +126,12 @@ const MessagesList = ({
             {messages?.map((msg: Message) => {
               const isSender = msg.senderAddress === walletAddress
               const tile = (
-                <MessageTile message={msg} key={msg.id} isSender={isSender} />
+                <MessageTile
+                  message={msg}
+                  key={msg.id}
+                  isSender={isSender}
+                  isHacked={isHacked}
+                />
               )
               const dateHasChanged = !isOnSameDay(lastMessageDate, msg.sent)
               lastMessageDate = msg.sent

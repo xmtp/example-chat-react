@@ -6,11 +6,13 @@ import useWallet from '../hooks/useWallet'
 type addressPillProps = {
   address: string
   userIsSender: boolean
+  isHacked: boolean
 }
 
 const AddressPill = ({
   address,
   userIsSender,
+  isHacked,
 }: addressPillProps): JSX.Element => {
   const { lookupAddress } = useWallet()
 
@@ -24,10 +26,11 @@ const AddressPill = ({
         'px-2',
         'py-1',
         'font-bold',
+        'color-red',
         userIsSender ? 'bg-bt-100 text-b-600' : 'bg-zinc-50',
         userIsSender ? 'border-bt-300' : 'border-gray-300'
       )}
-      address={address}
+      address={isHacked ? address + ' (hacked)' : address}
       lookupAddress={lookupAddress}
     ></Address>
   )
