@@ -35,14 +35,13 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
     <div
       className={classNames(
         'sticky',
-        'bottom-3 md:bottom-2',
-        'z-10',
+        'bottom-0',
+        'pl-4',
+        'pt-2',
         'flex-shrink-0',
         'flex',
-        'h-16',
-        'bg-white',
-
-        messageComposerStyles.container
+        'h-[68px]',
+        'bg-white'
       )}
     >
       <form
