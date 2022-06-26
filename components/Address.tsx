@@ -4,6 +4,7 @@ import { classNames } from '../helpers'
 type AddressProps = {
   address: string
   className?: string
+  hacked?: boolean
   lookupAddress?: (address: string) => Promise<string | undefined>
 }
 
@@ -15,6 +16,7 @@ const shortAddress = (addr: string): string =>
 const Address = ({
   address,
   className,
+  hacked,
   lookupAddress,
 }: AddressProps): JSX.Element => {
   const [name, setName] = useState<string>()
@@ -29,6 +31,7 @@ const Address = ({
 
   return (
     <span className={classNames(className || '', 'font-mono')} title={address}>
+      {hacked ? <span style={{ color: 'red' }}>HACKED</span> : null}
       {name || shortAddress(address)}
     </span>
   )
