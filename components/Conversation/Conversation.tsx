@@ -23,13 +23,14 @@ const Conversation = ({
     scrollToMessagesEndRef
   )
 
+  const hasMessages = messages.length > 0
   useEffect(() => {
-    if (!messages) return
+    if (!hasMessages) return
     const initScroll = () => {
       scrollToMessagesEndRef()
     }
     initScroll()
-  }, [recipientWalletAddr, messages, scrollToMessagesEndRef])
+  }, [recipientWalletAddr, hasMessages, scrollToMessagesEndRef])
 
   if (!recipientWalletAddr || !walletAddress || !client) {
     return <div />
