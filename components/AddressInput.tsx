@@ -57,7 +57,7 @@ const AddressInput = ({
 
   const recipientPillInputStyle = classNames(
     'absolute',
-    'top-[4px] md:top-[3px]',
+    'top-[4px] md:top-[2px]',
     'left-[26px] md:left-[23px]',
     'rounded-2xl',
     'px-[5px] md:px-2',

@@ -105,9 +105,9 @@ const RecipientControl = ({
   }
 
   return (
-    <div className="flex-1 flex-col flex h-14 bg-zinc-50 md:border md:border-gray-200 md:rounded-lg md:px-4 md:mx-4 md:mt-4 md:pb-1 md:mb-2">
+    <div className="flex-1 flex-col shrink justify-center flex h-[72px] bg-zinc-50 md:border-b md:border-gray-200 md:px-4 md:pb-[2px]">
       <form
-        className="w-full flex pl-2 md:pl-0 h-full pt-1"
+        className="w-full flex pl-2 md:pl-0 h-8 pt-1"
         action="#"
         method="GET"
         onSubmit={handleSubmit}
