@@ -18,7 +18,7 @@ const Avatar = ({ peerAddress }: AvatarProps) => {
     return (
       <img
         src={avatarUrl}
-        className="w-10 h-10 rounded-full"
+        className="w-10 h-10 rounded-full border"
         alt={peerAddress}
       />
     )
