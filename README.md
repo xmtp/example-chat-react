@@ -46,7 +46,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ### Wallet Connections
 
-[`Web3Modal`](https://github.com/Web3Modal/web3modal) is used to inject a Metamask, Coinbase Wallet, or WalletConnect provider through [`ethers`](https://docs.ethers.io/v5/). Methods for connecting and disconnecting are included in **WalletProvider** alongside the provider, signer, wallet address, and ENS utilities.
+[`Web3Modal`](https://github.com/Web3Modal/web3modal) is used to inject a Metamask, Coinbase Wallet, or WalletConnect provider through [`ethers`](https://docs.ethers.io/v5/). Methods for connecting and disconnecting are included in `WalletProvider` alongside the provider, signer, wallet address, and ENS utilities.
 
 To use the application's chat functionality, the connected wallet must provide two signatures:
 
@@ -55,13 +55,13 @@ To use the application's chat functionality, the connected wallet must provide t
 
 ### Chat Conversations
 
-The application uses the `xmtp-js` [Conversations](https://github.com/xmtp/xmtp-js#conversations) abstraction to list the available conversations for a connected wallet and to listen for or create new conversations. For each conversation, the application gets existing messages and listens for or creates new messages. Conversations and messages are kept in a lightweight store and made available through **XmtpProvider**.
+The application uses the `xmtp-js` [Conversations](https://github.com/xmtp/xmtp-js#conversations) abstraction to list the available conversations for a connected wallet and to listen for or create new conversations. For each conversation, the application gets existing messages and listens for or creates new messages. Conversations and messages are kept in a lightweight store and made available through `XmtpProvider`.
 
 ### Considerations
 
 Here are some important considerations when working with the example chat application:
 
-- The application sends and receives messages using the XMTP `dev` network environment. You may [configure the client](https://github.com/xmtp/xmtp-js#configuring-the-client) in **XmtpProvider** to use the `production` network environment.
+- The application sends and receives messages using the XMTP `dev` network environment. You may [configure the client](https://github.com/xmtp/xmtp-js#configuring-the-client) in `XmtpProvider` to use the `production` network environment.
      - XMTP may occasionally delete messages and keys from the `dev` network, and will provide advance notice in the XMTP Discord community ([request access](https://xmtp.typeform.com/to/yojTJarb?utm_source=docs_home)).
 - You can't yet send a message to a wallet address that hasn't used XMTP. The client displays an error when it looks up an address that doesn't have an identity broadcast on the XMTP network.
    - This limitation will soon be resolved by improvements to the `xmtp-js` library that will allow messages to be created and stored for future delivery, even if the recipient hasn't used XMTP yet.
