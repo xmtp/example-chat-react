@@ -4,7 +4,6 @@ import useEns from '../hooks/useEns'
 type AddressProps = {
   address: string
   className?: string
-  lookupAddress?: (address: string) => Promise<string | undefined>
 }
 
 const shortAddress = (addr: string): string =>

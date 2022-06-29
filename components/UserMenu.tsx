@@ -4,7 +4,6 @@ import { Fragment, useCallback } from 'react'
 import { classNames } from '../helpers'
 import Blockies from 'react-blockies'
 import Address from './Address'
-import useWallet from '../hooks/useWallet'
 import useXmtp from '../hooks/useXmtp'
 import useEns from '../hooks/useEns'
 
@@ -69,7 +68,6 @@ const NotConnected = ({ onConnect }: UserMenuProps): JSX.Element => {
 
 const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
   const { walletAddress, client } = useXmtp()
-  const { lookupAddress } = useWallet()
 
   const onClickCopy = useCallback(() => {
     if (walletAddress) {
@@ -102,7 +100,6 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                       <Address
                         address={walletAddress}
                         className="text-md leading-4 font-semibold text-white ml-3"
-                        lookupAddress={lookupAddress}
                       />
                     </div>
                   </>
