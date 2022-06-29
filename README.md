@@ -10,7 +10,7 @@
 
 This application is built with React, [Next.js](https://nextjs.org/), and the [`xmtp-js` client SDK](https://github.com/xmtp/xmtp-js).
 
-Use the application to send and receive messages using the XMTP `dev` network environment, with some [notable considerations](#considerations).
+Use the application to send and receive messages using the XMTP `dev` network environment, with some [important considerations](#considerations).
 
 This application is maintained by [XMTP Labs](https://xmtp.com) and distributed under [MIT License](./LICENSE) for learning about and developing applications built with XMTP, a messaging protocol and decentralized communication network for blockchain wallets. The application has not undergone a formal security audit.
 
