@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
 import { classNames } from '../helpers'
+import useEns from '../hooks/useEns'
 
 type AddressProps = {
   address: string
@@ -12,23 +12,18 @@ const shortAddress = (addr: string): string =>
     ? `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`
     : addr
 
-const Address = ({
-  address,
-  className,
-  lookupAddress,
-}: AddressProps): JSX.Element => {
-  const [name, setName] = useState<string>()
-
-  useEffect(() => {
-    if (!lookupAddress) return
-    const initName = async () => {
-      setName(await lookupAddress(address))
-    }
-    initName()
-  }, [address, lookupAddress])
+const Address = ({ address, className }: AddressProps): JSX.Element => {
+  const { name, loading } = useEns(address)
 
   return (
-    <span className={classNames(className || '', 'font-mono')} title={address}>
+    <span
+      className={classNames(
+        className || '',
+        'font-mono',
+        loading ? 'animate-pulse' : ''
+      )}
+      title={address}
+    >
       {name || shortAddress(address)}
     </span>
   )

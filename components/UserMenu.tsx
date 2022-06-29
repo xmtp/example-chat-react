@@ -6,6 +6,7 @@ import Blockies from 'react-blockies'
 import Address from './Address'
 import useWallet from '../hooks/useWallet'
 import useXmtp from '../hooks/useXmtp'
+import useEns from '../hooks/useEns'
 
 type UserMenuProps = {
   onConnect?: () => Promise<void>
@@ -14,11 +15,28 @@ type UserMenuProps = {
 
 type AvatarBlockProps = {
   walletAddress: string
+  avatarUrl?: string
 }
 
-const AvatarBlock = ({ walletAddress }: AvatarBlockProps) => (
-  <Blockies seed={walletAddress} size={8} className="rounded-full mr-2" />
-)
+const AvatarBlock = ({ walletAddress }: AvatarBlockProps) => {
+  const { avatarUrl, loading } = useEns(walletAddress)
+  if (loading) {
+    return (
+      <div className="animate-pulse flex">
+        <div className="rounded-full bg-n-200 h-8 w-8 mr-2"></div>
+      </div>
+    )
+  }
+  return avatarUrl ? (
+    <img
+      className={'rounded-full bg-n-200 h-8 w-8 mr-2'}
+      src={avatarUrl}
+      alt={walletAddress}
+    />
+  ) : (
+    <Blockies seed={walletAddress} size={8} className="rounded-full mr-2" />
+  )
+}
 
 const NotConnected = ({ onConnect }: UserMenuProps): JSX.Element => {
   return (
