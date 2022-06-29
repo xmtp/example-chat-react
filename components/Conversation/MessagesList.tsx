@@ -4,10 +4,10 @@ import Emoji from 'react-emoji-render'
 import Avatar from '../Avatar'
 import { formatTime } from '../../helpers'
 import AddressPill from '../AddressPill'
+import { useAccount } from 'wagmi'
 
 export type MessageListProps = {
   messages: Message[]
-  walletAddress: string | undefined
   messagesEndRef: MutableRefObject<null>
 }
 
@@ -25,7 +25,7 @@ const formatDate = (d?: Date) =>
 
 const MessageTile = ({ message, isSender }: MessageTileProps): JSX.Element => (
   <div className="flex items-start mx-auto mb-4">
-    <Avatar peerAddress={message.senderAddress as string} />
+    <Avatar addressOrName={message.senderAddress as string} />
     <div className="ml-2">
       <div>
         <AddressPill
@@ -75,11 +75,10 @@ const ConversationBeginningNotice = (): JSX.Element => (
 
 const MessagesList = ({
   messages,
-  walletAddress,
   messagesEndRef,
 }: MessageListProps): JSX.Element => {
+  const { data: account } = useAccount()
   let lastMessageDate: Date | undefined
-
   return (
     <div className="flex-grow flex">
       <div className="pb-6 md:pb-0 w-full flex flex-col self-end">
@@ -89,7 +88,7 @@ const MessagesList = ({
               <ConversationBeginningNotice />
             ) : null}
             {messages?.map((msg: Message) => {
-              const isSender = msg.senderAddress === walletAddress
+              const isSender = msg.senderAddress === account?.address
               const tile = (
                 <MessageTile message={msg} key={msg.id} isSender={isSender} />
               )

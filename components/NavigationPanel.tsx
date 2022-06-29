@@ -4,16 +4,9 @@ import { ArrowSmRightIcon } from '@heroicons/react/solid'
 import useXmtp from '../hooks/useXmtp'
 import ConversationsList from './ConversationsList'
 import Loader from './Loader'
+import { ConnectButton as RKConnectButton } from '@rainbow-me/rainbowkit'
 
-type NavigationPanelProps = {
-  onConnect: () => Promise<void>
-}
-
-type ConnectButtonProps = {
-  onConnect: () => Promise<void>
-}
-
-const NavigationPanel = ({ onConnect }: NavigationPanelProps): JSX.Element => {
+const NavigationPanel = (): JSX.Element => {
   const { walletAddress } = useXmtp()
 
   return (
@@ -22,7 +15,7 @@ const NavigationPanel = ({ onConnect }: NavigationPanelProps): JSX.Element => {
         <ConversationsPanel />
       ) : (
         <NoWalletConnectedMessage>
-          <ConnectButton onConnect={onConnect} />
+          <ConnectButton />
         </NoWalletConnectedMessage>
       )}
     </div>
@@ -49,17 +42,23 @@ const NoWalletConnectedMessage: React.FC = ({ children }) => {
   )
 }
 
-const ConnectButton = ({ onConnect }: ConnectButtonProps): JSX.Element => {
+const ConnectButton = (): JSX.Element => {
   return (
-    <button
-      onClick={onConnect}
-      className="rounded border border-l-300 mx-auto my-4 text-l-300 hover:text-white hover:bg-l-400 hover:border-l-400 hover:fill-white focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-n-100 focus-visible:outline-none active:bg-l-500 active:border-l-500 active:text-l-100 active:ring-0"
-    >
-      <div className="flex items-center justify-center text-xs font-semibold px-4 py-1">
-        Connect your wallet
-        <ArrowSmRightIcon className="h-4" />
-      </div>
-    </button>
+    <RKConnectButton.Custom>
+      {({ openConnectModal }) => {
+        return (
+          <button
+            onClick={openConnectModal}
+            className="rounded border border-l-300 mx-auto my-4 text-l-300 hover:text-white hover:bg-l-400 hover:border-l-400 hover:fill-white focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-n-100 focus-visible:outline-none active:bg-l-500 active:border-l-500 active:text-l-100 active:ring-0"
+          >
+            <div className="flex items-center justify-center text-xs font-semibold px-4 py-1">
+              Connect your wallet
+              <ArrowSmRightIcon className="h-4" />
+            </div>
+          </button>
+        )
+      }}
+    </RKConnectButton.Custom>
   )
 }
 

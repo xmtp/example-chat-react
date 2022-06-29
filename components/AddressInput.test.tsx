@@ -4,8 +4,8 @@ import { waitFor } from '@testing-library/dom'
 import AddressInput from './AddressInput'
 import assert from 'assert'
 
-const lookupAddress = async (address: string) =>
-  address === '0xfoo' ? 'foo.eth' : undefined
+// const lookupAddress = async (address: string) =>
+//   address === '0xfoo' ? 'foo.eth' : undefined
 
 describe('AddressInput', () => {
   it('renders no initial value', () => {
@@ -17,9 +17,7 @@ describe('AddressInput', () => {
 
   it('renders initial value', () => {
     act(() => {
-      const { container } = render(
-        <AddressInput recipientWalletAddress={'0xfoo'} />
-      )
+      const { container } = render(<AddressInput peerAddressOrName={'0xfoo'} />)
       expect(container.querySelector('input')).toHaveAttribute('value', '0xfoo')
     })
   })
@@ -27,12 +25,7 @@ describe('AddressInput', () => {
   it('renders lookup for initial value', async () => {
     let input: HTMLInputElement | null
     act(() => {
-      const { container } = render(
-        <AddressInput
-          recipientWalletAddress={'0xfoo'}
-          lookupAddress={lookupAddress}
-        />
-      )
+      const { container } = render(<AddressInput peerAddressOrName={'0xfoo'} />)
       input = container.querySelector('input')
     })
     waitFor(() => expect(input).toHaveAttribute('value', 'foo.eth'))
@@ -42,16 +35,10 @@ describe('AddressInput', () => {
     let input: HTMLInputElement | null
     act(() => {
       const rerenderWithInputValue = (value: string) =>
-        rerender(
-          <AddressInput
-            recipientWalletAddress={value}
-            lookupAddress={lookupAddress}
-          />
-        )
+        rerender(<AddressInput peerAddressOrName={value} />)
       const { container, rerender } = render(
         <AddressInput
-          recipientWalletAddress={'0xbar'}
-          lookupAddress={lookupAddress}
+          peerAddressOrName={'0xbar'}
           onInputChange={async (event: React.SyntheticEvent) => {
             const data = event.target as typeof event.target & {
               value: string

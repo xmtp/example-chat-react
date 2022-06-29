@@ -4,23 +4,33 @@ import { Fragment, useCallback } from 'react'
 import { classNames } from '../helpers'
 import Blockies from 'react-blockies'
 import Address from './Address'
-import useWallet from '../hooks/useWallet'
 import useXmtp from '../hooks/useXmtp'
+import { useEnsAvatar } from 'wagmi'
+import { ConnectButton as RKConnectButton } from '@rainbow-me/rainbowkit'
 
 type UserMenuProps = {
   onConnect?: () => Promise<void>
-  onDisconnect?: () => Promise<void>
+  onDisconnect?: () => void
 }
 
 type AvatarBlockProps = {
-  walletAddress: string
+  addressOrName: string
 }
 
-const AvatarBlock = ({ walletAddress }: AvatarBlockProps) => (
-  <Blockies seed={walletAddress} size={8} className="rounded-full mr-2" />
-)
+const AvatarBlock = ({ addressOrName }: AvatarBlockProps) => {
+  const { data: ensAvatar } = useEnsAvatar({ addressOrName })
+  return ensAvatar ? (
+    <img
+      className={'rounded-full h-8 w-8 mr-2'}
+      src={ensAvatar}
+      alt={addressOrName}
+    />
+  ) : (
+    <Blockies seed={addressOrName} size={8} className="rounded-full mr-2" />
+  )
+}
 
-const NotConnected = ({ onConnect }: UserMenuProps): JSX.Element => {
+const NotConnected = (): JSX.Element => {
   return (
     <>
       <div>
@@ -28,30 +38,36 @@ const NotConnected = ({ onConnect }: UserMenuProps): JSX.Element => {
           <div className="bg-y-100 rounded-full h-2 w-2 mr-1"></div>
           <p className="text-sm font-bold text-y-100">You are not connected.</p>
         </div>
-
-        <a onClick={onConnect}>
-          <p className="text-sm font-normal text-y-100 hover:text-y-200 ml-3 cursor-pointer">
-            Sign in with your wallet
-          </p>
-        </a>
+        <RKConnectButton.Custom>
+          {({ openConnectModal }) => (
+            <a onClick={openConnectModal}>
+              <p className="text-sm font-normal text-y-100 hover:text-y-200 ml-3 cursor-pointer">
+                Sign in with your wallet
+              </p>
+            </a>
+          )}
+        </RKConnectButton.Custom>
       </div>
-      <button
-        className="max-w-xs flex items-center text-sm rounded focus:outline-none"
-        onClick={onConnect}
-      >
-        <span className="sr-only">Connect</span>
-        <CogIcon
-          className="h-6 w-6 md:h-5 md:w-5 fill-n-100 hover:fill-n-200"
-          aria-hidden="true"
-        />
-      </button>
+      <RKConnectButton.Custom>
+        {({ openConnectModal }) => (
+          <button
+            className="max-w-xs flex items-center text-sm rounded focus:outline-none"
+            onClick={openConnectModal}
+          >
+            <span className="sr-only">Connect</span>
+            <CogIcon
+              className="h-6 w-6 md:h-5 md:w-5 fill-n-100 hover:fill-n-200"
+              aria-hidden="true"
+            />
+          </button>
+        )}
+      </RKConnectButton.Custom>
     </>
   )
 }
 
-const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
+const UserMenu = ({ onDisconnect }: UserMenuProps): JSX.Element => {
   const { walletAddress, client } = useXmtp()
-  const { lookupAddress } = useWallet()
 
   const onClickCopy = useCallback(() => {
     if (walletAddress) {
@@ -73,7 +89,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
               >
                 {client ? (
                   <>
-                    <AvatarBlock walletAddress={walletAddress} />
+                    <AvatarBlock addressOrName={walletAddress} />
                     <div className="flex flex-col">
                       <div className="flex items-center">
                         <div className="bg-g-100 rounded h-2 w-2 mr-1"></div>
@@ -84,7 +100,6 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                       <Address
                         address={walletAddress}
                         className="text-md leading-4 font-semibold text-white ml-3"
-                        lookupAddress={lookupAddress}
                       />
                     </div>
                   </>
@@ -160,7 +175,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
           )}
         </Menu>
       ) : (
-        <NotConnected onConnect={onConnect} />
+        <NotConnected />
       )}
     </div>
   )

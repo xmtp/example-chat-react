@@ -3,7 +3,6 @@ import useXmtp from '../hooks/useXmtp'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
-import useWallet from '../hooks/useWallet'
 import { NavigationView, ConversationView } from './Views'
 import { RecipientControl } from './Conversation'
 import NewMessageButton from './NewMessageButton'
@@ -11,6 +10,7 @@ import NavigationPanel from './NavigationPanel'
 import XmtpInfoPanel from './XmtpInfoPanel'
 import UserMenu from './UserMenu'
 import BackArrow from './BackArrow'
+import { useDisconnect, useSigner } from 'wagmi'
 
 const NavigationColumnLayout: React.FC = ({ children }) => (
   <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
@@ -37,11 +37,11 @@ const TopBarLayout: React.FC = ({ children }) => (
 
 const ConversationLayout: React.FC = ({ children }) => {
   const router = useRouter()
-  const recipientWalletAddress = router.query.recipientWalletAddr as string
+  const peerAddressOrName = router.query.peerAddressOrName as string
 
   const handleSubmit = useCallback(
-    async (address: string) => {
-      router.push(address ? `/dm/${address}` : '/dm/')
+    async (peerAddressOrName: string) => {
+      router.push(peerAddressOrName ? `/dm/${peerAddressOrName}` : '/dm/')
     },
     [router]
   )
@@ -57,7 +57,7 @@ const ConversationLayout: React.FC = ({ children }) => {
           <BackArrow onClick={handleBackArrowClick} />
         </div>
         <RecipientControl
-          recipientWalletAddress={recipientWalletAddress}
+          peerAddressOrName={peerAddressOrName}
           onSubmit={handleSubmit}
         />
       </TopBarLayout>
@@ -74,21 +74,15 @@ const Layout: React.FC = ({ children }) => {
     client,
   } = useXmtp()
   const router = useRouter()
-  const {
-    signer,
-    connect: connectWallet,
-    disconnect: disconnectWallet,
-  } = useWallet()
 
-  const handleDisconnect = useCallback(async () => {
-    disconnectXmtp()
-    await disconnectWallet()
-    router.push('/')
-  }, [disconnectWallet, disconnectXmtp, router])
-
-  const handleConnect = useCallback(async () => {
-    await connectWallet()
-  }, [connectWallet])
+  const { disconnect } = useDisconnect({
+    onSettled() {
+      console.log('disconnect')
+      disconnectXmtp()
+      router.push('/')
+    },
+  })
+  const { data: signer } = useSigner()
 
   const usePrevious = <T,>(value: T): T | undefined => {
     const ref = useRef<T>()
@@ -100,7 +94,7 @@ const Layout: React.FC = ({ children }) => {
   const prevSigner = usePrevious(signer)
 
   useEffect(() => {
-    if (!signer && prevSigner) {
+    if ((!signer && prevSigner) || signer !== prevSigner) {
       disconnectXmtp()
     }
     if (!signer || signer === prevSigner) return
@@ -128,18 +122,15 @@ const Layout: React.FC = ({ children }) => {
             <NavigationHeaderLayout>
               {walletAddress && client && <NewMessageButton />}
             </NavigationHeaderLayout>
-            <NavigationPanel onConnect={handleConnect} />
-            <UserMenu
-              onConnect={handleConnect}
-              onDisconnect={handleDisconnect}
-            />
+            <NavigationPanel />
+            <UserMenu onDisconnect={disconnect} />
           </NavigationColumnLayout>
         </NavigationView>
         <ConversationView>
           {walletAddress && client ? (
             <ConversationLayout>{children}</ConversationLayout>
           ) : (
-            <XmtpInfoPanel onConnect={handleConnect} />
+            <XmtpInfoPanel />
           )}
         </ConversationView>
       </div>

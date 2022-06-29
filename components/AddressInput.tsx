@@ -1,59 +1,64 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react'
 import useXmtp from '../hooks/useXmtp'
 import { classNames } from '../helpers'
+import useEns from '../hooks/useEns'
 
 type AddressInputProps = {
-  recipientWalletAddress?: string
+  peerAddressOrName?: string
   id?: string
   name?: string
   className?: string
   placeholder?: string
-  lookupAddress?: (address: string) => Promise<string | undefined>
   onInputChange?: (e: React.SyntheticEvent) => Promise<void>
 }
 
 const AddressInput = ({
-  recipientWalletAddress,
+  peerAddressOrName,
   id,
   name,
   className,
   placeholder,
-  lookupAddress,
   onInputChange,
 }: AddressInputProps): JSX.Element => {
   const { walletAddress } = useXmtp()
   const inputElement = useRef(null)
-  const [value, setValue] = useState<string>(recipientWalletAddress || '')
+
+  const { ensName, address } = useEns(peerAddressOrName)
+  const [resolvedNameOrAddress, setResolvedNameOrAddress] = useState<
+    string | undefined
+  >(ensName || address)
+  const [value, setValue] = useState<string>('')
 
   const focusInputElementRef = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(inputElement.current as any)?.focus()
   }, [inputElement])
 
+  const blurInputElementRef = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(inputElement.current as any)?.blur()
+  }, [inputElement])
+
   useEffect(() => {
-    if (!recipientWalletAddress) {
+    setResolvedNameOrAddress(ensName || address)
+  }, [setResolvedNameOrAddress, ensName, address])
+
+  useEffect(() => {
+    if (resolvedNameOrAddress) {
+      setValue(resolvedNameOrAddress)
+      blurInputElementRef()
+    } else {
       focusInputElementRef()
       setValue('')
     }
-  }, [focusInputElementRef, recipientWalletAddress])
+  }, [
+    focusInputElementRef,
+    blurInputElementRef,
+    resolvedNameOrAddress,
+    peerAddressOrName,
+  ])
 
-  useEffect(() => {
-    const setLookupValue = async () => {
-      if (!lookupAddress) return
-      if (recipientWalletAddress) {
-        const name = await lookupAddress(recipientWalletAddress)
-        setValue(name || recipientWalletAddress)
-      } else if (value.startsWith('0x') && value.length === 42) {
-        const name = await lookupAddress(value)
-        if (name) {
-          setValue(name)
-        }
-      }
-    }
-    setLookupValue()
-  }, [value, recipientWalletAddress, lookupAddress])
-
-  const userIsSender = recipientWalletAddress === walletAddress
+  const userIsSender = address === walletAddress
 
   const recipientPillInputStyle = classNames(
     'absolute',
@@ -77,18 +82,19 @@ const AddressInput = ({
 
   const onAddressChange = useCallback(
     async (event: React.SyntheticEvent) => {
+      if (!onInputChange) return
       const data = event.target as typeof event.target & {
         value: string
       }
       setValue(data.value.trim())
-      onInputChange && onInputChange(event)
+      onInputChange(event)
     },
     [onInputChange]
   )
 
   return (
     <div className="relative mb-5">
-      {recipientWalletAddress && value && (
+      {peerAddressOrName && value && (
         <span className={recipientPillInputStyle}>{value}</span>
       )}
       <input
@@ -98,7 +104,7 @@ const AddressInput = ({
           className || '',
           'absolute top-0 left-0',
           userIsSender ? '!text-b-600' : '',
-          recipientWalletAddress ? '!text-md font-bold top-[2px] left-1' : ''
+          peerAddressOrName ? '!text-md font-bold top-[2px] left-1' : ''
         )}
         placeholder={placeholder}
         onChange={onAddressChange}

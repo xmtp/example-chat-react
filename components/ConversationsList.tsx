@@ -6,9 +6,9 @@ import { Conversation } from '@xmtp/xmtp-js/dist/types/src/conversations'
 import useConversation from '../hooks/useConversation'
 import { XmtpContext } from '../contexts/xmtp'
 import { Message } from '@xmtp/xmtp-js'
-import useWallet from '../hooks/useWallet'
 import Avatar from './Avatar'
 import { useContext } from 'react'
+import useEns from '../hooks/useEns'
 
 type ConversationsListProps = {
   conversations: Conversation[]
@@ -28,10 +28,10 @@ const ConversationTile = ({
   isSelected,
   onClick,
 }: ConversationTileProps): JSX.Element | null => {
-  const { lookupAddress } = useWallet()
   const { messages } = useConversation(conversation.peerAddress)
   const latestMessage = getLatestMessage(messages)
-  const path = `/dm/${conversation.peerAddress}`
+  const { ensName } = useEns(conversation.peerAddress)
+  const path = `/dm/${ensName || conversation.peerAddress}`
   if (!latestMessage) {
     return null
   }
@@ -58,13 +58,12 @@ const ConversationTile = ({
             isSelected ? 'bg-bt-200' : null
           )}
         >
-          <Avatar peerAddress={conversation.peerAddress} />
+          <Avatar addressOrName={conversation.peerAddress} />
           <div className="py-4 sm:text-left text w-full">
             <div className="grid-cols-2 grid">
               <Address
                 address={conversation.peerAddress}
                 className="text-black text-lg md:text-md font-bold place-self-start"
-                lookupAddress={lookupAddress}
               />
               <span
                 className={classNames(
@@ -95,6 +94,8 @@ const ConversationsList = ({
 }: ConversationsListProps): JSX.Element => {
   const router = useRouter()
   const { getMessages } = useContext(XmtpContext)
+  const peerAddressOrName = router.query.peerAddressOrName as string
+  const { address, ensName } = useEns(peerAddressOrName)
   const orderByLatestMessage = (
     convoA: Conversation,
     convoB: Conversation
@@ -112,7 +113,7 @@ const ConversationsList = ({
       {conversations &&
         conversations.sort(orderByLatestMessage).map((convo) => {
           const isSelected =
-            router.query.recipientWalletAddr == convo.peerAddress
+            convo.peerAddress === address || convo.peerAddress === ensName
           return (
             <ConversationTile
               key={convo.peerAddress}

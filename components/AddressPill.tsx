@@ -1,7 +1,6 @@
 import React from 'react'
 import { classNames } from '../helpers'
 import Address from './Address'
-import useWallet from '../hooks/useWallet'
 
 type addressPillProps = {
   address: string
@@ -12,8 +11,6 @@ const AddressPill = ({
   address,
   userIsSender,
 }: addressPillProps): JSX.Element => {
-  const { lookupAddress } = useWallet()
-
   return (
     <Address
       className={classNames(
@@ -28,7 +25,6 @@ const AddressPill = ({
         userIsSender ? 'border-bt-300' : 'border-gray-300'
       )}
       address={address}
-      lookupAddress={lookupAddress}
     ></Address>
   )
 }

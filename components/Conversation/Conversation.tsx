@@ -3,13 +3,14 @@ import useXmtp from '../../hooks/useXmtp'
 import useConversation from '../../hooks/useConversation'
 import { MessagesList, MessageComposer } from './'
 import Loader from '../../components/Loader'
+import useEns from '../../hooks/useEns'
 
 type ConversationProps = {
-  recipientWalletAddr: string
+  peerAddressOrName: string
 }
 
 const Conversation = ({
-  recipientWalletAddr,
+  peerAddressOrName,
 }: ConversationProps): JSX.Element => {
   const { walletAddress, client } = useXmtp()
   const messagesEndRef = useRef(null)
@@ -18,8 +19,10 @@ const Conversation = ({
     ;(messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
   }, [messagesEndRef])
 
+  const { address: peerAddress } = useEns(peerAddressOrName)
+
   const { messages, sendMessage, loading } = useConversation(
-    recipientWalletAddr,
+    peerAddress as string,
     scrollToMessagesEndRef
   )
 
@@ -30,9 +33,9 @@ const Conversation = ({
       scrollToMessagesEndRef()
     }
     initScroll()
-  }, [recipientWalletAddr, hasMessages, scrollToMessagesEndRef])
+  }, [peerAddressOrName, hasMessages, scrollToMessagesEndRef])
 
-  if (!recipientWalletAddr || !walletAddress || !client) {
+  if (!peerAddressOrName || !walletAddress || !client) {
     return <div />
   }
   if (loading && !messages?.length) {
@@ -47,11 +50,7 @@ const Conversation = ({
 
   return (
     <main className="flex flex-col flex-1 bg-white h-screen">
-      <MessagesList
-        messagesEndRef={messagesEndRef}
-        messages={messages}
-        walletAddress={walletAddress}
-      />
+      <MessagesList messagesEndRef={messagesEndRef} messages={messages} />
       {walletAddress && <MessageComposer onSend={sendMessage} />}
     </main>
   )

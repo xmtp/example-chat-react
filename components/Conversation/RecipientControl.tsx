@@ -1,10 +1,11 @@
 import { useCallback, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import AddressInput from '../AddressInput'
-import useWallet from '../../hooks/useWallet'
 import useXmtp from '../../hooks/useXmtp'
+import useEns from '../../hooks/useEns'
+
 type RecipientInputProps = {
-  recipientWalletAddress: string | undefined
+  peerAddressOrName: string | undefined
   onSubmit: (address: string) => Promise<void>
 }
 
@@ -17,81 +18,77 @@ const RecipientInputMode = {
 }
 
 const RecipientControl = ({
-  recipientWalletAddress,
+  peerAddressOrName,
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
-  const { resolveName, lookupAddress } = useWallet()
   const { client } = useXmtp()
   const router = useRouter()
   const [recipientInputMode, setRecipientInputMode] = useState(
     RecipientInputMode.InvalidEntry
   )
-  const [hasName, setHasName] = useState(false)
+  const [pendingPeerAddressOrName, setPendingPeerAddressOrName] =
+    useState<string>('')
+  const { address: pendingAddress, isLoading } = useEns(
+    pendingPeerAddressOrName
+  )
+  const { ensName: resolvedEnsName, address: resolvedAddress } =
+    useEns(peerAddressOrName)
 
   const checkIfOnNetwork = useCallback(
-    async (address: string): Promise<boolean> => {
-      return client?.canMessage(address) || false
+    async (pendingAddress: string): Promise<boolean> => {
+      return client?.canMessage(pendingAddress) || false
     },
     [client]
   )
 
-  const completeSubmit = useCallback(
-    async (address: string, input: HTMLInputElement) => {
-      if (await checkIfOnNetwork(address)) {
-        onSubmit(address)
-        input.blur()
-        setRecipientInputMode(RecipientInputMode.Submitted)
-      } else {
-        setRecipientInputMode(RecipientInputMode.NotOnNetwork)
-      }
-    },
-    [checkIfOnNetwork, setRecipientInputMode, onSubmit]
-  )
+  const completeSubmit = useCallback(async () => {
+    if (await checkIfOnNetwork(pendingAddress as string)) {
+      onSubmit(pendingPeerAddressOrName)
+      setRecipientInputMode(RecipientInputMode.Submitted)
+    } else {
+      setRecipientInputMode(RecipientInputMode.NotOnNetwork)
+    }
+  }, [checkIfOnNetwork, pendingAddress, pendingPeerAddressOrName, onSubmit])
 
   useEffect(() => {
-    const handleAddressLookup = async (address: string) => {
-      const name = await lookupAddress(address)
-      setHasName(!!name)
+    const handleRecipientInput = () => {
+      if (peerAddressOrName) {
+        setRecipientInputMode(RecipientInputMode.Submitted)
+      } else if (isLoading) {
+        setRecipientInputMode(RecipientInputMode.FindingEntry)
+      } else if (pendingPeerAddressOrName) {
+        completeSubmit()
+        setPendingPeerAddressOrName('')
+      } else {
+        setRecipientInputMode(RecipientInputMode.InvalidEntry)
+      }
     }
-    if (recipientWalletAddress) {
-      setRecipientInputMode(RecipientInputMode.Submitted)
-      handleAddressLookup(recipientWalletAddress)
-    } else {
-      setRecipientInputMode(RecipientInputMode.InvalidEntry)
-    }
-  }, [recipientWalletAddress, setRecipientInputMode, lookupAddress, setHasName])
+    handleRecipientInput()
+  }, [
+    peerAddressOrName,
+    isLoading,
+    pendingPeerAddressOrName,
+    setRecipientInputMode,
+    completeSubmit,
+  ])
 
   const handleSubmit = useCallback(
     async (e: React.SyntheticEvent, value?: string) => {
       e.preventDefault()
       const data = e.target as typeof e.target & {
-        recipient: { value: string }
+        input: { value: string }
       }
-      const input = e.target as HTMLInputElement
-      const recipientValue = value || data.recipient.value
-      if (recipientValue.endsWith('eth')) {
-        setRecipientInputMode(RecipientInputMode.FindingEntry)
-        const address = await resolveName(recipientValue)
-        if (address) {
-          await completeSubmit(address, input)
-        } else {
-          setRecipientInputMode(RecipientInputMode.InvalidEntry)
-        }
-      } else if (
-        recipientValue.startsWith('0x') &&
-        recipientValue.length === 42
-      ) {
-        await completeSubmit(recipientValue, input)
-      }
+      const inputValue = value || data.input.value
+      setPendingPeerAddressOrName(inputValue)
     },
-    [setRecipientInputMode, resolveName, completeSubmit]
+    []
   )
 
   const handleInputChange = async (e: React.SyntheticEvent) => {
     const data = e.target as typeof e.target & {
       value: string
     }
-    if (router.pathname !== '/dm') {
+    if (router.pathname !== '/dm/') {
       router.push('/dm')
     }
     if (
@@ -120,11 +117,10 @@ const RecipientControl = ({
             To:
           </div>
           <AddressInput
-            recipientWalletAddress={recipientWalletAddress}
+            peerAddressOrName={peerAddressOrName}
             id="recipient-field"
             className="block w-[95%] pl-7 pr-3 pt-[3px] md:pt-[2px] md:pt-[1px] bg-transparent caret-n-600 text-n-600 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent text-lg font-mono"
             name="recipient"
-            lookupAddress={lookupAddress}
             onInputChange={handleInputChange}
           />
           <button type="submit" className="hidden" />
@@ -133,7 +129,7 @@ const RecipientControl = ({
 
       {recipientInputMode === RecipientInputMode.Submitted ? (
         <div className="text-md text-n-300 text-sm font-mono ml-10 md:ml-8 pb-1 md:pb-[1px]">
-          {hasName ? recipientWalletAddress : <br />}
+          {resolvedEnsName ? resolvedAddress : <br />}
         </div>
       ) : (
         <div className="text-sm md:text-xs text-n-300 ml-[29px] pl-2 md:pl-0 pb-1 md:pb-[3px]">
