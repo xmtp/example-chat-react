@@ -4,8 +4,8 @@ import { Conversation } from '../../components/Conversation'
 
 const ConversationPage: NextPage = () => {
   const router = useRouter()
-  const recipientWalletAddr = router.query.recipientWalletAddr as string
-  return <Conversation recipientWalletAddr={recipientWalletAddr} />
+  const peerAddressOrName = router.query.peerAddressOrName as string
+  return <Conversation peerAddressOrName={peerAddressOrName} />
 }
 
 export default ConversationPage

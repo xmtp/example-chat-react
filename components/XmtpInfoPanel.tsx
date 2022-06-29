@@ -8,17 +8,15 @@ import {
   ChevronRightIcon,
   ArrowSmRightIcon,
 } from '@heroicons/react/solid'
+import { ConnectButton as RKConnectButton } from '@rainbow-me/rainbowkit'
 
 type XmtpInfoRowProps = {
   icon: JSX.Element
   headingText: string
   subHeadingText: string
   onClick?: (() => void) | (() => Promise<void>)
+  isConnectButton?: boolean
   disabled?: boolean
-}
-
-type XmtpInfoPanelProps = {
-  onConnect?: () => Promise<void>
 }
 
 const InfoRow = ({
@@ -26,12 +24,10 @@ const InfoRow = ({
   headingText,
   subHeadingText,
   onClick,
+  isConnectButton,
   disabled,
-}: XmtpInfoRowProps): JSX.Element => (
-  <a
-    onClick={disabled ? undefined : onClick}
-    className={disabled ? 'cursor-auto' : 'cursor-pointer'}
-  >
+}: XmtpInfoRowProps): JSX.Element => {
+  const rowContent = (
     <div
       className={classNames(
         disabled ? 'opacity-40' : '',
@@ -47,17 +43,36 @@ const InfoRow = ({
         <ChevronRightIcon className="h-5" />
       </div>
     </div>
-  </a>
-)
+  )
+  return isConnectButton ? (
+    <RKConnectButton.Custom>
+      {({ openConnectModal }) => (
+        <a
+          onClick={openConnectModal}
+          className={disabled ? 'cursor-auto' : 'cursor-pointer'}
+        >
+          {rowContent}
+        </a>
+      )}
+    </RKConnectButton.Custom>
+  ) : (
+    <a
+      onClick={disabled ? undefined : onClick}
+      className={disabled ? 'cursor-auto' : 'cursor-pointer'}
+    >
+      {rowContent}
+    </a>
+  )
+}
 
-const XmtpInfoPanel = ({ onConnect }: XmtpInfoPanelProps): JSX.Element => {
+const XmtpInfoPanel = (): JSX.Element => {
   const { walletAddress, client } = useXmtp()
   const InfoRows = [
     {
       icon: <LinkIcon />,
       headingText: 'Connect your wallet',
       subHeadingText: 'Verify your wallet to start using the XMTP protocol',
-      onClick: onConnect,
+      isConnectButton: true,
       disabled: !!walletAddress && !client,
     },
     {
@@ -96,6 +111,7 @@ const XmtpInfoPanel = ({ onConnect }: XmtpInfoPanelProps): JSX.Element => {
               headingText={info.headingText}
               subHeadingText={info.subHeadingText}
               onClick={info.onClick}
+              isConnectButton={info.isConnectButton}
               disabled={info.disabled}
             />
           )
