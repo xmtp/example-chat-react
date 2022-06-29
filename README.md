@@ -10,7 +10,7 @@
 
 This application is built with React, [Next.js](https://nextjs.org/), and the [`xmtp-js` client SDK](https://github.com/xmtp/xmtp-js).
 
-The application sends and receives messages using the XMTP `dev` network environment, with some [notable considerations](#considerations).
+Use the application to send and receive messages using the XMTP `dev` network environment, with some [notable considerations](#considerations).
 
 This application is maintained by [XMTP Labs](https://xmtp.com) and distributed under [MIT License](./LICENSE) for learning about and developing applications built with XMTP, a messaging protocol and decentralized communication network for blockchain wallets. The application has not undergone a formal security audit.
 
@@ -57,9 +57,9 @@ To use the application's chat functionality, the connected wallet must provide t
 
 The application uses the `xmtp-js` [Conversations](https://github.com/xmtp/xmtp-js#conversations) abstraction to list the available conversations for a connected wallet and to listen for or create new conversations. For each conversation, the application gets existing messages and listens for or creates new messages. Conversations and messages are kept in a lightweight store and made available through **XmtpContext** alongside the client and its methods.
 
-### Limitations
+### Considerations
 
-Here are important limitations to understand when working with the example chat application:
+Here are some important considerations when working with the example chat application:
 
 - The application sends and receives messages using the XMTP `dev` network environment.
      - XMTP may occasionally delete messages and keys from the `dev` network, and will provide advance notice in the XMTP Discord community ([request access](https://xmtp.typeform.com/to/yojTJarb?utm_source=docs_home)).
