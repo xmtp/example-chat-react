@@ -10,9 +10,9 @@
 
 This application is built with React, [Next.js](https://nextjs.org/), and the [`xmtp-js` client SDK](https://github.com/xmtp/xmtp-js).
 
-The application sends and receives messages using the XMTP `dev` network environment, with some **[notable limitations](#limitations)**.
+The application sends and receives messages using the XMTP `dev` network environment, with some [notable considerations](#considerations).
 
-This application is maintained by [XMTP Labs](https://xmtp.com) and distributed under [MIT License](./LICENSE) for learning about and developing applications built with XMTP, a messaging protocol and decentralized communication network for blockchain wallets.
+This application is maintained by [XMTP Labs](https://xmtp.com) and distributed under [MIT License](./LICENSE) for learning about and developing applications built with XMTP, a messaging protocol and decentralized communication network for blockchain wallets. The application has not undergone a formal security audit.
 
 ## Getting Started
 
@@ -61,10 +61,7 @@ The application uses the `xmtp-js` [Conversations](https://github.com/xmtp/xmtp-
 
 Here are important limitations to understand when working with the example chat application:
 
-- The application hasn't undergone a formal security audit.
 - The application sends and receives messages using the XMTP `dev` network environment.
-     - **DO NOT** send sensitive information on the `dev` network.
-     - XMTP does not regularly delete messages and keys from the `dev` network. However, because XMTP is still in active development, we might need to delete messages and keys occasionally to maintain network stability. XMTP communicates about deletions in the XMTP Discord community ([request access](https://xmtp.typeform.com/to/yojTJarb?utm_source=docs_home)), providing as much advance notice as possible.
+     - XMTP may occasionally delete messages and keys from the `dev` network, and will provide advance notice in the XMTP Discord community ([request access](https://xmtp.typeform.com/to/yojTJarb?utm_source=docs_home)).
 - You can't yet send a message to a wallet address that hasn't used XMTP. The client displays an error when it looks up an address that doesn't have an identity broadcast on the XMTP network.
-   - This limitation will soon be communicated more clearly in the application UI.
    - This limitation will soon be resolved by improvements to the `xmtp-js` library that will allow messages to be created and stored for future delivery, even if the recipient hasn't used XMTP yet.
