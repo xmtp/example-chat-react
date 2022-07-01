@@ -7,6 +7,7 @@ import { WalletContext } from '../contexts/wallet'
 
 const cachedLookupAddress = new Map<string, string | undefined>()
 const cachedResolveName = new Map<string, string | undefined>()
+const cachedGetAvatarUrl = new Map<string, string | undefined>()
 
 type WalletProviderProps = {
   children?: React.ReactNode
@@ -40,6 +41,18 @@ export const WalletProvider = ({
       const name = (await provider?.lookupAddress(address)) || undefined
       cachedLookupAddress.set(address, name)
       return name
+    },
+    [provider]
+  )
+
+  const getAvatarUrl = useCallback(
+    async (name: string) => {
+      if (cachedGetAvatarUrl.has(name)) {
+        return cachedGetAvatarUrl.get(name)
+      }
+      const avatarUrl = (await provider?.getAvatar(name)) || undefined
+      cachedGetAvatarUrl.set(name, avatarUrl)
+      return avatarUrl
     },
     [provider]
   )
@@ -154,6 +167,7 @@ export const WalletProvider = ({
         web3Modal,
         resolveName,
         lookupAddress,
+        getAvatarUrl,
         connect,
         disconnect,
       }}

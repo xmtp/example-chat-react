@@ -6,7 +6,7 @@ import { Conversation } from '@xmtp/xmtp-js/dist/types/src/conversations'
 import useConversation from '../hooks/useConversation'
 import { XmtpContext } from '../contexts/xmtp'
 import { Message } from '@xmtp/xmtp-js'
-import useWallet from '../hooks/useWallet'
+import useEns from '../hooks/useEns'
 import Avatar from './Avatar'
 import { useContext } from 'react'
 
@@ -28,8 +28,11 @@ const ConversationTile = ({
   isSelected,
   onClick,
 }: ConversationTileProps): JSX.Element | null => {
-  const { lookupAddress } = useWallet()
-  const { messages } = useConversation(conversation.peerAddress)
+  const { loading: isLoadingEns } = useEns(conversation.peerAddress)
+  const { messages, loading: isLoadingConversation } = useConversation(
+    conversation.peerAddress
+  )
+  const loading = isLoadingEns || isLoadingConversation
   const latestMessage = getLatestMessage(messages)
   const path = `/dm/${conversation.peerAddress}`
   if (!latestMessage) {
@@ -55,6 +58,7 @@ const ConversationTile = ({
             'border-b-2',
             'border-gray-100',
             'hover:bg-bt-100',
+            loading ? 'opacity-80' : 'opacity-100',
             isSelected ? 'bg-bt-200' : null
           )}
         >
@@ -64,12 +68,12 @@ const ConversationTile = ({
               <Address
                 address={conversation.peerAddress}
                 className="text-black text-lg md:text-md font-bold place-self-start"
-                lookupAddress={lookupAddress}
               />
               <span
                 className={classNames(
                   'text-lg md:text-sm font-normal place-self-end',
-                  isSelected ? 'text-n-500' : 'text-n-300'
+                  isSelected ? 'text-n-500' : 'text-n-300',
+                  loading ? 'animate-pulse' : ''
                 )}
               >
                 {formatDate(latestMessage?.sent)}
@@ -78,7 +82,8 @@ const ConversationTile = ({
             <p
               className={classNames(
                 'text-[13px] md:text-sm font-normal text-ellipsis mt-0',
-                isSelected ? 'text-n-500' : 'text-n-300'
+                isSelected ? 'text-n-500' : 'text-n-300',
+                loading ? 'animate-pulse' : ''
               )}
             >
               {latestMessage && truncate(latestMessage.content, 75)}

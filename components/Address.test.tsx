@@ -1,5 +1,6 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, act } from '@testing-library/react'
+import { waitFor } from '@testing-library/dom'
 import Address from './Address'
 
 describe('Address', () => {
@@ -13,19 +14,14 @@ describe('Address', () => {
   })
 
   it('renders lookup', async () => {
-    const { container } = render(
-      <Address
-        address={'0xfoo'}
-        lookupAddress={async (address: string) =>
-          address === '0xfoo' ? 'foo.eth' : undefined
-        }
-      />
-    )
-    await screen.findByText('foo.eth')
-    expect(container.textContent).toBe('foo.eth')
-    expect(container.querySelector('div > span')).toHaveAttribute(
-      'title',
-      '0xfoo'
-    )
+    let text: string | null
+    let span: Element | null
+    act(() => {
+      const { container } = render(<Address address={'0xfoo'} />)
+      text = container.textContent
+      span = container.querySelector('div > span')
+    })
+    waitFor(() => expect(text).toBe('foo.eth'))
+    waitFor(() => expect(span).toHaveAttribute('title', '0xfoo'))
   })
 })
