@@ -10,17 +10,20 @@ const Avatar = ({ peerAddress }: AvatarProps) => {
   if (loading) {
     return (
       <div className="animate-pulse flex">
-        <div className="rounded-full bg-gray-200 h-10 w-10"></div>
+        <div className="rounded-full bg-gray-200 h-10 w-10" />
       </div>
     )
   }
   if (avatarUrl) {
     return (
-      <img
-        src={avatarUrl}
-        className="w-10 h-10 rounded-full border"
-        alt={peerAddress}
-      />
+      <div>
+        <div className="w-10 h-10 rounded-full border border-n-80" />
+        <img
+          className="w-10 h-10 rounded-full z-10 -mt-10"
+          src={avatarUrl}
+          alt={peerAddress}
+        />
+      </div>
     )
   }
   return <Blockies seed={peerAddress} size={10} className="rounded-full" />

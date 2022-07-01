@@ -22,16 +22,19 @@ const AvatarBlock = ({ walletAddress }: AvatarBlockProps) => {
   if (loading) {
     return (
       <div className="animate-pulse flex">
-        <div className="rounded-full bg-n-200 h-8 w-8 mr-2"></div>
+        <div className="rounded-full bg-n-200 h-8 w-8 mr-2" />
       </div>
     )
   }
   return avatarUrl ? (
-    <img
-      className={'rounded-full bg-n-200 h-8 w-8 mr-2'}
-      src={avatarUrl}
-      alt={walletAddress}
-    />
+    <div>
+      <div className="rounded-full w-8 h-8 mr-2 border border-n-80" />
+      <img
+        className={'rounded-full h-8 w-8 -mt-8'}
+        src={avatarUrl}
+        alt={walletAddress}
+      />
+    </div>
   ) : (
     <Blockies seed={walletAddress} size={8} className="rounded-full mr-2" />
   )
@@ -76,7 +79,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
   }, [walletAddress])
 
   return (
-    <div className="flex bg-n-500 items-center justify-between rounded-lg h-14 m-4 mb-5 md:mb-4 px-4 drop-shadow-xl">
+    <div className="flex bg-n-500 items-center justify-between rounded-lg h-14 mx-4 mb-5 md:mb-4 px-4 drop-shadow-xl">
       {walletAddress ? (
         <Menu>
           {({ open }) => (
