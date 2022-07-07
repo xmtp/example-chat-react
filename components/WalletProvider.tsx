@@ -81,37 +81,36 @@ export const WalletProvider = ({
   )
 
   const changeNetwork = async () => {
-    if (window.ethereum.networkVersion !== chainId) {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: `0x${chainId}` }],
-        })
-        return true
-      } catch (err: any) {
-        // This error code indicates that the chain has not been added to MetaMask
-        if (err.code === 4902) {
-          try {
-            await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [
-                {
-                  chainName: 'Ethereum Mainnet',
-                  chainId: `0x${chainId}`,
-                  nativeCurrency: {
-                    name: 'Ethereum',
-                    symbol: 'ETH',
-                    decimals: 18,
-                  },
-                  rpcUrls: ['https://mainnet.infura.io/v3/'],
+    if (window.ethereum.networkVersion === chainId) return true
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: `0x${chainId}` }],
+      })
+      return true
+    } catch (err) {
+      // This error code indicates that the chain has not been added to MetaMask
+      if (err.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainName: 'Ethereum Mainnet',
+                chainId: `0x${chainId}`,
+                nativeCurrency: {
+                  name: 'Ethereum',
+                  symbol: 'ETH',
+                  decimals: 18,
                 },
-              ],
-            })
-            return true
-          } catch (err: any) {
-            console.error('Failed to setup the network in Metamask:', err)
-            return false
-          }
+                rpcUrls: ['https://mainnet.infura.io/v3/'],
+              },
+            ],
+          })
+          return true
+        } catch (err) {
+          console.error('Failed to setup the network in Metamask:', err)
+          return false
         }
       }
     }
@@ -223,3 +222,4 @@ export const WalletProvider = ({
     </WalletContext.Provider>
   )
 }
+
