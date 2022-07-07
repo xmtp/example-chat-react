@@ -15,6 +15,10 @@ type WalletProviderProps = {
   children?: React.ReactNode
 }
 
+type ErrorMsg = {
+  code?: number
+}
+
 export const WalletProvider = ({
   children,
 }: WalletProviderProps): JSX.Element => {
@@ -89,8 +93,9 @@ export const WalletProvider = ({
       })
       return true
     } catch (err) {
+      const typedError = err as unknown as ErrorMsg
       // This error code indicates that the chain has not been added to MetaMask
-      if (err.code === 4902) {
+      if (typedError?.code === 4902) {
         try {
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
@@ -222,4 +227,3 @@ export const WalletProvider = ({
     </WalletContext.Provider>
   )
 }
-
