@@ -99,7 +99,6 @@ export const WalletProvider = ({
   const connect = useCallback(async () => {
     if (!web3Modal) throw new Error('web3Modal not initialized')
     try {
-      console.log('connecting')
       const instance = await web3Modal.connect()
       if (!instance) return
       instance.on('accountsChanged', handleAccountsChanged)
@@ -190,6 +189,7 @@ export const WalletProvider = ({
         signer,
         address,
         web3Modal,
+        chainId,
         resolveName,
         lookupAddress,
         getAvatarUrl,
