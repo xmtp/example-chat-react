@@ -5,6 +5,8 @@ import WalletConnectProvider from '@walletconnect/web3-provider'
 import WalletLink from 'walletlink'
 import { WalletContext } from '../contexts/wallet'
 
+const ETH_CHAIN_ID = 1 // Ethereum mainnet
+
 const cachedLookupAddress = new Map<string, string | undefined>()
 const cachedResolveName = new Map<string, string | undefined>()
 const cachedGetAvatarUrl = new Map<string, string | undefined>()
@@ -38,6 +40,16 @@ export const WalletProvider = ({
       if (cachedLookupAddress.has(address)) {
         return cachedLookupAddress.get(address)
       }
+      if (provider) {
+        const { chainId } = await provider.getNetwork()
+        if (chainId !== ETH_CHAIN_ID) {
+          console.log(
+            'ENS lookups only available when connected to the Ethereum network'
+          )
+          return undefined
+        }
+      }
+
       const name = (await provider?.lookupAddress(address)) || undefined
       cachedLookupAddress.set(address, name)
       return name
