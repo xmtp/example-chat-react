@@ -9,6 +9,8 @@ const cachedLookupAddress = new Map<string, string | undefined>()
 const cachedResolveName = new Map<string, string | undefined>()
 const cachedGetAvatarUrl = new Map<string, string | undefined>()
 
+const chainId = 1 // Ethereum mainnet
+
 type WalletProviderProps = {
   children?: React.ReactNode
 }
@@ -78,11 +80,52 @@ export const WalletProvider = ({
     [address, disconnect]
   )
 
+  const changeNetwork = async () => {
+    if (window.ethereum.networkVersion !== chainId) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: `0x${chainId}` }],
+        })
+        return true
+      } catch (err: any) {
+        // This error code indicates that the chain has not been added to MetaMask
+        if (err.code === 4902) {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                {
+                  chainName: 'Ethereum Mainnet',
+                  chainId: `0x${chainId}`,
+                  nativeCurrency: {
+                    name: 'Ethereum',
+                    symbol: 'ETH',
+                    decimals: 18,
+                  },
+                  rpcUrls: ['https://mainnet.infura.io/v3/'],
+                },
+              ],
+            })
+            return true
+          } catch (err: any) {
+            console.error('Failed to setup the network in Metamask:', err)
+            return false
+          }
+        }
+      }
+    }
+  }
+
   const connect = useCallback(async () => {
     if (!web3Modal) throw new Error('web3Modal not initialized')
     try {
       const instance = await web3Modal.connect()
       if (!instance) return
+      if (instance.isMetaMask)
+        if (!(await changeNetwork())) {
+          return
+        }
       instance.on('accountsChanged', handleAccountsChanged)
       const provider = new ethers.providers.Web3Provider(instance)
       const signer = provider.getSigner()
@@ -149,6 +192,10 @@ export const WalletProvider = ({
       const instance = await web3Modal.connectTo(cachedProviderName)
       if (!instance) return
       instance.on('accountsChanged', handleAccountsChanged)
+      if (instance.isMetaMask)
+        if (!(await changeNetwork())) {
+          return
+        }
       const provider = new ethers.providers.Web3Provider(instance)
       const signer = provider.getSigner()
       setProvider(provider)
@@ -156,7 +203,7 @@ export const WalletProvider = ({
       setAddress(await signer.getAddress())
     }
     initCached()
-  }, [web3Modal, handleAccountsChanged])
+  }, [web3Modal, handleAccountsChanged, provider?._network?.chainId])
 
   return (
     <WalletContext.Provider
