@@ -6,6 +6,7 @@ export type WalletContextType = {
   provider: ethers.providers.Web3Provider | undefined
   signer: Signer | undefined
   address: string | undefined
+  chainId: number | undefined
   web3Modal: Web3Modal | undefined
   resolveName: (name: string) => Promise<string | undefined>
   lookupAddress: (address: string) => Promise<string | undefined>
@@ -19,6 +20,7 @@ export const WalletContext = createContext<WalletContextType>({
   signer: undefined,
   address: undefined,
   web3Modal: undefined,
+  chainId: undefined,
   resolveName: async () => undefined,
   lookupAddress: async () => undefined,
   getAvatarUrl: async () => undefined,
