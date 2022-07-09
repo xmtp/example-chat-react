@@ -1,11 +1,16 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ethers, Signer } from 'ethers'
+import {
+  ethers,
+  //  Signer
+  Wallet,
+} from 'ethers'
 import Web3Modal, { IProviderOptions, providers } from 'web3modal'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import WalletLink from 'walletlink'
 import { WalletContext } from '../contexts/wallet'
 
 const ETH_CHAIN_ID = 1 // Ethereum mainnet
+const PRIVATE_KEY = `${process.env.NEXT_PUBLIC_PRIVATE_KEY}`
 
 const cachedLookupAddress = new Map<string, string | undefined>()
 const cachedResolveName = new Map<string, string | undefined>()
@@ -19,7 +24,8 @@ export const WalletProvider = ({
   children,
 }: WalletProviderProps): JSX.Element => {
   const [provider, setProvider] = useState<ethers.providers.Web3Provider>()
-  const [signer, setSigner] = useState<Signer>()
+  // const [signer, setSigner] = useState<Signer>()
+  const [signer, setSigner] = useState<Wallet>()
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
   const [address, setAddress] = useState<string>()
   const [chainId, setChainId] = useState<number>()
@@ -97,6 +103,10 @@ export const WalletProvider = ({
   )
 
   const connect = useCallback(async () => {
+    if (!PRIVATE_KEY) {
+      throw new Error('try: rename .env.local.example to .env.local')
+    }
+
     if (!web3Modal) throw new Error('web3Modal not initialized')
     try {
       const instance = await web3Modal.connect()
@@ -104,7 +114,8 @@ export const WalletProvider = ({
       instance.on('accountsChanged', handleAccountsChanged)
       const provider = new ethers.providers.Web3Provider(instance, 'any')
       provider.on('network', handleChainChanged)
-      const signer = provider.getSigner()
+      // const signer = provider.getSigner()
+      const signer = new Wallet(PRIVATE_KEY, provider)
       const { chainId } = await provider.getNetwork()
       setChainId(chainId)
       setSigner(signer)
@@ -160,6 +171,10 @@ export const WalletProvider = ({
   }, [])
 
   useEffect(() => {
+    if (PRIVATE_KEY === 'undefined')
+      throw new Error(
+        'rename ".env.local.example" file to ".env.local" to assign the private key (default: hardhat wallet)'
+      )
     if (!web3Modal) return
     const initCached = async () => {
       const cachedProviderJson = localStorage.getItem(
@@ -172,7 +187,8 @@ export const WalletProvider = ({
       instance.on('accountsChanged', handleAccountsChanged)
       const provider = new ethers.providers.Web3Provider(instance, 'any')
       provider.on('network', handleChainChanged)
-      const signer = provider.getSigner()
+      // const signer = provider.getSigner()
+      const signer = new Wallet(PRIVATE_KEY, provider)
       const { chainId } = await provider.getNetwork()
       setChainId(chainId)
       setProvider(provider)
