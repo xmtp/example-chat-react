@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import AddressInput from '../AddressInput'
 import useWallet from '../../hooks/useWallet'
 import useXmtp from '../../hooks/useXmtp'
+
 type RecipientInputProps = {
   recipientWalletAddress: string | undefined
   onSubmit: (address: string) => Promise<void>
@@ -20,6 +21,7 @@ const RecipientControl = ({
   recipientWalletAddress,
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
+  console.log('RecipientControl')
   const { resolveName, lookupAddress } = useWallet()
   const { client } = useXmtp()
   const router = useRouter()
@@ -55,7 +57,8 @@ const RecipientControl = ({
     }
     if (recipientWalletAddress) {
       setRecipientInputMode(RecipientInputMode.Submitted)
-      handleAddressLookup(recipientWalletAddress)
+      if (!recipientWalletAddress.endsWith('eth'))
+        handleAddressLookup(recipientWalletAddress)
     } else {
       setRecipientInputMode(RecipientInputMode.InvalidEntry)
     }
