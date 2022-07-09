@@ -122,7 +122,7 @@ const RecipientControl = ({
           <AddressInput
             recipientWalletAddress={recipientWalletAddress}
             id="recipient-field"
-            className="block w-[95%] pl-7 pr-3 pt-[3px] md:pt-[2px] md:pt-[1px] bg-transparent caret-n-600 text-n-600 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent text-lg font-mono"
+            className="block w-[95%] pl-7 pr-3 pt-[3px] md:pt-[1px] bg-transparent caret-n-600 text-n-600 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent text-lg font-mono"
             name="recipient"
             lookupAddress={lookupAddress}
             onInputChange={handleInputChange}
@@ -132,7 +132,7 @@ const RecipientControl = ({
       </form>
 
       {recipientInputMode === RecipientInputMode.Submitted ? (
-        <div className="text-md text-n-300 text-sm font-mono ml-10 md:ml-8 pb-1 md:pb-[1px]">
+        <div className="text-n-300 text-sm font-mono ml-10 md:ml-8 pb-1 md:pb-[1px]">
           {hasName ? recipientWalletAddress : <br />}
         </div>
       ) : (
