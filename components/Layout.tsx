@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import useXmtp from '../hooks/useXmtp'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
@@ -36,12 +36,20 @@ const TopBarLayout: React.FC = ({ children }) => (
 )
 
 const ConversationLayout: React.FC = ({ children }) => {
+  console.log('ConversationLayout')
   const router = useRouter()
+  const { resolveName, lookupAddress } = useWallet()
   const recipientWalletAddress = router.query.recipientWalletAddr as string
+  const [recipient, setRecipient] = useState<string>()
 
   const handleSubmit = useCallback(
     async (address: string) => {
-      router.push(address ? `/dm/${address}` : '/dm/')
+      const name = await lookupAddress(address)
+      if (name) {
+        router.push(address ? `/dm/${name}` : '/dm/')
+      } else {
+        router.push(address ? `/dm/${address}` : '/dm/')
+      }
     },
     [router]
   )
@@ -50,6 +58,17 @@ const ConversationLayout: React.FC = ({ children }) => {
     router.push('/')
   }, [router])
 
+  useEffect(() => {
+    const checkName = async () => {
+      if (!recipientWalletAddress) return
+      if (recipientWalletAddress.endsWith('eth')) {
+        const address = await resolveName(recipientWalletAddress)
+        setRecipient(address)
+      }
+    }
+    checkName()
+  })
+
   return (
     <>
       <TopBarLayout>
@@ -57,7 +76,9 @@ const ConversationLayout: React.FC = ({ children }) => {
           <BackArrow onClick={handleBackArrowClick} />
         </div>
         <RecipientControl
-          recipientWalletAddress={recipientWalletAddress}
+          recipientWalletAddress={
+            recipient ? recipient : recipientWalletAddress
+          }
           onSubmit={handleSubmit}
         />
       </TopBarLayout>
@@ -67,6 +88,7 @@ const ConversationLayout: React.FC = ({ children }) => {
 }
 
 const Layout: React.FC = ({ children }) => {
+  console.log('Layout')
   const {
     connect: connectXmtp,
     disconnect: disconnectXmtp,
