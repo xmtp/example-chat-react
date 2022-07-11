@@ -36,7 +36,6 @@ const TopBarLayout: React.FC = ({ children }) => (
 )
 
 const ConversationLayout: React.FC = ({ children }) => {
-  console.log('ConversationLayout')
   const router = useRouter()
   const { resolveName, lookupAddress } = useWallet()
   const recipientWalletAddress = router.query.recipientWalletAddr as string
@@ -88,7 +87,6 @@ const ConversationLayout: React.FC = ({ children }) => {
 }
 
 const Layout: React.FC = ({ children }) => {
-  console.log('Layout')
   const {
     connect: connectXmtp,
     disconnect: disconnectXmtp,
@@ -103,14 +101,18 @@ const Layout: React.FC = ({ children }) => {
   } = useWallet()
 
   const handleDisconnect = useCallback(async () => {
+    localStorage.removeItem('autosign')
     disconnectXmtp()
     await disconnectWallet()
     router.push('/')
   }, [disconnectWallet, disconnectXmtp, router])
 
-  const handleConnect = useCallback(async () => {
-    await connectWallet()
-  }, [connectWallet])
+  const handleConnect = useCallback(
+    async (autosign: boolean) => {
+      await connectWallet(autosign)
+    },
+    [connectWallet]
+  )
 
   const usePrevious = <T,>(value: T): T | undefined => {
     const ref = useRef<T>()
