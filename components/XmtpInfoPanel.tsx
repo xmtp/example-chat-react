@@ -8,17 +8,18 @@ import {
   ChevronRightIcon,
   ArrowSmRightIcon,
 } from '@heroicons/react/solid'
+import { MouseEventHandler } from 'react'
 
 type XmtpInfoRowProps = {
   icon: JSX.Element
   headingText: string
   subHeadingText: string
-  onClick?: (() => void) | (() => Promise<void>)
+  onClick: MouseEventHandler<HTMLAnchorElement> | undefined
   disabled?: boolean
 }
 
 type XmtpInfoPanelProps = {
-  onConnect?: () => Promise<void>
+  onConnect: (autosign: boolean) => Promise<void>
 }
 
 const InfoRow = ({
@@ -57,7 +58,7 @@ const XmtpInfoPanel = ({ onConnect }: XmtpInfoPanelProps): JSX.Element => {
       icon: <LinkIcon />,
       headingText: 'Connect your wallet',
       subHeadingText: 'Verify your wallet to start using the XMTP protocol',
-      onClick: onConnect,
+      onClick: () => onConnect(false),
       disabled: !!walletAddress && !client,
     },
     {
