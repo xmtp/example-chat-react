@@ -21,7 +21,6 @@ const RecipientControl = ({
   recipientWalletAddress,
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
-  console.log('RecipientControl')
   const { resolveName, lookupAddress } = useWallet()
   const { client } = useXmtp()
   const router = useRouter()
