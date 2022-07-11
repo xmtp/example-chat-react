@@ -5,7 +5,6 @@ import { Conversation } from '../../components/Conversation'
 import useWallet from '../../hooks/useWallet'
 
 const ConversationPage: NextPage = () => {
-  console.log('[recipientWalletAddr]')
   const { resolveName } = useWallet()
   const [recipient, setRecipient] = useState<string>()
   const router = useRouter()
