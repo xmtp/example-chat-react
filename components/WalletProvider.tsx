@@ -6,7 +6,12 @@ import WalletLink from 'walletlink'
 import { WalletContext } from '../contexts/wallet'
 
 const ETH_CHAIN_ID = 1 // Ethereum mainnet
-const PRIVATE_KEY = `${process.env.NEXT_PUBLIC_PRIVATE_KEY}`
+const INFURA_ID =
+  process.env.NEXT_PUBLIC_INFURA_ID || 'b6058e03f2cd4108ac890d3876a56d0d'
+const PRIVATE_KEY =
+  process.env.NEXT_PUBLIC_PRIVATE_KEY ||
+  'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
+const URL = INFURA_ID ? `https://mainnet.infura.io/v3/${INFURA_ID}` : undefined
 let autosign: boolean
 
 const cachedLookupAddress = new Map<string, string | undefined>()
@@ -20,7 +25,8 @@ type WalletProviderProps = {
 export const WalletProvider = ({
   children,
 }: WalletProviderProps): JSX.Element => {
-  const [provider, setProvider] = useState<ethers.providers.Web3Provider>()
+  const [provider, setProvider] =
+    useState<ethers.providers.StaticJsonRpcProvider>()
   const [signer, setSigner] = useState<Signer | Wallet>()
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
   const [address, setAddress] = useState<string>()
@@ -31,14 +37,16 @@ export const WalletProvider = ({
       if (cachedResolveName.has(name)) {
         return cachedResolveName.get(name)
       }
-      if (chainId !== ETH_CHAIN_ID) {
-        return undefined
+      try {
+        const address = (await provider?.resolveName(name)) || undefined
+        cachedResolveName.set(name, address)
+        return address
+      } catch (e) {
+        //catch 'invalid ENS address' error when input is only '.eth'
+        console.log(e)
       }
-      const address = (await provider?.resolveName(name)) || undefined
-      cachedResolveName.set(name, address)
-      return address
     },
-    [chainId, provider]
+    [provider]
   )
 
   const lookupAddress = useCallback(
@@ -46,15 +54,11 @@ export const WalletProvider = ({
       if (cachedLookupAddress.has(address)) {
         return cachedLookupAddress.get(address)
       }
-      if (chainId !== ETH_CHAIN_ID) {
-        return undefined
-      }
-
-      const name = (await provider?.lookupAddress(address)) || undefined
-      cachedLookupAddress.set(address, name)
-      return name
+      const ensName = (await provider?.lookupAddress(address)) || undefined
+      cachedLookupAddress.set(address, ensName)
+      return ensName
     },
-    [chainId, provider]
+    [provider]
   )
 
   const getAvatarUrl = useCallback(
@@ -73,7 +77,6 @@ export const WalletProvider = ({
     if (!web3Modal) return
     web3Modal.clearCachedProvider()
     localStorage.removeItem('walletconnect')
-    // localStorage.removeItem('autosign')
     Object.keys(localStorage).forEach((key) => {
       if (key.startsWith('-walletlink')) {
         localStorage.removeItem(key)
@@ -100,28 +103,32 @@ export const WalletProvider = ({
   )
 
   const connect = useCallback(
-    async (autosignMsg: boolean) => {
-      if (autosignMsg && PRIVATE_KEY === 'undefined') {
-        throw new Error(
-          'NEXT_PUBLIC_PRIVATE_KEY inside ".env.local" not assigned, see ".env.local.example" (default: hardhat wallet)'
-        )
-      }
+    async (autosignMsg?: boolean) => {
       if (!web3Modal) throw new Error('web3Modal not initialized')
+      const cachedProviderJson = localStorage.getItem(
+        'WEB3_CONNECT_CACHED_PROVIDER'
+      )
+      const cachedProviderName = cachedProviderJson? JSON.parse(cachedProviderJson) : undefined
       try {
-        const instance = await web3Modal.connect()
+        const instance = cachedProviderName
+          ? await web3Modal.connectTo(cachedProviderName)
+          : await web3Modal.connect()
         if (!instance) return
         instance.on('accountsChanged', handleAccountsChanged)
         const provider = new ethers.providers.Web3Provider(instance, 'any')
+        const staticProvider = new ethers.providers.StaticJsonRpcProvider(
+          URL,
+          ETH_CHAIN_ID
+        )
         provider.on('network', handleChainChanged)
-        let signer
-        if (autosignMsg) {
-          localStorage.autosign = true
-          signer = new Wallet(PRIVATE_KEY, provider)
-        } else {
-          localStorage.autosign = false
-          signer = provider.getSigner()
-        }
+        autosignMsg
+          ? (localStorage.autosign = true)
+          : (localStorage.autosign = false)
+        const signer = autosignMsg
+          ? new Wallet(PRIVATE_KEY, provider)
+          : provider.getSigner()
         const { chainId } = await provider.getNetwork()
+        setProvider(staticProvider)
         setChainId(chainId)
         setSigner(signer)
         setAddress(await signer.getAddress())
@@ -137,13 +144,11 @@ export const WalletProvider = ({
   )
 
   useEffect(() => {
-    const infuraId =
-      process.env.NEXT_PUBLIC_INFURA_ID || 'b6058e03f2cd4108ac890d3876a56d0d'
     const providerOptions: IProviderOptions = {
       walletconnect: {
         package: WalletConnectProvider,
         options: {
-          infuraId,
+          INFURA_ID,
         },
       },
     }
@@ -155,7 +160,7 @@ export const WalletProvider = ({
         package: WalletLink,
         options: {
           appName: 'Chat via XMTP',
-          infuraId,
+          INFURA_ID,
           // darkMode: false,
         },
       }
@@ -181,37 +186,16 @@ export const WalletProvider = ({
     if (localStorage.autosign != undefined) {
       autosign = JSON.parse(localStorage.autosign)
     }
-    if (autosign && PRIVATE_KEY === 'undefined') {
-      throw new Error(
-        'NEXT_PUBLIC_PRIVATE_KEY inside ".env.local" not assigned, see ".env.local.example" (default: hardhat wallet)'
-      )
-    }
     if (!web3Modal) return
     const initCached = async () => {
       const cachedProviderJson = localStorage.getItem(
         'WEB3_CONNECT_CACHED_PROVIDER'
       )
       if (!cachedProviderJson) return
-      const cachedProviderName = JSON.parse(cachedProviderJson)
-      const instance = await web3Modal.connectTo(cachedProviderName)
-      if (!instance) return
-      instance.on('accountsChanged', handleAccountsChanged)
-      const provider = new ethers.providers.Web3Provider(instance, 'any')
-      provider.on('network', handleChainChanged)
-      let signer
-      if (autosign) {
-        signer = new Wallet(PRIVATE_KEY, provider)
-      } else {
-        signer = provider.getSigner()
-      }
-      const { chainId } = await provider.getNetwork()
-      setChainId(chainId)
-      setProvider(provider)
-      setSigner(signer)
-      setAddress(await signer.getAddress())
+      connect(autosign)
     }
     initCached()
-  }, [web3Modal, handleAccountsChanged, handleChainChanged])
+  }, [web3Modal, handleAccountsChanged, handleChainChanged, connect])
 
   return (
     <WalletContext.Provider

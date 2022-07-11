@@ -3,7 +3,7 @@ import { ethers, Signer, Wallet } from 'ethers'
 import Web3Modal from 'web3modal'
 
 export type WalletContextType = {
-  provider: ethers.providers.Web3Provider | undefined
+  provider: ethers.providers.StaticJsonRpcProvider | undefined
   signer: Signer | Wallet | undefined
   address: string | undefined
   web3Modal: Web3Modal | undefined
@@ -11,7 +11,7 @@ export type WalletContextType = {
   resolveName: (name: string) => Promise<string | undefined>
   lookupAddress: (address: string) => Promise<string | undefined>
   getAvatarUrl: (address: string) => Promise<string | undefined>
-  connect: (autosign: boolean) => Promise<Signer | Wallet | undefined>
+  connect: (autosign?: boolean) => Promise<Signer | Wallet | undefined>
   disconnect: () => Promise<void>
 }
 

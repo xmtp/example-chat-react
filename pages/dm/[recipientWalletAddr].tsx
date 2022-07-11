@@ -20,7 +20,7 @@ const ConversationPage: NextPage = () => {
       }
     }
     getAddress()
-  }, [recipientWalletAddr])
+  }, [recipientWalletAddr, resolveName])
 
   return <>{recipient && <Conversation recipientWalletAddr={recipient} />}</>
 }

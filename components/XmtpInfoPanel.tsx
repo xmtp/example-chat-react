@@ -19,7 +19,7 @@ type XmtpInfoRowProps = {
 }
 
 type XmtpInfoPanelProps = {
-  onConnect: (autosign: boolean) => Promise<void>
+  onConnect: (autosign?: boolean) => Promise<void>
 }
 
 const InfoRow = ({

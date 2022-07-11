@@ -18,12 +18,15 @@ const RecipientInputMode = {
 }
 
 const RecipientControl = ({
-  recipientWalletAddress,
+
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
+
   const { resolveName, lookupAddress } = useWallet()
   const { client } = useXmtp()
   const router = useRouter()
+  const recipientWalletAddress = router.query.recipientWalletAddr as string
+
   const [recipientInputMode, setRecipientInputMode] = useState(
     RecipientInputMode.InvalidEntry
   )
@@ -126,6 +129,7 @@ const RecipientControl = ({
             id="recipient-field"
             className="block w-[95%] pl-7 pr-3 pt-[3px] md:pt-[1px] bg-transparent caret-n-600 text-n-600 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent text-lg font-mono"
             name="recipient"
+            resolveName={resolveName}
             lookupAddress={lookupAddress}
             onInputChange={handleInputChange}
           />

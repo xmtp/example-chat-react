@@ -9,6 +9,7 @@ type AddressInputProps = {
   className?: string
   placeholder?: string
   lookupAddress?: (address: string) => Promise<string | undefined>
+  resolveName?: (name: string) => Promise<string | undefined>
   onInputChange?: (e: React.SyntheticEvent) => Promise<void>
 }
 
@@ -18,6 +19,7 @@ const AddressInput = ({
   name,
   className,
   placeholder,
+  resolveName,
   lookupAddress,
   onInputChange,
 }: AddressInputProps): JSX.Element => {
@@ -41,23 +43,20 @@ const AddressInput = ({
     const setLookupValue = async () => {
       if (!lookupAddress) return
       if (recipientWalletAddress) {
-        if (recipientWalletAddress.startsWith('0x')) {
+        if (
+          recipientWalletAddress.startsWith('0x') &&
+          recipientWalletAddress.length === 42
+        ) {
           const name = await lookupAddress(recipientWalletAddress)
           setValue(name || recipientWalletAddress)
-        }
-        if (recipientWalletAddress.endsWith('eth')) {
-          setValue(recipientWalletAddress)
-        }
-      } else if (value.startsWith('0x') && value.length === 42) {
-        // ??
-        const name = await lookupAddress(value)
-        if (name) {
-          setValue(name)
+        } else if (recipientWalletAddress.endsWith('eth')) {
+          const address = resolveName? await resolveName(recipientWalletAddress) : undefined
+          setValue(address || recipientWalletAddress)
         }
       }
     }
     setLookupValue()
-  }, [value, recipientWalletAddress, lookupAddress])
+  }, [value, recipientWalletAddress, lookupAddress, resolveName])
 
   const userIsSender = recipientWalletAddress === walletAddress
 

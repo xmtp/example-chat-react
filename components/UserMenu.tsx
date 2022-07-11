@@ -8,7 +8,7 @@ import useXmtp from '../hooks/useXmtp'
 import useEns from '../hooks/useEns'
 
 type UserMenuProps = {
-  onConnect: (autosign: boolean) => Promise<void>
+  onConnect: (autosign?: boolean) => Promise<void>
   onDisconnect?: () => Promise<void>
 }
 
@@ -49,7 +49,7 @@ const NotConnected = ({ onConnect }: UserMenuProps): JSX.Element => {
           <p className="text-sm font-bold text-y-100">You are not connected.</p>
         </div>
 
-        <a onClick={() => onConnect(false)}>
+        <a onClick={() => onConnect()}>
           <p className="text-sm font-normal text-y-100 hover:text-y-200 ml-3 cursor-pointer">
             Sign in with your wallet
           </p>
@@ -57,7 +57,7 @@ const NotConnected = ({ onConnect }: UserMenuProps): JSX.Element => {
       </div>
       <button
         className="max-w-xs flex items-center text-sm rounded focus:outline-none"
-        onClick={() => onConnect(false)}
+        onClick={() => onConnect()}
       >
         <span className="sr-only">Connect</span>
         <CogIcon

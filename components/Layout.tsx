@@ -50,7 +50,7 @@ const ConversationLayout: React.FC = ({ children }) => {
         router.push(address ? `/dm/${address}` : '/dm/')
       }
     },
-    [router]
+    [router, lookupAddress]
   )
 
   const handleBackArrowClick = useCallback(() => {
@@ -108,7 +108,7 @@ const Layout: React.FC = ({ children }) => {
   }, [disconnectWallet, disconnectXmtp, router])
 
   const handleConnect = useCallback(
-    async (autosign: boolean) => {
+    async (autosign?: boolean) => {
       await connectWallet(autosign)
     },
     [connectWallet]
