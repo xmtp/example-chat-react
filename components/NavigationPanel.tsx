@@ -6,11 +6,11 @@ import ConversationsList from './ConversationsList'
 import Loader from './Loader'
 
 type NavigationPanelProps = {
-  onConnect: () => Promise<void>
+  onConnect: (autosign:boolean) => Promise<void>
 }
 
 type ConnectButtonProps = {
-  onConnect: () => Promise<void>
+  onConnect: (autosign: boolean) => Promise<void>
 }
 
 const NavigationPanel = ({ onConnect }: NavigationPanelProps): JSX.Element => {
@@ -51,15 +51,26 @@ const NoWalletConnectedMessage: React.FC = ({ children }) => {
 
 const ConnectButton = ({ onConnect }: ConnectButtonProps): JSX.Element => {
   return (
+    <>
     <button
-      onClick={onConnect}
+      onClick={()=>onConnect(false)}
       className="rounded border border-l-300 mx-auto my-4 text-l-300 hover:text-white hover:bg-l-400 hover:border-l-400 hover:fill-white focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-n-100 focus-visible:outline-none active:bg-l-500 active:border-l-500 active:text-l-100 active:ring-0"
-    >
+      >
       <div className="flex items-center justify-center text-xs font-semibold px-4 py-1">
         Connect your wallet
         <ArrowSmRightIcon className="h-4" />
       </div>
     </button>
+    <button
+      onClick={()=>onConnect(true)}
+      className="rounded border border-l-300 mx-auto my-4 text-l-300 hover:text-white hover:bg-l-400 hover:border-l-400 hover:fill-white focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-n-100 focus-visible:outline-none active:bg-l-500 active:border-l-500 active:text-l-100 active:ring-0"
+      >
+      <div className="flex items-center justify-center text-xs font-semibold px-4 py-1">
+        Connect your wallet (autosign)
+        <ArrowSmRightIcon className="h-4" />
+      </div>
+    </button>
+      </>
   )
 }
 
