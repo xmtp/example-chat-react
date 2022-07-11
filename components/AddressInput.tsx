@@ -21,7 +21,6 @@ const AddressInput = ({
   lookupAddress,
   onInputChange,
 }: AddressInputProps): JSX.Element => {
-  console.log('AddressInput')
   const { walletAddress } = useXmtp()
   const inputElement = useRef(null)
   const [value, setValue] = useState<string>(recipientWalletAddress || '')
