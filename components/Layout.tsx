@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import useXmtp from '../hooks/useXmtp'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import useWallet from '../hooks/useWallet'
+import useXmtp from '../hooks/useXmtp'
 import { NavigationView, ConversationView } from './Views'
 import { RecipientControl } from './Conversation'
 import NewMessageButton from './NewMessageButton'
@@ -44,10 +44,12 @@ const ConversationLayout: React.FC = ({ children }) => {
   const handleSubmit = useCallback(
     async (address: string) => {
       const name = await lookupAddress(address)
-      if (name) {
-        router.push(address ? `/dm/${name}` : '/dm/')
+      if (name && address) {
+        router.push('/dm/[recipientWalletAddr]', `/dm/${name}`)
+      } else if (address) {
+        router.push('/dm/[recipientWalletAddr]', `/dm/${address}`)
       } else {
-        router.push(address ? `/dm/${address}` : '/dm/')
+        router.push('/dm/')
       }
     },
     [router, lookupAddress]
@@ -87,13 +89,13 @@ const ConversationLayout: React.FC = ({ children }) => {
 }
 
 const Layout: React.FC = ({ children }) => {
+  const router = useRouter()
   const {
     connect: connectXmtp,
     disconnect: disconnectXmtp,
     walletAddress,
     client,
   } = useXmtp()
-  const router = useRouter()
   const {
     signer,
     connect: connectWallet,

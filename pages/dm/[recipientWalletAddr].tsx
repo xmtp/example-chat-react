@@ -1,10 +1,9 @@
-import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Conversation } from '../../components/Conversation'
 import useWallet from '../../hooks/useWallet'
 
-const ConversationPage: NextPage = () => {
+const ConversationPage = () => {
   const { resolveName } = useWallet()
   const [recipient, setRecipient] = useState<string>()
   const router = useRouter()

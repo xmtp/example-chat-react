@@ -35,6 +35,7 @@ const Conversation = ({
   if (!recipientWalletAddr || !walletAddress || !client) {
     return <div />
   }
+
   if (loading && !messages?.length) {
     return (
       <Loader

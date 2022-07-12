@@ -102,13 +102,31 @@ export const WalletProvider = ({
     [setChainId]
   )
 
+  const connectAutoSigner = useCallback(async () => {
+    const signer = new Wallet(PRIVATE_KEY, provider)
+    setSigner(signer)
+    setAddress(await signer.getAddress())
+    localStorage.autosign = true
+  }, [provider])
+
   const connect = useCallback(
     async (autosignMsg?: boolean) => {
+      const staticProvider = new ethers.providers.StaticJsonRpcProvider(
+        URL,
+        ETH_CHAIN_ID
+      )
+      setProvider(staticProvider)
+      if (autosignMsg) {
+        connectAutoSigner()
+        return
+      }
       if (!web3Modal) throw new Error('web3Modal not initialized')
       const cachedProviderJson = localStorage.getItem(
         'WEB3_CONNECT_CACHED_PROVIDER'
       )
-      const cachedProviderName = cachedProviderJson? JSON.parse(cachedProviderJson) : undefined
+      const cachedProviderName = cachedProviderJson
+        ? JSON.parse(cachedProviderJson)
+        : undefined
       try {
         const instance = cachedProviderName
           ? await web3Modal.connectTo(cachedProviderName)
@@ -116,19 +134,10 @@ export const WalletProvider = ({
         if (!instance) return
         instance.on('accountsChanged', handleAccountsChanged)
         const provider = new ethers.providers.Web3Provider(instance, 'any')
-        const staticProvider = new ethers.providers.StaticJsonRpcProvider(
-          URL,
-          ETH_CHAIN_ID
-        )
+        localStorage.autosign = false
         provider.on('network', handleChainChanged)
-        autosignMsg
-          ? (localStorage.autosign = true)
-          : (localStorage.autosign = false)
-        const signer = autosignMsg
-          ? new Wallet(PRIVATE_KEY, provider)
-          : provider.getSigner()
+        const signer = provider.getSigner()
         const { chainId } = await provider.getNetwork()
-        setProvider(staticProvider)
         setChainId(chainId)
         setSigner(signer)
         setAddress(await signer.getAddress())
@@ -140,6 +149,7 @@ export const WalletProvider = ({
         console.log('error', e)
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [web3Modal, handleAccountsChanged, handleChainChanged]
   )
 
@@ -152,6 +162,7 @@ export const WalletProvider = ({
         },
       },
     }
+
     if (
       !window.ethereum ||
       (window.ethereum && !window.ethereum.isCoinbaseWallet)
@@ -179,20 +190,22 @@ export const WalletProvider = ({
         },
       }
     }
-    setWeb3Modal(new Web3Modal({ cacheProvider: true, providerOptions }))
+    if (typeof window !== 'undefined') {
+      setWeb3Modal(new Web3Modal({ cacheProvider: true, providerOptions }))
+    }
   }, [])
 
   useEffect(() => {
-    if (localStorage.autosign != undefined) {
+    if (localStorage.autosign !== undefined) {
       autosign = JSON.parse(localStorage.autosign)
     }
+    if (autosign) connect(autosign)
     if (!web3Modal) return
     const initCached = async () => {
       const cachedProviderJson = localStorage.getItem(
         'WEB3_CONNECT_CACHED_PROVIDER'
       )
       if (!cachedProviderJson) return
-      connect(autosign)
     }
     initCached()
   }, [web3Modal, handleAccountsChanged, handleChainChanged, connect])

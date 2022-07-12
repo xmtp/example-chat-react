@@ -18,10 +18,8 @@ const RecipientInputMode = {
 }
 
 const RecipientControl = ({
-
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
-
   const { resolveName, lookupAddress } = useWallet()
   const { client } = useXmtp()
   const router = useRouter()
