@@ -1,11 +1,18 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ethers, Signer } from 'ethers'
+import { ethers, Signer, Wallet } from 'ethers'
 import Web3Modal, { IProviderOptions, providers } from 'web3modal'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import WalletLink from 'walletlink'
 import { WalletContext } from '../contexts/wallet'
 
 const ETH_CHAIN_ID = 1 // Ethereum mainnet
+const INFURA_ID =
+  process.env.NEXT_PUBLIC_INFURA_ID || 'b6058e03f2cd4108ac890d3876a56d0d'
+const PRIVATE_KEY =
+  process.env.NEXT_PUBLIC_PRIVATE_KEY ||
+  'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
+const URL = INFURA_ID ? `https://mainnet.infura.io/v3/${INFURA_ID}` : undefined
+let autosign: boolean
 
 const cachedLookupAddress = new Map<string, string | undefined>()
 const cachedResolveName = new Map<string, string | undefined>()
@@ -18,8 +25,9 @@ type WalletProviderProps = {
 export const WalletProvider = ({
   children,
 }: WalletProviderProps): JSX.Element => {
-  const [provider, setProvider] = useState<ethers.providers.Web3Provider>()
-  const [signer, setSigner] = useState<Signer>()
+  const [provider, setProvider] =
+    useState<ethers.providers.StaticJsonRpcProvider>()
+  const [signer, setSigner] = useState<Signer | Wallet>()
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
   const [address, setAddress] = useState<string>()
   const [chainId, setChainId] = useState<number>()
@@ -29,14 +37,16 @@ export const WalletProvider = ({
       if (cachedResolveName.has(name)) {
         return cachedResolveName.get(name)
       }
-      if (chainId !== ETH_CHAIN_ID) {
-        return undefined
+      try {
+        const address = (await provider?.resolveName(name)) || undefined
+        cachedResolveName.set(name, address)
+        return address
+      } catch (e) {
+        //catch 'invalid ENS address' error when input is only '.eth'
+        console.log(e)
       }
-      const address = (await provider?.resolveName(name)) || undefined
-      cachedResolveName.set(name, address)
-      return address
     },
-    [chainId, provider]
+    [provider]
   )
 
   const lookupAddress = useCallback(
@@ -44,15 +54,11 @@ export const WalletProvider = ({
       if (cachedLookupAddress.has(address)) {
         return cachedLookupAddress.get(address)
       }
-      if (chainId !== ETH_CHAIN_ID) {
-        return undefined
-      }
-
-      const name = (await provider?.lookupAddress(address)) || undefined
-      cachedLookupAddress.set(address, name)
-      return name
+      const ensName = (await provider?.lookupAddress(address)) || undefined
+      cachedLookupAddress.set(address, ensName)
+      return ensName
     },
-    [chainId, provider]
+    [provider]
   )
 
   const getAvatarUrl = useCallback(
@@ -96,39 +102,67 @@ export const WalletProvider = ({
     [setChainId]
   )
 
-  const connect = useCallback(async () => {
-    if (!web3Modal) throw new Error('web3Modal not initialized')
-    try {
-      const instance = await web3Modal.connect()
-      if (!instance) return
-      instance.on('accountsChanged', handleAccountsChanged)
-      const provider = new ethers.providers.Web3Provider(instance, 'any')
-      provider.on('network', handleChainChanged)
-      const signer = provider.getSigner()
-      const { chainId } = await provider.getNetwork()
-      setChainId(chainId)
-      setSigner(signer)
-      setAddress(await signer.getAddress())
-      return signer
-    } catch (e) {
-      // TODO: better error handling/surfacing here.
-      // Note that web3Modal.connect throws an error when the user closes the
-      // modal, as "User closed modal"
-      console.log('error', e)
-    }
-  }, [web3Modal, handleAccountsChanged, handleChainChanged])
+  const connectAutoSigner = useCallback(async () => {
+    const signer = new Wallet(PRIVATE_KEY, provider)
+    setSigner(signer)
+    setAddress(await signer.getAddress())
+    localStorage.autosign = true
+  }, [provider])
+
+  const connect = useCallback(
+    async (autosignMsg?: boolean) => {
+      const staticProvider = new ethers.providers.StaticJsonRpcProvider(
+        URL,
+        ETH_CHAIN_ID
+      )
+      setProvider(staticProvider)
+      if (autosignMsg) {
+        connectAutoSigner()
+        return
+      }
+      if (!web3Modal) throw new Error('web3Modal not initialized')
+      const cachedProviderJson = localStorage.getItem(
+        'WEB3_CONNECT_CACHED_PROVIDER'
+      )
+      const cachedProviderName = cachedProviderJson
+        ? JSON.parse(cachedProviderJson)
+        : undefined
+      try {
+        const instance = cachedProviderName
+          ? await web3Modal.connectTo(cachedProviderName)
+          : await web3Modal.connect()
+        if (!instance) return
+        instance.on('accountsChanged', handleAccountsChanged)
+        const provider = new ethers.providers.Web3Provider(instance, 'any')
+        localStorage.autosign = false
+        provider.on('network', handleChainChanged)
+        const signer = provider.getSigner()
+        const { chainId } = await provider.getNetwork()
+        setChainId(chainId)
+        setSigner(signer)
+        setAddress(await signer.getAddress())
+        return signer
+      } catch (e) {
+        // TODO: better error handling/surfacing here.
+        // Note that web3Modal.connect throws an error when the user closes the
+        // modal, as "User closed modal"
+        console.log('error', e)
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [web3Modal, handleAccountsChanged, handleChainChanged]
+  )
 
   useEffect(() => {
-    const infuraId =
-      process.env.NEXT_PUBLIC_INFURA_ID || 'b6058e03f2cd4108ac890d3876a56d0d'
     const providerOptions: IProviderOptions = {
       walletconnect: {
         package: WalletConnectProvider,
         options: {
-          infuraId,
+          INFURA_ID,
         },
       },
     }
+
     if (
       !window.ethereum ||
       (window.ethereum && !window.ethereum.isCoinbaseWallet)
@@ -137,7 +171,7 @@ export const WalletProvider = ({
         package: WalletLink,
         options: {
           appName: 'Chat via XMTP',
-          infuraId,
+          INFURA_ID,
           // darkMode: false,
         },
       }
@@ -156,31 +190,25 @@ export const WalletProvider = ({
         },
       }
     }
-    setWeb3Modal(new Web3Modal({ cacheProvider: true, providerOptions }))
+    if (typeof window !== 'undefined') {
+      setWeb3Modal(new Web3Modal({ cacheProvider: true, providerOptions }))
+    }
   }, [])
 
   useEffect(() => {
+    if (localStorage.autosign !== undefined) {
+      autosign = JSON.parse(localStorage.autosign)
+    }
+    if (autosign) connect(autosign)
     if (!web3Modal) return
     const initCached = async () => {
       const cachedProviderJson = localStorage.getItem(
         'WEB3_CONNECT_CACHED_PROVIDER'
       )
       if (!cachedProviderJson) return
-      const cachedProviderName = JSON.parse(cachedProviderJson)
-      const instance = await web3Modal.connectTo(cachedProviderName)
-      if (!instance) return
-      instance.on('accountsChanged', handleAccountsChanged)
-      const provider = new ethers.providers.Web3Provider(instance, 'any')
-      provider.on('network', handleChainChanged)
-      const signer = provider.getSigner()
-      const { chainId } = await provider.getNetwork()
-      setChainId(chainId)
-      setProvider(provider)
-      setSigner(signer)
-      setAddress(await signer.getAddress())
     }
     initCached()
-  }, [web3Modal, handleAccountsChanged, handleChainChanged])
+  }, [web3Modal, handleAccountsChanged, handleChainChanged, connect])
 
   return (
     <WalletContext.Provider

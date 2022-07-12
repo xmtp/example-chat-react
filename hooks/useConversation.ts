@@ -12,12 +12,22 @@ const useConversation = (
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [stream, setStream] = useState<Stream<Message>>()
   const [loading, setLoading] = useState<boolean>(false)
+
   useEffect(() => {
     const getConvo = async () => {
       if (!client) {
         return
       }
-      setConversation(await client.conversations.newConversation(peerAddress))
+      // handle error when using ENS domain in URL
+      try {
+        setConversation(await client.conversations.newConversation(peerAddress))
+      } catch (e) {
+        // TODO: onscreen error message
+        // to replicate error goto: http://localhost:3000/dm/hello.eth
+        // Unhandled Runtime Error
+        // Error: Recipient 0x064Bd35c9064fC3e628a3BE3310a1cf65488103D is not on the XMTP network
+        console.log(e)
+      }
     }
     getConvo()
   }, [client, peerAddress])

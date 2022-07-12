@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import AddressInput from '../AddressInput'
 import useWallet from '../../hooks/useWallet'
 import useXmtp from '../../hooks/useXmtp'
+
 type RecipientInputProps = {
   recipientWalletAddress: string | undefined
   onSubmit: (address: string) => Promise<void>
@@ -17,12 +18,13 @@ const RecipientInputMode = {
 }
 
 const RecipientControl = ({
-  recipientWalletAddress,
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
   const { resolveName, lookupAddress } = useWallet()
   const { client } = useXmtp()
   const router = useRouter()
+  const recipientWalletAddress = router.query.recipientWalletAddr as string
+
   const [recipientInputMode, setRecipientInputMode] = useState(
     RecipientInputMode.InvalidEntry
   )
@@ -55,7 +57,8 @@ const RecipientControl = ({
     }
     if (recipientWalletAddress) {
       setRecipientInputMode(RecipientInputMode.Submitted)
-      handleAddressLookup(recipientWalletAddress)
+      if (!recipientWalletAddress.endsWith('eth'))
+        handleAddressLookup(recipientWalletAddress)
     } else {
       setRecipientInputMode(RecipientInputMode.InvalidEntry)
     }
@@ -122,8 +125,9 @@ const RecipientControl = ({
           <AddressInput
             recipientWalletAddress={recipientWalletAddress}
             id="recipient-field"
-            className="block w-[95%] pl-7 pr-3 pt-[3px] md:pt-[2px] md:pt-[1px] bg-transparent caret-n-600 text-n-600 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent text-lg font-mono"
+            className="block w-[95%] pl-7 pr-3 pt-[3px] md:pt-[1px] bg-transparent caret-n-600 text-n-600 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent text-lg font-mono"
             name="recipient"
+            resolveName={resolveName}
             lookupAddress={lookupAddress}
             onInputChange={handleInputChange}
           />
@@ -132,7 +136,7 @@ const RecipientControl = ({
       </form>
 
       {recipientInputMode === RecipientInputMode.Submitted ? (
-        <div className="text-md text-n-300 text-sm font-mono ml-10 md:ml-8 pb-1 md:pb-[1px]">
+        <div className="text-n-300 text-sm font-mono ml-10 md:ml-8 pb-1 md:pb-[1px]">
           {hasName ? recipientWalletAddress : <br />}
         </div>
       ) : (

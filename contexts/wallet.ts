@@ -1,17 +1,17 @@
 import { createContext } from 'react'
-import { ethers, Signer } from 'ethers'
+import { ethers, Signer, Wallet } from 'ethers'
 import Web3Modal from 'web3modal'
 
 export type WalletContextType = {
-  provider: ethers.providers.Web3Provider | undefined
-  signer: Signer | undefined
+  provider: ethers.providers.StaticJsonRpcProvider | undefined
+  signer: Signer | Wallet | undefined
   address: string | undefined
-  chainId: number | undefined
   web3Modal: Web3Modal | undefined
+  chainId: number | undefined
   resolveName: (name: string) => Promise<string | undefined>
   lookupAddress: (address: string) => Promise<string | undefined>
   getAvatarUrl: (address: string) => Promise<string | undefined>
-  connect: () => Promise<Signer | undefined>
+  connect: (autosign?: boolean) => Promise<Signer | Wallet | undefined>
   disconnect: () => Promise<void>
 }
 

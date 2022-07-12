@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef } from 'react'
-import useXmtp from '../hooks/useXmtp'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import useWallet from '../hooks/useWallet'
+import useXmtp from '../hooks/useXmtp'
 import { NavigationView, ConversationView } from './Views'
 import { RecipientControl } from './Conversation'
 import NewMessageButton from './NewMessageButton'
@@ -37,18 +37,38 @@ const TopBarLayout: React.FC = ({ children }) => (
 
 const ConversationLayout: React.FC = ({ children }) => {
   const router = useRouter()
+  const { resolveName, lookupAddress } = useWallet()
   const recipientWalletAddress = router.query.recipientWalletAddr as string
+  const [recipient, setRecipient] = useState<string>()
 
   const handleSubmit = useCallback(
     async (address: string) => {
-      router.push(address ? `/dm/${address}` : '/dm/')
+      const name = await lookupAddress(address)
+      if (name && address) {
+        router.push('/dm/[recipientWalletAddr]', `/dm/${name}`)
+      } else if (address) {
+        router.push('/dm/[recipientWalletAddr]', `/dm/${address}`)
+      } else {
+        router.push('/dm/')
+      }
     },
-    [router]
+    [router, lookupAddress]
   )
 
   const handleBackArrowClick = useCallback(() => {
     router.push('/')
   }, [router])
+
+  useEffect(() => {
+    const checkName = async () => {
+      if (!recipientWalletAddress) return
+      if (recipientWalletAddress.endsWith('eth')) {
+        const address = await resolveName(recipientWalletAddress)
+        setRecipient(address)
+      }
+    }
+    checkName()
+  })
 
   return (
     <>
@@ -57,7 +77,9 @@ const ConversationLayout: React.FC = ({ children }) => {
           <BackArrow onClick={handleBackArrowClick} />
         </div>
         <RecipientControl
-          recipientWalletAddress={recipientWalletAddress}
+          recipientWalletAddress={
+            recipient ? recipient : recipientWalletAddress
+          }
           onSubmit={handleSubmit}
         />
       </TopBarLayout>
@@ -67,13 +89,13 @@ const ConversationLayout: React.FC = ({ children }) => {
 }
 
 const Layout: React.FC = ({ children }) => {
+  const router = useRouter()
   const {
     connect: connectXmtp,
     disconnect: disconnectXmtp,
     walletAddress,
     client,
   } = useXmtp()
-  const router = useRouter()
   const {
     signer,
     connect: connectWallet,
@@ -81,14 +103,18 @@ const Layout: React.FC = ({ children }) => {
   } = useWallet()
 
   const handleDisconnect = useCallback(async () => {
+    localStorage.removeItem('autosign')
     disconnectXmtp()
     await disconnectWallet()
     router.push('/')
   }, [disconnectWallet, disconnectXmtp, router])
 
-  const handleConnect = useCallback(async () => {
-    await connectWallet()
-  }, [connectWallet])
+  const handleConnect = useCallback(
+    async (autosign?: boolean) => {
+      await connectWallet(autosign)
+    },
+    [connectWallet]
+  )
 
   const usePrevious = <T,>(value: T): T | undefined => {
     const ref = useRef<T>()

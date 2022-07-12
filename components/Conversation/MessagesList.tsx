@@ -32,7 +32,7 @@ const MessageTile = ({ message, isSender }: MessageTileProps): JSX.Element => (
           address={message.senderAddress as string}
           userIsSender={isSender}
         />
-        <span className="text-sm font-normal place-self-end text-n-300 text-md uppercase">
+        <span className="text-sm font-normal place-self-end text-n-300 uppercase">
           {formatTime(message.sent)}
         </span>
       </div>
