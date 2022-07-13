@@ -63,7 +63,7 @@ The application utilizes the `xmtp-js` [Conversations](https://github.com/xmtp/x
 
 By default the chat app connects to the XMTP `dev` network, which is designed for development. The `dev` network makes no guarantees of messsage persistence, and is periodically purged of all messages.
 
-To connect to the `production` network, please set the following environment variable `NEXT_EXPOSED_XMTP_ENVIRONMENT=production`. The production network persists messages long-term and is intended for publicly depoloyed production environments.
+To connect to the `production` network, please set the following environment variable `NEXT_PUBLIC_XMTP_ENVIRONMENT=production`. The production network persists messages long-term and is intended for publicly depoloyed production environments.
 
 ### Limitations
 
