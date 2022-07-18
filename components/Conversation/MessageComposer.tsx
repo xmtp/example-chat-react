@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { classNames } from '../../helpers'
-import messageComposerStyles from '../../styles/MessageComposer.module.scss'
+import messageComposerStyles from '../../styles/MessageComposer.module.css'
 import upArrowGreen from '../../public/up-arrow-green.svg'
 import upArrowGrey from '../../public/up-arrow-grey.svg'
 import { useRouter } from 'next/router'

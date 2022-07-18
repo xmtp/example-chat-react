@@ -4,8 +4,8 @@ import { Fragment, useCallback } from 'react'
 import { classNames } from '../helpers'
 import Blockies from 'react-blockies'
 import Address from './Address'
-import useWallet from '../hooks/useWallet'
 import useXmtp from '../hooks/useXmtp'
+import useEns from '../hooks/useEns'
 
 type UserMenuProps = {
   onConnect?: () => Promise<void>
@@ -14,11 +14,31 @@ type UserMenuProps = {
 
 type AvatarBlockProps = {
   walletAddress: string
+  avatarUrl?: string
 }
 
-const AvatarBlock = ({ walletAddress }: AvatarBlockProps) => (
-  <Blockies seed={walletAddress} size={8} className="rounded-full mr-2" />
-)
+const AvatarBlock = ({ walletAddress }: AvatarBlockProps) => {
+  const { avatarUrl, loading } = useEns(walletAddress)
+  if (loading) {
+    return (
+      <div className="animate-pulse flex">
+        <div className="rounded-full bg-n-200 h-8 w-8 mr-2" />
+      </div>
+    )
+  }
+  return avatarUrl ? (
+    <div>
+      <div className="rounded-full w-8 h-8 mr-2 border border-n-80" />
+      <img
+        className={'rounded-full h-8 w-8 -mt-8'}
+        src={avatarUrl}
+        alt={walletAddress}
+      />
+    </div>
+  ) : (
+    <Blockies seed={walletAddress} size={8} className="rounded-full mr-2" />
+  )
+}
 
 const NotConnected = ({ onConnect }: UserMenuProps): JSX.Element => {
   return (
@@ -51,7 +71,6 @@ const NotConnected = ({ onConnect }: UserMenuProps): JSX.Element => {
 
 const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
   const { walletAddress, client } = useXmtp()
-  const { lookupAddress } = useWallet()
 
   const onClickCopy = useCallback(() => {
     if (walletAddress) {
@@ -60,7 +79,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
   }, [walletAddress])
 
   return (
-    <div className="flex bg-n-500 items-center justify-between rounded-lg h-14 m-4 mb-5 md:mb-4 px-4 drop-shadow-xl">
+    <div className="flex bg-n-500 items-center justify-between rounded-lg h-14 mx-4 mb-5 md:mb-4 px-4 drop-shadow-xl">
       {walletAddress ? (
         <Menu>
           {({ open }) => (
@@ -84,7 +103,6 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                       <Address
                         address={walletAddress}
                         className="text-md leading-4 font-semibold text-white ml-3"
-                        lookupAddress={lookupAddress}
                       />
                     </div>
                   </>
