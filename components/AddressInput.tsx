@@ -21,6 +21,7 @@ const AddressInput = ({
   lookupAddress,
   onInputChange,
 }: AddressInputProps): JSX.Element => {
+  console.log('AddressInput')
   const { walletAddress } = useXmtp()
   const inputElement = useRef(null)
   const [value, setValue] = useState<string>(recipientWalletAddress || '')
@@ -41,9 +42,15 @@ const AddressInput = ({
     const setLookupValue = async () => {
       if (!lookupAddress) return
       if (recipientWalletAddress) {
-        const name = await lookupAddress(recipientWalletAddress)
-        setValue(name || recipientWalletAddress)
+        if (recipientWalletAddress.startsWith('0x')) {
+          const name = await lookupAddress(recipientWalletAddress)
+          setValue(name || recipientWalletAddress)
+        }
+        if (recipientWalletAddress.endsWith('eth')) {
+          setValue(recipientWalletAddress)
+        }
       } else if (value.startsWith('0x') && value.length === 42) {
+        // ??
         const name = await lookupAddress(value)
         if (name) {
           setValue(name)
