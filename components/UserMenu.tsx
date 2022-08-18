@@ -122,7 +122,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                 )}
               </div>
               <div className="flex items-center">
-                {getEnv() !== 'dev' && (
+                {getEnv() === 'dev' && (
                   <Tooltip message="You are connected to the dev network">
                     <div className="bg-p-200 font-bold mr-1 text-sm p-1 rounded cursor-pointer">
                       DEV
