@@ -17,7 +17,7 @@ const NavigationPanel = ({ onConnect }: NavigationPanelProps): JSX.Element => {
   const { walletAddress } = useXmtp()
 
   return (
-    <div className="flex-grow flex flex-col">
+    <div className="flex-grow flex flex-col h-[80vh] overflow-y-auto">
       {walletAddress ? (
         <ConversationsPanel />
       ) : (
