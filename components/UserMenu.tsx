@@ -1,7 +1,7 @@
 import { Menu, Transition } from '@headlessui/react'
 import { CogIcon } from '@heroicons/react/solid'
 import { Fragment, useCallback } from 'react'
-import { classNames, getEnv } from '../helpers'
+import { classNames, isDev } from '../helpers'
 import Blockies from 'react-blockies'
 import Address from './Address'
 import useXmtp from '../hooks/useXmtp'
@@ -122,7 +122,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                 )}
               </div>
               <div className="flex items-center">
-                {getEnv() === 'dev' && (
+                {isDev() && (
                   <Tooltip message="You are connected to the dev network">
                     <div className="bg-p-200 font-bold mr-1 text-sm p-1 rounded cursor-pointer">
                       DEV

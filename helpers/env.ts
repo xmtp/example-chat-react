@@ -3,3 +3,7 @@ export const getEnv = (): 'dev' | 'production' => {
     ? 'production'
     : 'dev'
 }
+
+export const isDev = (): boolean => {
+  return getEnv() === 'dev'
+}
