@@ -6,6 +6,7 @@ import Blockies from 'react-blockies'
 import Address from './Address'
 import useXmtp from '../hooks/useXmtp'
 import useEns from '../hooks/useEns'
+import { Tooltip } from './Tooltip/Tooltip'
 
 type UserMenuProps = {
   onConnect?: () => Promise<void>
@@ -122,12 +123,11 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
               </div>
               <div className="flex items-center">
                 {getEnv() !== 'dev' && (
-                  <div
-                    title="You are connected to the dev network"
-                    className="bg-p-200 font-bold mr-1 text-sm p-1 rounded cursor-pointer"
-                  >
-                    DEV
-                  </div>
+                  <Tooltip message="You are connected to the dev network">
+                    <div className="bg-p-200 font-bold mr-1 text-sm p-1 rounded cursor-pointer">
+                      DEV
+                    </div>
+                  </Tooltip>
                 )}
                 <div>
                   <Menu.Button className="max-w-xs flex items-center text-sm rounded-full focus:outline-none">
