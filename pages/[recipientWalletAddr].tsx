@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { Conversation } from '../../components/Conversation'
+import { Conversation } from '../components/Conversation'
 
 const ConversationPage: NextPage = () => {
   const router = useRouter()

@@ -41,7 +41,7 @@ const ConversationLayout: React.FC = ({ children }) => {
 
   const handleSubmit = useCallback(
     async (address: string) => {
-      router.push(address ? `/dm/${address}` : '/dm/')
+      router.push(address ? `/${address}` : '/dm/')
     },
     [router]
   )

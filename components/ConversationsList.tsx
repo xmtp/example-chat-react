@@ -34,7 +34,7 @@ const ConversationTile = ({
   )
   const loading = isLoadingEns || isLoadingConversation
   const latestMessage = getLatestMessage(messages)
-  const path = `/dm/${conversation.peerAddress}`
+  const path = `/${conversation.peerAddress}`
   const linkRef = useRef<HTMLAnchorElement>(null)
 
   useEffect(() => {
