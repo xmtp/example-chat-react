@@ -49,7 +49,7 @@ const ConversationTile = ({
   }
 
   return (
-    <Link href={path} key={conversation.peerAddress}>
+    <Link passHref href={path} key={conversation.peerAddress}>
       <a onClick={onClick}>
         <div
           className={classNames(
@@ -122,9 +122,6 @@ const ConversationsList = ({
       getLatestMessage(convoBMessages)?.sent || new Date()
     return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
   }
-
-  if (!router.query.recipientWalletAddr) return <div />
-
   return (
     <div>
       {conversations &&
