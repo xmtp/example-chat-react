@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { classNames, truncate, formatDate } from '../helpers'
 import Link from 'next/link'
 import Address from './Address'
@@ -36,12 +36,13 @@ const ConversationTile = ({
   const loading = isLoadingEns || isLoadingConversation
   const latestMessage = getLatestMessage(messages)
   const path = `/${conversation.peerAddress}`
+  const [resetPage, setResetPage] = useState(false)
 
   useEffect(() => {
     if (isSelected) {
-      router.push(path)
+      setResetPage(!resetPage)
     }
-  }, [isSelected, router.query.recipientWalletAddr, path])
+  }, [isSelected, router.query.recipientWalletAddr])
 
   if (!latestMessage) {
     return null
@@ -127,6 +128,7 @@ const ConversationsList = ({
         conversations.sort(orderByLatestMessage).map((convo) => {
           const isSelected =
             router.query.recipientWalletAddr == convo.peerAddress
+          console.log({ isSelected })
           return (
             <ConversationTile
               key={convo.peerAddress}

@@ -3,14 +3,15 @@ import useXmtp from '../../hooks/useXmtp'
 import useConversation from '../../hooks/useConversation'
 import { MessagesList, MessageComposer } from './'
 import Loader from '../../components/Loader'
+import { useRouter } from 'next/router'
 
 type ConversationProps = {
   recipientWalletAddr: string
 }
 
-const Conversation = ({
-  recipientWalletAddr,
-}: ConversationProps): JSX.Element => {
+const Conversation = ({}: ConversationProps): JSX.Element => {
+  const router = useRouter()
+  const recipientWalletAddr = router.query.recipientWalletAddr as string
   const { walletAddress, client } = useXmtp()
   const messagesEndRef = useRef(null)
   const scrollToMessagesEndRef = useCallback(() => {
@@ -24,6 +25,7 @@ const Conversation = ({
   )
 
   const hasMessages = messages.length > 0
+
   useEffect(() => {
     if (!hasMessages) return
     const initScroll = () => {
@@ -35,6 +37,7 @@ const Conversation = ({
   if (!recipientWalletAddr || !walletAddress || !client) {
     return <div />
   }
+
   if (loading && !messages?.length) {
     return (
       <Loader
