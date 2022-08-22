@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { classNames, truncate, formatDate } from '../helpers'
 import Link from 'next/link'
 import Address from './Address'
@@ -32,16 +32,16 @@ const ConversationTile = ({
   const { messages, loading: isLoadingConversation } = useConversation(
     conversation.peerAddress
   )
+  const router = useRouter()
   const loading = isLoadingEns || isLoadingConversation
   const latestMessage = getLatestMessage(messages)
   const path = `/${conversation.peerAddress}`
-  const linkRef = useRef<HTMLAnchorElement>(null)
 
   useEffect(() => {
     if (isSelected) {
-      linkRef.current?.click()
+      router.push(path)
     }
-  }, [isSelected])
+  }, [isSelected, router.query.recipientWalletAddr, path])
 
   if (!latestMessage) {
     return null
@@ -49,7 +49,7 @@ const ConversationTile = ({
 
   return (
     <Link href={path} key={conversation.peerAddress}>
-      <a ref={linkRef} onClick={onClick}>
+      <a onClick={onClick}>
         <div
           className={classNames(
             'h-20',
