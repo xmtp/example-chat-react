@@ -38,7 +38,10 @@ const ConversationTile = ({
   const path = `/dm/${conversation.peerAddress}`
 
   useEffect(() => {
-    if (isSelected) router.push(path)
+    if (isSelected) {
+      router.push(path)
+      onClick && onClick()
+    }
   }, [isSelected])
 
   if (!latestMessage) {
@@ -119,6 +122,9 @@ const ConversationsList = ({
       getLatestMessage(convoBMessages)?.sent || new Date()
     return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
   }
+
+  if (!router.query.recipientWalletAddr) return <div />
+
   return (
     <div>
       {conversations &&
