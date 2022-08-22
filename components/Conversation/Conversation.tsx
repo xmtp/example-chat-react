@@ -5,11 +5,7 @@ import { MessagesList, MessageComposer } from './'
 import Loader from '../../components/Loader'
 import { useRouter } from 'next/router'
 
-type ConversationProps = {
-  recipientWalletAddr: string
-}
-
-const Conversation = ({}: ConversationProps): JSX.Element => {
+const Conversation = (): JSX.Element => {
   const router = useRouter()
   const recipientWalletAddr = router.query.recipientWalletAddr as string
   const { walletAddress, client } = useXmtp()
