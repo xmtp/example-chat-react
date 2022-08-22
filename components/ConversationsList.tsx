@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react'
 import { classNames, truncate, formatDate } from '../helpers'
-import Link from 'next/link'
+// import Link from 'next/link'
 import Address from './Address'
 import { useRouter } from 'next/router'
 import { Conversation } from '@xmtp/xmtp-js'
