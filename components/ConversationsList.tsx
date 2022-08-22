@@ -1,3 +1,4 @@
+import { useContext, useEffect } from 'react'
 import { classNames, truncate, formatDate } from '../helpers'
 import Link from 'next/link'
 import Address from './Address'
@@ -8,7 +9,6 @@ import { XmtpContext } from '../contexts/xmtp'
 import { Message } from '@xmtp/xmtp-js'
 import useEns from '../hooks/useEns'
 import Avatar from './Avatar'
-import { useContext } from 'react'
 
 type ConversationsListProps = {
   conversations: Conversation[]
@@ -28,6 +28,7 @@ const ConversationTile = ({
   isSelected,
   onClick,
 }: ConversationTileProps): JSX.Element | null => {
+  const router = useRouter()
   const { loading: isLoadingEns } = useEns(conversation.peerAddress)
   const { messages, loading: isLoadingConversation } = useConversation(
     conversation.peerAddress
@@ -35,9 +36,15 @@ const ConversationTile = ({
   const loading = isLoadingEns || isLoadingConversation
   const latestMessage = getLatestMessage(messages)
   const path = `/dm/${conversation.peerAddress}`
+
+  useEffect(() => {
+    if (isSelected) router.push(path)
+  }, [isSelected])
+
   if (!latestMessage) {
     return null
   }
+
   return (
     <Link href={path} key={conversation.peerAddress}>
       <a onClick={onClick}>
