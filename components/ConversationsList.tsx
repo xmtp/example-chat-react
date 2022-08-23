@@ -123,6 +123,7 @@ const ConversationsList = ({
       )
       if (Array.isArray(matchAddress) && matchAddress.length > 0) {
         setResetPage(!resetPage)
+        router.push(window.location.pathname)
       }
     }
   }
