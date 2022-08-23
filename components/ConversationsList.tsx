@@ -123,10 +123,8 @@ const ConversationsList = ({
       const matchAddress = conversations.filter(
         (convo) => path == convo.peerAddress
       )
-      console.log({ matchAddress })
       if (Array.isArray(matchAddress) && matchAddress.length > 0) {
         setResetPage(!resetPage)
-        router.push(window.location.pathname)
       }
     }
   }
@@ -141,7 +139,6 @@ const ConversationsList = ({
         conversations.sort(orderByLatestMessage).map((convo) => {
           const isSelected =
             router.query.recipientWalletAddr == convo.peerAddress
-          console.log({ isSelected })
           return (
             <ConversationTile
               key={convo.peerAddress}

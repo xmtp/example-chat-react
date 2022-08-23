@@ -14,7 +14,7 @@ const useConversation = (
   const [loading, setLoading] = useState<boolean>(false)
   useEffect(() => {
     const getConvo = async () => {
-      if (!client || !peerAddress) {
+      if (!client) {
         return
       }
       setConversation(await client.conversations.newConversation(peerAddress))
