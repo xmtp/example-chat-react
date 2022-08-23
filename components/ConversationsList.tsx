@@ -118,10 +118,10 @@ const ConversationsList = ({
   const [resetPage, setResetPage] = useState(false)
 
   const reloadIfQueryParamPresent = () => {
-    console.log(router.query['recipientWalletAddr'], 'address')
-    if (router.query['recipientWalletAddr']) {
+    console.log(window.location.pathname.replace('/', ''), 'address')
+    if (window.location.pathname) {
       const matchAddress = conversations.filter(
-        (convo) => router.query['recipientWalletAddr'] == convo.peerAddress
+        (convo) => window.location.pathname == convo.peerAddress
       )
       if (Array.isArray(matchAddress) && matchAddress.length > 0) {
         setResetPage(!resetPage)
@@ -131,10 +131,7 @@ const ConversationsList = ({
 
   useEffect(() => {
     reloadIfQueryParamPresent()
-    setTimeout(() => {
-      reloadIfQueryParamPresent()
-    }, 500)
-  }, [router.query['recipientWalletAddr']])
+  }, [window.location.pathname])
 
   return (
     <div>
