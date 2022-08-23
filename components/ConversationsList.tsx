@@ -8,7 +8,7 @@ import { XmtpContext } from '../contexts/xmtp'
 import { Message } from '@xmtp/xmtp-js'
 import useEns from '../hooks/useEns'
 import Avatar from './Avatar'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 type ConversationsListProps = {
   conversations: Conversation[]
@@ -112,6 +112,25 @@ const ConversationsList = ({
       getLatestMessage(convoBMessages)?.sent || new Date()
     return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
   }
+
+  const [resetPage, setResetPage] = useState(false)
+
+  const reloadIfQueryParamPresent = () => {
+    if (window.location.pathname) {
+      const path = window.location.pathname.replace('/dm/', '')
+      const matchAddress = conversations.filter(
+        (convo) => path == convo.peerAddress
+      )
+      if (Array.isArray(matchAddress) && matchAddress.length > 0) {
+        setResetPage(!resetPage)
+      }
+    }
+  }
+
+  useEffect(() => {
+    reloadIfQueryParamPresent()
+  }, [window.location.pathname])
+
   return (
     <div>
       {conversations &&
