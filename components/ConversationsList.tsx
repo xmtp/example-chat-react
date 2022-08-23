@@ -32,19 +32,9 @@ const ConversationTile = ({
   const { messages, loading: isLoadingConversation } = useConversation(
     conversation.peerAddress
   )
-  const router = useRouter()
   const loading = isLoadingEns || isLoadingConversation
   const latestMessage = getLatestMessage(messages)
   const path = `/${conversation.peerAddress}`
-  const [resetPage, setResetPage] = useState(false)
-
-  useEffect(() => {
-    if (isSelected) {
-      document.addEventListener('DOMContentLoaded', function () {
-        setResetPage(!resetPage)
-      })
-    }
-  }, [isSelected, router.query.recipientWalletAddr])
 
   if (!latestMessage) {
     return null
@@ -127,16 +117,19 @@ const ConversationsList = ({
 
   const [resetPage, setResetPage] = useState(false)
 
-  useEffect(() => {
-    console.log(router.query.recipientWalletAddr, 'address')
+  const reloadIfQueryParamPresent = () => {
     const matchAddress = conversations.filter(
-      (convo) => router.query.recipientWalletAddr == convo.peerAddress
+      (convo) => router.query['recipientWalletAddr'] == convo.peerAddress
     )
     if (Array.isArray(matchAddress) && matchAddress.length > 0) {
-      console.log({ matchAddress })
       setResetPage(!resetPage)
     }
-  }, [router.query.recipientWalletAddr])
+  }
+
+  useEffect(() => {
+    console.log(router.query['recipientWalletAddr'], 'address')
+    reloadIfQueryParamPresent()
+  }, [router.query['recipientWalletAddr']])
 
   return (
     <div>
