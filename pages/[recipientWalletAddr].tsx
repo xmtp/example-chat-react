@@ -1,12 +1,18 @@
+import { useEffect } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { Conversation } from '../components/Conversation'
+import useXmtp from '../hooks/useXmtp'
 
 const ConversationPage: NextPage = () => {
   const router = useRouter()
-  const recipientWalletAddr = router.query.recipientWalletAddr as string
+  const { walletAddress, client } = useXmtp()
 
-  if (!recipientWalletAddr) return <div />
+  useEffect(() => {
+    if (!walletAddress || !client) {
+      router.push('/')
+    }
+  }, [walletAddress, client])
 
   return <Conversation />
 }
