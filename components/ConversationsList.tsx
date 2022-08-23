@@ -40,7 +40,9 @@ const ConversationTile = ({
 
   useEffect(() => {
     if (isSelected) {
-      setResetPage(!resetPage)
+      document.addEventListener('DOMContentLoaded', function () {
+        setResetPage(!resetPage)
+      })
     }
   }, [isSelected, router.query.recipientWalletAddr])
 
@@ -122,13 +124,26 @@ const ConversationsList = ({
       getLatestMessage(convoBMessages)?.sent || new Date()
     return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
   }
+
+  const [resetPage, setResetPage] = useState(false)
+
+  useEffect(() => {
+    console.log(router.query.recipientWalletAddr, 'address')
+    const matchAddress = conversations.filter(
+      (convo) => router.query.recipientWalletAddr == convo.peerAddress
+    )
+    if (Array.isArray(matchAddress) && matchAddress.length > 0) {
+      console.log({ matchAddress })
+      setResetPage(!resetPage)
+    }
+  }, [router.query.recipientWalletAddr])
+
   return (
     <div>
       {conversations &&
         conversations.sort(orderByLatestMessage).map((convo) => {
           const isSelected =
             router.query.recipientWalletAddr == convo.peerAddress
-          console.log({ isSelected })
           return (
             <ConversationTile
               key={convo.peerAddress}
