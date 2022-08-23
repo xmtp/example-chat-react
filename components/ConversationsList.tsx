@@ -118,13 +118,15 @@ const ConversationsList = ({
   const [resetPage, setResetPage] = useState(false)
 
   const reloadIfQueryParamPresent = () => {
-    console.log(window.location.pathname.replace('/', ''), 'address')
     if (window.location.pathname) {
+      const path = window.location.pathname.replace('/', '')
       const matchAddress = conversations.filter(
-        (convo) => window.location.pathname == convo.peerAddress
+        (convo) => path == convo.peerAddress
       )
+      console.log({ matchAddress })
       if (Array.isArray(matchAddress) && matchAddress.length > 0) {
         setResetPage(!resetPage)
+        router.push(window.location.pathname)
       }
     }
   }
@@ -139,6 +141,7 @@ const ConversationsList = ({
         conversations.sort(orderByLatestMessage).map((convo) => {
           const isSelected =
             router.query.recipientWalletAddr == convo.peerAddress
+          console.log({ isSelected })
           return (
             <ConversationTile
               key={convo.peerAddress}
