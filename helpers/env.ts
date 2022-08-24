@@ -9,6 +9,6 @@ export const getEnv = (): 'dev' | 'production' | 'local' => {
   return 'dev'
 }
 
-export const isDev = (): boolean => {
-  return getEnv() === 'dev'
+export const tagStr = (): string | null => {
+  return getEnv() === 'production' ? null : getEnv().toLocaleUpperCase()
 }
