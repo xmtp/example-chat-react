@@ -36,7 +36,7 @@ const useConversation = (
       if (!conversation) return
       console.log('Listing messages for peer address', conversation.peerAddress)
       setLoading(true)
-      const msgs = await conversation.messages({ pageSize: 100 })
+      const msgs = await conversation.messages()
       if (dispatchMessages) {
         dispatchMessages({
           peerAddress: conversation.peerAddress,
