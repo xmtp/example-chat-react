@@ -17,6 +17,7 @@ const ConversationPage: NextPage = () => {
       const queryAddress = window.location.pathname.replace('/dm/', '')
       const canMessage = await client?.canMessage(queryAddress)
       if (!canMessage) {
+        setCanMessageAddr(false)
         router.push('/')
       } else {
         setCanMessageAddr(true)
