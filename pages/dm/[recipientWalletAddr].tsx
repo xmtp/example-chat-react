@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Conversation } from '../../components/Conversation'
+import { checkPath } from '../../helpers'
 import useXmtp from '../../hooks/useXmtp'
 
 const ConversationPage: NextPage = () => {
@@ -13,10 +14,10 @@ const ConversationPage: NextPage = () => {
   )
 
   const redirectToHome = async () => {
-    if (window.location.pathname) {
+    if (checkPath()) {
       const queryAddress = window.location.pathname.replace('/dm/', '')
       const canMessage = await client?.canMessage(queryAddress)
-      if (!canMessage) {
+      if (!canMessage || !queryAddress) {
         setCanMessageAddr(false)
         router.push('/')
       } else {

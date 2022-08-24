@@ -1,4 +1,4 @@
-import { classNames, truncate, formatDate } from '../helpers'
+import { classNames, truncate, formatDate, checkPath } from '../helpers'
 import Link from 'next/link'
 import Address from './Address'
 import { useRouter } from 'next/router'
@@ -117,23 +117,23 @@ const ConversationsList = ({
   const [refresh, setRefresh] = useState(false)
 
   const reloadIfQueryParamPresent = async () => {
-    const queryAddress = window.location.pathname.replace('/dm/', '')
-    if (queryAddress) {
-      const canMessage = await client?.canMessage(queryAddress)
-      const matchAddress = conversations.filter(
-        (convo) => queryAddress == convo.peerAddress
-      )
-      if (
-        canMessage ||
-        (Array.isArray(matchAddress) && matchAddress.length > 0)
-      ) {
-        router.push(window.location.pathname)
-        setRefresh(!refresh)
-      } else {
-        router.push('/')
+    if (checkPath()) {
+      const queryAddress = window.location.pathname.replace('/dm/', '')
+      if (queryAddress) {
+        const canMessage = await client?.canMessage(queryAddress)
+        const matchAddress = conversations.filter(
+          (convo) => queryAddress == convo.peerAddress
+        )
+        if (
+          canMessage ||
+          (Array.isArray(matchAddress) && matchAddress.length > 0)
+        ) {
+          router.push(window.location.pathname)
+          setRefresh(!refresh)
+        } else {
+          router.push('/')
+        }
       }
-    } else {
-      router.push('/')
     }
   }
 
