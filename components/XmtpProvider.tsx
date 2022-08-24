@@ -55,8 +55,9 @@ export const XmtpProvider: React.FC = ({ children }) => {
   }, [wallet])
 
   useEffect(() => {
+    if (!client) return
+
     const listConversations = async () => {
-      if (!client) return
       console.log('Listing conversations')
       setLoadingConversations(true)
       const convos = await client.conversations.list()
@@ -65,18 +66,14 @@ export const XmtpProvider: React.FC = ({ children }) => {
       })
       setLoadingConversations(false)
     }
-    listConversations()
-  }, [client, walletAddress])
-
-  useEffect(() => {
     const streamConversations = async () => {
-      if (!client) return
       const stream = await client.conversations.stream()
       for await (const convo of stream) {
         dispatchConversations([convo])
       }
     }
     streamConversations()
+    listConversations()
   }, [client, walletAddress])
 
   const [providerState, setProviderState] = useState<XmtpContextType>({

@@ -14,13 +14,13 @@ const useConversation = (
   const [loading, setLoading] = useState<boolean>(false)
   useEffect(() => {
     const getConvo = async () => {
-      if (!client) {
+      if (!client || !peerAddress) {
         return
       }
       setConversation(await client.conversations.newConversation(peerAddress))
     }
     getConvo()
-  }, [client, peerAddress])
+  }, [peerAddress])
 
   useEffect(() => {
     const closeStream = async () => {
@@ -29,28 +29,27 @@ const useConversation = (
     }
     closeStream()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [peerAddress])
+  }, [])
 
   useEffect(() => {
     const listMessages = async () => {
       if (!conversation) return
       console.log('Listing messages for peer address', conversation.peerAddress)
       setLoading(true)
-      const msgs = await conversation.messages({ pageSize: 100 })
+      const msgs = await conversation.messages()
       if (dispatchMessages) {
         dispatchMessages({
           peerAddress: conversation.peerAddress,
           messages: msgs,
         })
       }
-
       if (onMessageCallback) {
         onMessageCallback()
       }
       setLoading(false)
     }
     listMessages()
-  }, [conversation, dispatchMessages, onMessageCallback, setLoading])
+  }, [conversation])
 
   useEffect(() => {
     const streamMessages = async () => {
@@ -64,14 +63,13 @@ const useConversation = (
             messages: [msg],
           })
         }
-
         if (onMessageCallback) {
           onMessageCallback()
         }
       }
     }
     streamMessages()
-  }, [conversation, peerAddress, dispatchMessages, onMessageCallback])
+  }, [conversation])
 
   const handleSend = useCallback(
     async (message: string) => {
