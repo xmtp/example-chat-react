@@ -1,4 +1,4 @@
-import { classNames, truncate, formatDate } from '../helpers'
+import { classNames, truncate, formatDate, checkPath } from '../helpers'
 import Link from 'next/link'
 import Address from './Address'
 import { useRouter } from 'next/router'
@@ -8,7 +8,8 @@ import { XmtpContext } from '../contexts/xmtp'
 import { Message } from '@xmtp/xmtp-js'
 import useEns from '../hooks/useEns'
 import Avatar from './Avatar'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import useXmtp from '../hooks/useXmtp'
 
 type ConversationsListProps = {
   conversations: Conversation[]
@@ -112,6 +113,34 @@ const ConversationsList = ({
       getLatestMessage(convoBMessages)?.sent || new Date()
     return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
   }
+  const { client } = useXmtp()
+  const [refresh, setRefresh] = useState(false)
+
+  const reloadIfQueryParamPresent = async () => {
+    if (checkPath()) {
+      const queryAddress = window.location.pathname.replace('/dm/', '')
+      if (queryAddress) {
+        const canMessage = await client?.canMessage(queryAddress)
+        const matchAddress = conversations.filter(
+          (convo) => queryAddress == convo.peerAddress
+        )
+        if (
+          canMessage ||
+          (Array.isArray(matchAddress) && matchAddress.length > 0)
+        ) {
+          router.push(window.location.pathname)
+          setRefresh(!refresh)
+        } else {
+          router.push('/')
+        }
+      }
+    }
+  }
+
+  useEffect(() => {
+    reloadIfQueryParamPresent()
+  }, [window.location.pathname])
+
   return (
     <div>
       {conversations &&
