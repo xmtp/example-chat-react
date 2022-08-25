@@ -11,8 +11,8 @@ type ConversationProps = {
 const Conversation = ({
   recipientWalletAddr,
 }: ConversationProps): JSX.Element => {
-  const { walletAddress, client } = useXmtp()
   const messagesEndRef = useRef(null)
+
   const scrollToMessagesEndRef = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
@@ -24,6 +24,7 @@ const Conversation = ({
   )
 
   const hasMessages = messages.length > 0
+
   useEffect(() => {
     if (!hasMessages) return
     const initScroll = () => {
@@ -32,9 +33,10 @@ const Conversation = ({
     initScroll()
   }, [recipientWalletAddr, hasMessages, scrollToMessagesEndRef])
 
-  if (!recipientWalletAddr || !walletAddress || !client) {
+  if (!recipientWalletAddr) {
     return <div />
   }
+
   if (loading && !messages?.length) {
     return (
       <Loader
@@ -47,12 +49,10 @@ const Conversation = ({
 
   return (
     <main className="flex flex-col flex-1 bg-white h-screen">
-      <MessagesList
-        messagesEndRef={messagesEndRef}
-        messages={messages}
-        walletAddress={walletAddress}
-      />
-      {walletAddress && <MessageComposer onSend={sendMessage} />}
+      {hasMessages && (
+        <MessagesList messagesEndRef={messagesEndRef} messages={messages} />
+      )}
+      <MessageComposer onSend={sendMessage} />
     </main>
   )
 }
