@@ -22,3 +22,7 @@ export const formatTime = (d: Date | undefined): string =>
         minute: '2-digit',
       })
     : ''
+
+export const checkPath = () => {
+  return window.location.pathname !== '/' && window.location.pathname !== '/dm'
+}
