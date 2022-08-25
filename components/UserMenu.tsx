@@ -1,11 +1,12 @@
 import { Menu, Transition } from '@headlessui/react'
 import { CogIcon } from '@heroicons/react/solid'
 import { Fragment, useCallback } from 'react'
-import { classNames } from '../helpers'
+import { classNames, tagStr } from '../helpers'
 import Blockies from 'react-blockies'
 import Address from './Address'
 import useXmtp from '../hooks/useXmtp'
 import useEns from '../hooks/useEns'
+import { Tooltip } from './Tooltip/Tooltip'
 
 type UserMenuProps = {
   onConnect?: () => Promise<void>
@@ -79,7 +80,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
   }, [walletAddress])
 
   return (
-    <div className="flex bg-n-500 items-center justify-between rounded-lg h-14 mx-4 mb-5 md:mb-4 px-4 drop-shadow-xl">
+    <div className="flex bg-p-600 items-center justify-between rounded-lg h-[8vh] max-h-16 mx-4 mb-5 md:mb-4 px-4 drop-shadow-xl">
       {walletAddress ? (
         <Menu>
           {({ open }) => (
@@ -120,60 +121,69 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                   </div>
                 )}
               </div>
-              <div>
-                <Menu.Button className="max-w-xs flex items-center text-sm rounded-full focus:outline-none">
-                  <span className="sr-only">Open user menu</span>
-                  <CogIcon
-                    className={classNames(
-                      open ? 'fill-white' : '',
-                      'h-6 w-6 md:h-5 md:w-5 fill-n-100 hover:fill-n-200'
-                    )}
-                    aria-hidden="true"
-                  />
-                </Menu.Button>
+              <div className="flex items-center">
+                {tagStr() && (
+                  <Tooltip message="You are connected to the dev network">
+                    <div className="bg-p-200 font-bold mr-1 text-sm p-1 rounded cursor-pointer">
+                      {tagStr()}
+                    </div>
+                  </Tooltip>
+                )}
+                <div>
+                  <Menu.Button className="max-w-xs flex items-center text-sm rounded-full focus:outline-none">
+                    <span className="sr-only">Open user menu</span>
+                    <CogIcon
+                      className={classNames(
+                        open ? 'fill-white' : '',
+                        'h-6 w-6 md:h-5 md:w-5 fill-n-100 hover:fill-n-200'
+                      )}
+                      aria-hidden="true"
+                    />
+                  </Menu.Button>
+                </div>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="origin-bottom-right absolute right-0 bottom-12 mb-4 w-40 rounded-md shadow-lg bg-white divide-y-2 divide-zinc-50 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="px-1 py-1 ">
+                      <Menu.Item>
+                        {({ active }) => (
+                          <a
+                            onClick={onClickCopy}
+                            className={classNames(
+                              active ? 'bg-zinc-50' : '',
+                              'block rounded-md px-2 py-2 text-sm text-n-600 text-right font-normal cursor-pointer'
+                            )}
+                          >
+                            Copy wallet address
+                          </a>
+                        )}
+                      </Menu.Item>
+                    </div>
+                    <div className="px-1 py-1 ">
+                      <Menu.Item>
+                        {({ active }) => (
+                          <a
+                            onClick={onDisconnect}
+                            className={classNames(
+                              active ? 'bg-zinc-50 cursor-pointer' : '',
+                              'block rounded-md px-2 py-2 text-sm text-l-300 text-right font-semibold'
+                            )}
+                          >
+                            Disconnect wallet
+                          </a>
+                        )}
+                      </Menu.Item>
+                    </div>
+                  </Menu.Items>
+                </Transition>
               </div>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="origin-bottom-right absolute right-0 bottom-12 mb-4 w-40 rounded-md shadow-lg bg-white divide-y-2 divide-zinc-50 ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <div className="px-1 py-1 ">
-                    <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          onClick={onClickCopy}
-                          className={classNames(
-                            active ? 'bg-zinc-50' : '',
-                            'block rounded-md px-2 py-2 text-sm text-n-600 text-right font-normal cursor-pointer'
-                          )}
-                        >
-                          Copy wallet address
-                        </a>
-                      )}
-                    </Menu.Item>
-                  </div>
-                  <div className="px-1 py-1 ">
-                    <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          onClick={onDisconnect}
-                          className={classNames(
-                            active ? 'bg-zinc-50 cursor-pointer' : '',
-                            'block rounded-md px-2 py-2 text-sm text-l-300 text-right font-semibold'
-                          )}
-                        >
-                          Disconnect wallet
-                        </a>
-                      )}
-                    </Menu.Item>
-                  </div>
-                </Menu.Items>
-              </Transition>
             </>
           )}
         </Menu>

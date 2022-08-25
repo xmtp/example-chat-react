@@ -21,7 +21,7 @@ const NavigationColumnLayout: React.FC = ({ children }) => (
 )
 
 const NavigationHeaderLayout: React.FC = ({ children }) => (
-  <div className="h-[72px] bg-p-600 flex items-center justify-between flex-shrink-0 px-4">
+  <div className="h-[10vh] max-h-20 bg-p-600 flex items-center justify-between flex-shrink-0 px-4">
     <Link href="/" passHref={true}>
       <img className="h-8 w-auto" src="/xmtp-icon.png" alt="XMTP" />
     </Link>
