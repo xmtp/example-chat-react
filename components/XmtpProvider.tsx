@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { Conversation } from '@xmtp/xmtp-js'
 import { Client } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
@@ -8,7 +8,6 @@ import useMessageStore from '../hooks/useMessageStore'
 
 export const XmtpProvider: React.FC = ({ children }) => {
   const [wallet, setWallet] = useState<Signer>()
-  const [walletAddress, setWalletAddress] = useState<string>()
   const [client, setClient] = useState<Client>()
   const { getMessages, dispatchMessages } = useMessageStore()
   const [loadingConversations, setLoadingConversations] =
@@ -30,21 +29,15 @@ export const XmtpProvider: React.FC = ({ children }) => {
     []
   )
 
-  const connect = useCallback(
-    async (wallet: Signer) => {
-      setWallet(wallet)
-      const walletAddr = await wallet.getAddress()
-      setWalletAddress(walletAddr)
-    },
-    [setWallet, setWalletAddress]
-  )
+  const connect = (wallet: Signer) => {
+    setWallet(wallet)
+  }
 
-  const disconnect = useCallback(async () => {
+  const disconnect = () => {
     setWallet(undefined)
-    setWalletAddress(undefined)
     setClient(undefined)
     dispatchConversations(undefined)
-  }, [setWallet, setWalletAddress, setClient, dispatchConversations])
+  }
 
   useEffect(() => {
     const initClient = async () => {
@@ -74,11 +67,10 @@ export const XmtpProvider: React.FC = ({ children }) => {
     }
     streamConversations()
     listConversations()
-  }, [client, walletAddress])
+  }, [client])
 
   const [providerState, setProviderState] = useState<XmtpContextType>({
     wallet,
-    walletAddress,
     client,
     conversations,
     loadingConversations,
@@ -91,7 +83,6 @@ export const XmtpProvider: React.FC = ({ children }) => {
   useEffect(() => {
     setProviderState({
       wallet,
-      walletAddress,
       client,
       conversations,
       loadingConversations,
@@ -102,14 +93,11 @@ export const XmtpProvider: React.FC = ({ children }) => {
     })
   }, [
     wallet,
-    walletAddress,
     client,
     conversations,
     loadingConversations,
     getMessages,
     dispatchMessages,
-    connect,
-    disconnect,
   ])
 
   return (

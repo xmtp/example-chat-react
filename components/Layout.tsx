@@ -67,14 +67,10 @@ const ConversationLayout: React.FC = ({ children }) => {
 }
 
 const Layout: React.FC = ({ children }) => {
-  const {
-    connect: connectXmtp,
-    disconnect: disconnectXmtp,
-    walletAddress,
-    client,
-  } = useXmtp()
+  const { connect: connectXmtp, disconnect: disconnectXmtp, client } = useXmtp()
   const router = useRouter()
   const {
+    address: walletAddress,
     signer,
     connect: connectWallet,
     disconnect: disconnectWallet,
@@ -84,7 +80,7 @@ const Layout: React.FC = ({ children }) => {
     disconnectXmtp()
     await disconnectWallet()
     router.push('/')
-  }, [disconnectWallet, disconnectXmtp, router])
+  }, [disconnectWallet, router])
 
   const handleConnect = useCallback(async () => {
     await connectWallet()
@@ -97,6 +93,7 @@ const Layout: React.FC = ({ children }) => {
     })
     return ref.current
   }
+
   const prevSigner = usePrevious(signer)
 
   useEffect(() => {
@@ -111,7 +108,7 @@ const Layout: React.FC = ({ children }) => {
       connectXmtp(signer)
     }
     connect()
-  }, [signer, prevSigner, connectXmtp, disconnectXmtp])
+  }, [signer, prevSigner])
 
   return (
     <>

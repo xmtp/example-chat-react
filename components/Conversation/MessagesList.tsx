@@ -4,7 +4,7 @@ import Emoji from 'react-emoji-render'
 import Avatar from '../Avatar'
 import { formatTime } from '../../helpers'
 import AddressPill from '../AddressPill'
-import useXmtp from '../../hooks/useXmtp'
+import useWallet from '../../hooks/useWallet'
 
 export type MessageListProps = {
   messages: Message[]
@@ -78,7 +78,7 @@ const MessagesList = ({
   messagesEndRef,
 }: MessageListProps): JSX.Element => {
   let lastMessageDate: Date | undefined
-  const { walletAddress } = useXmtp()
+  const { address: walletAddress } = useWallet()
 
   return (
     <div className="flex-grow flex">

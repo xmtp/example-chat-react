@@ -1,19 +1,15 @@
-import { classNames, truncate, formatDate, checkPath } from '../helpers'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { ChatIcon } from '@heroicons/react/outline'
 import Address from './Address'
 import { useRouter } from 'next/router'
 import { Conversation } from '@xmtp/xmtp-js'
-import useConversation from '../hooks/useConversation'
-import { XmtpContext } from '../contexts/xmtp'
 import { Message } from '@xmtp/xmtp-js'
+import { classNames, truncate, formatDate, checkPath } from '../helpers'
+import useConversation from '../hooks/useConversation'
 import useEns from '../hooks/useEns'
 import Avatar from './Avatar'
-import { useContext, useEffect, useState } from 'react'
 import useXmtp from '../hooks/useXmtp'
-
-type ConversationsListProps = {
-  conversations: Conversation[]
-}
 
 type ConversationTileProps = {
   conversation: Conversation
@@ -96,11 +92,9 @@ const ConversationTile = ({
   )
 }
 
-const ConversationsList = ({
-  conversations,
-}: ConversationsListProps): JSX.Element => {
+const ConversationsList = (): JSX.Element => {
   const router = useRouter()
-  const { getMessages } = useContext(XmtpContext)
+  const { client, conversations, getMessages } = useXmtp()
   const orderByLatestMessage = (
     convoA: Conversation,
     convoB: Conversation
@@ -113,8 +107,8 @@ const ConversationsList = ({
       getLatestMessage(convoBMessages)?.sent || new Date()
     return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
   }
-  const { client } = useXmtp()
-  const [refresh, setRefresh] = useState(false)
+
+  // const [refresh, setRefresh] = useState(false)
 
   const reloadIfQueryParamPresent = async () => {
     if (checkPath()) {
@@ -129,7 +123,7 @@ const ConversationsList = ({
           (Array.isArray(matchAddress) && matchAddress.length > 0)
         ) {
           router.push(window.location.pathname)
-          setRefresh(!refresh)
+          // setRefresh(!refresh)
         } else {
           router.push('/')
         }
@@ -143,7 +137,7 @@ const ConversationsList = ({
 
   return (
     <div>
-      {conversations &&
+      {conversations && conversations.length > 0 ? (
         conversations.sort(orderByLatestMessage).map((convo) => {
           const isSelected =
             router.query.recipientWalletAddr == convo.peerAddress
@@ -154,7 +148,29 @@ const ConversationsList = ({
               isSelected={isSelected}
             />
           )
-        })}
+        })
+      ) : (
+        <NoConversationsMessage />
+      )}
+    </div>
+  )
+}
+
+const NoConversationsMessage = (): JSX.Element => {
+  return (
+    <div className="flex flex-col flex-grow justify-center">
+      <div className="flex flex-col items-center px-4 text-center">
+        <ChatIcon
+          className="h-8 w-8 mb-1 stroke-n-200 md:stroke-n-300"
+          aria-hidden="true"
+        />
+        <p className="text-xl md:text-lg text-n-200 md:text-n-300 font-bold">
+          Your message list is empty
+        </p>
+        <p className="text-lx md:text-md text-n-200 font-normal">
+          There are no messages in this wallet
+        </p>
+      </div>
     </div>
   )
 }

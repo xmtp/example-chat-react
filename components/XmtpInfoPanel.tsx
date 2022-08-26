@@ -1,5 +1,4 @@
 import packageJson from '../package.json'
-import useXmtp from '../hooks/useXmtp'
 import { classNames } from '../helpers'
 import {
   LinkIcon,
@@ -8,6 +7,7 @@ import {
   ChevronRightIcon,
   ArrowSmRightIcon,
 } from '@heroicons/react/solid'
+import useWallet from '../hooks/useWallet'
 
 type XmtpInfoRowProps = {
   icon: JSX.Element
@@ -51,14 +51,14 @@ const InfoRow = ({
 )
 
 const XmtpInfoPanel = ({ onConnect }: XmtpInfoPanelProps): JSX.Element => {
-  const { walletAddress, client } = useXmtp()
+  const { address: walletAddress } = useWallet()
   const InfoRows = [
     {
       icon: <LinkIcon />,
       headingText: 'Connect your wallet',
       subHeadingText: 'Verify your wallet to start using the XMTP protocol',
       onClick: onConnect,
-      disabled: !!walletAddress && !client,
+      disabled: !!walletAddress,
     },
     {
       icon: <BookOpenIcon />,

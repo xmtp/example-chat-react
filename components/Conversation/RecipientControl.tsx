@@ -28,12 +28,9 @@ const RecipientControl = ({
   )
   const [hasName, setHasName] = useState(false)
 
-  const checkIfOnNetwork = useCallback(
-    async (address: string): Promise<boolean> => {
-      return client?.canMessage(address) || false
-    },
-    [client]
-  )
+  const checkIfOnNetwork = async (address: string): Promise<boolean> => {
+    return client?.canMessage(address) || false
+  }
 
   const completeSubmit = useCallback(
     async (address: string, input: HTMLInputElement) => {
@@ -45,7 +42,7 @@ const RecipientControl = ({
         setRecipientInputMode(RecipientInputMode.NotOnNetwork)
       }
     },
-    [checkIfOnNetwork, setRecipientInputMode, onSubmit]
+    [setRecipientInputMode, onSubmit]
   )
 
   useEffect(() => {

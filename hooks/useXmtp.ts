@@ -2,6 +2,7 @@ import { useContext } from 'react'
 import { XmtpContextType, XmtpContext } from '../contexts/xmtp'
 
 const useXmtp = (): XmtpContextType => {
+  console.log('HELL')
   const context = useContext(XmtpContext)
   if (context === undefined) {
     throw new Error('useXmtp must be used within an XmtpProvider')

@@ -4,9 +4,9 @@ import { Fragment, useCallback } from 'react'
 import { classNames, tagStr } from '../helpers'
 import Blockies from 'react-blockies'
 import Address from './Address'
-import useXmtp from '../hooks/useXmtp'
 import useEns from '../hooks/useEns'
 import { Tooltip } from './Tooltip/Tooltip'
+import useWallet from '../hooks/useWallet'
 
 type UserMenuProps = {
   onConnect?: () => Promise<void>
@@ -71,7 +71,7 @@ const NotConnected = ({ onConnect }: UserMenuProps): JSX.Element => {
 }
 
 const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
-  const { walletAddress, client } = useXmtp()
+  const { address: walletAddress } = useWallet()
 
   const onClickCopy = useCallback(() => {
     if (walletAddress) {
@@ -91,7 +91,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                   'flex items-center'
                 )}
               >
-                {client ? (
+                {walletAddress ? (
                   <>
                     <AvatarBlock walletAddress={walletAddress} />
                     <div className="flex flex-col">

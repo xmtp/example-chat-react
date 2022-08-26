@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react'
-import useXmtp from '../hooks/useXmtp'
 import { classNames } from '../helpers'
+import useWallet from '../hooks/useWallet'
 
 type AddressInputProps = {
   recipientWalletAddress?: string
@@ -21,7 +21,7 @@ const AddressInput = ({
   lookupAddress,
   onInputChange,
 }: AddressInputProps): JSX.Element => {
-  const { walletAddress } = useXmtp()
+  const { address: walletAddress } = useWallet()
   const inputElement = useRef(null)
   const [value, setValue] = useState<string>(recipientWalletAddress || '')
 
