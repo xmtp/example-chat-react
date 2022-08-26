@@ -16,14 +16,15 @@ type WalletProviderProps = {
   children?: React.ReactNode
 }
 
+let provider: ethers.providers.Web3Provider
+let chainId: number
+
 export const WalletProvider = ({
   children,
 }: WalletProviderProps): JSX.Element => {
-  const [provider, setProvider] = useState<ethers.providers.Web3Provider>()
   const [signer, setSigner] = useState<Signer>()
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
   const [address, setAddress] = useState<string>()
-  const [chainId, setChainId] = useState<number>()
   const router = useRouter()
 
   const resolveName = async (name: string) => {
@@ -80,9 +81,9 @@ export const WalletProvider = ({
     }
   }
 
-  const handleChainChanged = ({ chainId }: { chainId: number }) => {
-    console.log('Chain changed to', chainId)
-    setChainId(chainId)
+  const handleChainChanged = ({ chainId: newChainId }: { chainId: number }) => {
+    console.log('Chain changed to', newChainId)
+    chainId = newChainId
   }
 
   const connect = async () => {
@@ -91,11 +92,11 @@ export const WalletProvider = ({
       const instance = await web3Modal.connect()
       if (!instance) return
       instance.on('accountsChanged', handleAccountsChanged)
-      const provider = new ethers.providers.Web3Provider(instance, 'any')
+      provider = new ethers.providers.Web3Provider(instance, 'any')
       provider.on('network', handleChainChanged)
       const signer = provider.getSigner()
-      const { chainId } = await provider.getNetwork()
-      setChainId(chainId)
+      const { chainId: newChainId } = await provider.getNetwork()
+      chainId = newChainId
       setSigner(signer)
       setAddress(await signer.getAddress())
       return signer
@@ -159,12 +160,11 @@ export const WalletProvider = ({
       const instance = await web3Modal.connectTo(cachedProviderName)
       if (!instance) return
       instance.on('accountsChanged', handleAccountsChanged)
-      const provider = new ethers.providers.Web3Provider(instance, 'any')
+      provider = new ethers.providers.Web3Provider(instance, 'any')
       provider.on('network', handleChainChanged)
       const signer = provider.getSigner()
-      const { chainId } = await provider.getNetwork()
-      setChainId(chainId)
-      setProvider(provider)
+      const { chainId: newChainId } = await provider.getNetwork()
+      chainId = newChainId
       setSigner(signer)
       setAddress(await signer.getAddress())
     }
@@ -174,11 +174,8 @@ export const WalletProvider = ({
   return (
     <WalletContext.Provider
       value={{
-        provider,
         signer,
         address,
-        web3Modal,
-        chainId,
         resolveName,
         lookupAddress,
         getAvatarUrl,

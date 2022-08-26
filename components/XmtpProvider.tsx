@@ -7,7 +7,7 @@ import { XmtpContext, XmtpContextType } from '../contexts/xmtp'
 import useMessageStore from '../hooks/useMessageStore'
 
 export const XmtpProvider: React.FC = ({ children }) => {
-  const [wallet, setWallet] = useState<Signer>()
+  console.log('hell yeah')
   const [client, setClient] = useState<Client>()
   const { getMessages, dispatchMessages } = useMessageStore()
   const [loadingConversations, setLoadingConversations] =
@@ -29,23 +29,15 @@ export const XmtpProvider: React.FC = ({ children }) => {
     []
   )
 
-  const connect = (wallet: Signer) => {
-    setWallet(wallet)
+  const initClient = async (wallet: Signer) => {
+    if (!wallet) return
+    setClient(await Client.create(wallet, { env: getEnv() }))
   }
 
   const disconnect = () => {
-    setWallet(undefined)
     setClient(undefined)
     dispatchConversations(undefined)
   }
-
-  useEffect(() => {
-    const initClient = async () => {
-      if (!wallet) return
-      setClient(await Client.create(wallet, { env: getEnv() }))
-    }
-    initClient()
-  }, [wallet])
 
   useEffect(() => {
     if (!client) return
@@ -70,29 +62,26 @@ export const XmtpProvider: React.FC = ({ children }) => {
   }, [client])
 
   const [providerState, setProviderState] = useState<XmtpContextType>({
-    wallet,
     client,
     conversations,
     loadingConversations,
     getMessages,
     dispatchMessages,
-    connect,
+    connect: initClient,
     disconnect,
   })
 
   useEffect(() => {
     setProviderState({
-      wallet,
       client,
       conversations,
       loadingConversations,
       getMessages,
       dispatchMessages,
-      connect,
+      connect: initClient,
       disconnect,
     })
   }, [
-    wallet,
     client,
     conversations,
     loadingConversations,
