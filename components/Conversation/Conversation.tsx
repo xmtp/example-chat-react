@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef } from 'react'
-import useXmtp from '../../hooks/useXmtp'
 import useConversation from '../../hooks/useConversation'
 import { MessagesList, MessageComposer } from './'
 import Loader from '../../components/Loader'
