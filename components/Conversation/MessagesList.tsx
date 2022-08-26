@@ -111,4 +111,4 @@ const MessagesList = ({
     </div>
   )
 }
-export default MessagesList
+export default React.memo(MessagesList)

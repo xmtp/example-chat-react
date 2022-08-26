@@ -1,3 +1,4 @@
+import React from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -36,4 +37,4 @@ const ConversationPage: NextPage = () => {
   }
 }
 
-export default ConversationPage
+export default React.memo(ConversationPage)

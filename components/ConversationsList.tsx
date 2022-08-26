@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { ChatIcon } from '@heroicons/react/outline'
 import Address from './Address'
@@ -173,4 +173,4 @@ const NoConversationsMessage = (): JSX.Element => {
   )
 }
 
-export default ConversationsList
+export default React.memo(ConversationsList)
