@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react'
 import { Conversation } from '../../components/Conversation'
 import XmtpContext from '../../contexts/xmtp'
 import { checkPath } from '../../helpers'
-import useXmtp from '../../hooks/useXmtp'
+// import useXmtp from '../../hooks/useXmtp'
 
 const ConversationPage: NextPage = () => {
   const router = useRouter()

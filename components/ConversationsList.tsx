@@ -9,7 +9,7 @@ import { classNames, truncate, formatDate, checkPath } from '../helpers'
 import useConversation from '../hooks/useConversation'
 import useEns from '../hooks/useEns'
 import Avatar from './Avatar'
-import useXmtp from '../hooks/useXmtp'
+// import useXmtp from '../hooks/useXmtp'
 import XmtpContext from '../contexts/xmtp'
 
 type ConversationTileProps = {
