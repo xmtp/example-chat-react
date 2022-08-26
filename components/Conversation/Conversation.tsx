@@ -48,9 +48,7 @@ const Conversation = ({
 
   return (
     <main className="flex flex-col flex-1 bg-white h-screen">
-      {hasMessages && (
-        <MessagesList messagesEndRef={messagesEndRef} messages={messages} />
-      )}
+      <MessagesList messagesEndRef={messagesEndRef} messages={messages} />
       <MessageComposer onSend={sendMessage} />
     </main>
   )

@@ -94,7 +94,7 @@ const ConversationTile = ({
 
 const ConversationsList = (): JSX.Element => {
   const router = useRouter()
-  const { client, conversations, getMessages } = useXmtp()
+  const { conversations, getMessages } = useXmtp()
 
   const orderByLatestMessage = (
     convoA: Conversation,
@@ -113,17 +113,11 @@ const ConversationsList = (): JSX.Element => {
     if (checkPath()) {
       const queryAddress = window.location.pathname.replace('/dm/', '')
       if (queryAddress) {
-        const canMessage = await client?.canMessage(queryAddress)
         const matchAddress = conversations.filter(
           (convo) => queryAddress == convo.peerAddress
         )
-        if (
-          canMessage ||
-          (Array.isArray(matchAddress) && matchAddress.length > 0)
-        ) {
+        if (Array.isArray(matchAddress) && matchAddress.length > 0) {
           router.push(window.location.pathname)
-        } else {
-          router.push('/')
         }
       }
     }
