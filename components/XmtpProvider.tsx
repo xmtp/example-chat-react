@@ -7,7 +7,6 @@ import { XmtpContext, XmtpContextType } from '../contexts/xmtp'
 import useMessageStore from '../hooks/useMessageStore'
 
 export const XmtpProvider: React.FC = ({ children }) => {
-  console.log('hell yeah')
   const [client, setClient] = useState<Client>()
   const { getMessages, dispatchMessages } = useMessageStore()
   const [loadingConversations, setLoadingConversations] =
