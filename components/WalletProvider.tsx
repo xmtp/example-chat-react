@@ -19,6 +19,7 @@ type WalletProviderProps = {
 export const WalletProvider = ({
   children,
 }: WalletProviderProps): JSX.Element => {
+  console.log('Hell yeah')
   const [provider, setProvider] = useState<ethers.providers.Web3Provider>()
   const [signer, setSigner] = useState<Signer>()
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
@@ -26,50 +27,41 @@ export const WalletProvider = ({
   const [chainId, setChainId] = useState<number>()
   const router = useRouter()
 
-  const resolveName = useCallback(
-    async (name: string) => {
-      if (cachedResolveName.has(name)) {
-        return cachedResolveName.get(name)
-      }
-      if (chainId !== ETH_CHAIN_ID) {
-        return undefined
-      }
-      const address = (await provider?.resolveName(name)) || undefined
-      cachedResolveName.set(name, address)
-      return address
-    },
-    [chainId, provider]
-  )
+  const resolveName = async (name: string) => {
+    if (cachedResolveName.has(name)) {
+      return cachedResolveName.get(name)
+    }
+    if (chainId !== ETH_CHAIN_ID) {
+      return undefined
+    }
+    const address = (await provider?.resolveName(name)) || undefined
+    cachedResolveName.set(name, address)
+    return address
+  }
 
-  const lookupAddress = useCallback(
-    async (address: string) => {
-      if (cachedLookupAddress.has(address)) {
-        return cachedLookupAddress.get(address)
-      }
-      if (chainId !== ETH_CHAIN_ID) {
-        return undefined
-      }
+  const lookupAddress = async (address: string) => {
+    if (cachedLookupAddress.has(address)) {
+      return cachedLookupAddress.get(address)
+    }
+    if (chainId !== ETH_CHAIN_ID) {
+      return undefined
+    }
 
-      const name = (await provider?.lookupAddress(address)) || undefined
-      cachedLookupAddress.set(address, name)
-      return name
-    },
-    [chainId, provider]
-  )
+    const name = (await provider?.lookupAddress(address)) || undefined
+    cachedLookupAddress.set(address, name)
+    return name
+  }
 
-  const getAvatarUrl = useCallback(
-    async (name: string) => {
-      if (cachedGetAvatarUrl.has(name)) {
-        return cachedGetAvatarUrl.get(name)
-      }
-      const avatarUrl = (await provider?.getAvatar(name)) || undefined
-      cachedGetAvatarUrl.set(name, avatarUrl)
-      return avatarUrl
-    },
-    [provider]
-  )
+  const getAvatarUrl = async (name: string) => {
+    if (cachedGetAvatarUrl.has(name)) {
+      return cachedGetAvatarUrl.get(name)
+    }
+    const avatarUrl = (await provider?.getAvatar(name)) || undefined
+    cachedGetAvatarUrl.set(name, avatarUrl)
+    return avatarUrl
+  }
 
-  const disconnect = useCallback(async () => {
+  const disconnect = async () => {
     if (!web3Modal) return
     web3Modal.clearCachedProvider()
     localStorage.removeItem('walletconnect')
@@ -81,26 +73,20 @@ export const WalletProvider = ({
     setSigner(undefined)
     setAddress(undefined)
     router.push('/')
-  }, [web3Modal, router])
+  }
 
-  const handleAccountsChanged = useCallback(
-    async (accounts: string[]) => {
-      if (address && accounts.indexOf(address) < 0) {
-        await disconnect()
-      }
-    },
-    [address, disconnect]
-  )
+  const handleAccountsChanged = async (accounts: string[]) => {
+    if (address && accounts.indexOf(address) < 0) {
+      await disconnect()
+    }
+  }
 
-  const handleChainChanged = useCallback(
-    ({ chainId }) => {
-      console.log('Chain changed to', chainId)
-      setChainId(chainId)
-    },
-    [setChainId]
-  )
+  const handleChainChanged = ({ chainId }: { chainId: number }) => {
+    console.log('Chain changed to', chainId)
+    setChainId(chainId)
+  }
 
-  const connect = useCallback(async () => {
+  const connect = async () => {
     if (!web3Modal) throw new Error('web3Modal not initialized')
     try {
       const instance = await web3Modal.connect()
@@ -120,7 +106,7 @@ export const WalletProvider = ({
       // modal, as "User closed modal"
       console.log('error', e)
     }
-  }, [web3Modal, handleAccountsChanged, handleChainChanged])
+  }
 
   useEffect(() => {
     const infuraId =
@@ -184,7 +170,7 @@ export const WalletProvider = ({
       setAddress(await signer.getAddress())
     }
     initCached()
-  }, [web3Modal, handleAccountsChanged, handleChainChanged])
+  }, [web3Modal])
 
   return (
     <WalletContext.Provider

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import useXmtp from '../hooks/useXmtp'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
@@ -39,16 +39,13 @@ const ConversationLayout: React.FC = ({ children }) => {
   const router = useRouter()
   const recipientWalletAddress = router.query.recipientWalletAddr as string
 
-  const handleSubmit = useCallback(
-    async (address: string) => {
-      router.push(address ? `/dm/${address}` : '/dm/')
-    },
-    [router]
-  )
+  const handleSubmit = async (address: string) => {
+    router.push(address ? `/dm/${address}` : '/dm/')
+  }
 
-  const handleBackArrowClick = useCallback(() => {
+  const handleBackArrowClick = () => {
     router.push('/')
-  }, [router])
+  }
 
   return (
     <>
@@ -76,15 +73,15 @@ const Layout: React.FC = ({ children }) => {
     disconnect: disconnectWallet,
   } = useWallet()
 
-  const handleDisconnect = useCallback(async () => {
+  const handleDisconnect = async () => {
     disconnectXmtp()
     await disconnectWallet()
     router.push('/')
-  }, [disconnectWallet, router])
+  }
 
-  const handleConnect = useCallback(async () => {
+  const handleConnect = async () => {
     await connectWallet()
-  }, [connectWallet])
+  }
 
   const usePrevious = <T,>(value: T): T | undefined => {
     const ref = useRef<T>()

@@ -8,7 +8,6 @@ type AddressInputProps = {
   name?: string
   className?: string
   placeholder?: string
-  lookupAddress?: (address: string) => Promise<string | undefined>
   onInputChange?: (e: React.SyntheticEvent) => Promise<void>
 }
 
@@ -18,10 +17,9 @@ const AddressInput = ({
   name,
   className,
   placeholder,
-  lookupAddress,
   onInputChange,
 }: AddressInputProps): JSX.Element => {
-  const { address: walletAddress } = useWallet()
+  const { address: walletAddress, lookupAddress } = useWallet()
   const inputElement = useRef(null)
   const [value, setValue] = useState<string>(recipientWalletAddress || '')
 
@@ -51,7 +49,7 @@ const AddressInput = ({
       }
     }
     setLookupValue()
-  }, [value, recipientWalletAddress, lookupAddress])
+  }, [value, recipientWalletAddress])
 
   const userIsSender = recipientWalletAddress === walletAddress
 

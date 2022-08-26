@@ -57,7 +57,7 @@ const RecipientControl = ({
     } else {
       setRecipientInputMode(RecipientInputMode.InvalidEntry)
     }
-  }, [recipientWalletAddress, setRecipientInputMode, lookupAddress, setHasName])
+  }, [recipientWalletAddress, setRecipientInputMode, setHasName])
 
   const handleSubmit = useCallback(
     async (e: React.SyntheticEvent, value?: string) => {
@@ -82,7 +82,7 @@ const RecipientControl = ({
         await completeSubmit(recipientValue, input)
       }
     },
-    [setRecipientInputMode, resolveName, completeSubmit]
+    [setRecipientInputMode, completeSubmit]
   )
 
   const handleInputChange = async (e: React.SyntheticEvent) => {
@@ -122,7 +122,6 @@ const RecipientControl = ({
             id="recipient-field"
             className="block w-[95%] pl-7 pr-3 pt-[3px] md:pt-[2px] md:pt-[1px] bg-transparent caret-n-600 text-n-600 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent text-lg font-mono"
             name="recipient"
-            lookupAddress={lookupAddress}
             onInputChange={handleInputChange}
           />
           <button type="submit" className="hidden" />

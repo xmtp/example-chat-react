@@ -38,14 +38,7 @@ const useEns = (addressOrName: string | undefined) => {
     if (probableName) {
       initAddress(probableName)
     }
-  }, [
-    probableName,
-    probableAddress,
-    resolveName,
-    lookupAddress,
-    getAvatarUrl,
-    name,
-  ])
+  }, [probableName, probableAddress, name])
 
   return {
     address: probableAddress || (address as string | undefined),
