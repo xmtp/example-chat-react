@@ -1,5 +1,5 @@
 import { Conversation, Message, Stream } from '@xmtp/xmtp-js'
-import { useCallback, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import useXmtp from './useXmtp'
 
 type OnMessageCallback = () => void
@@ -12,6 +12,7 @@ const useConversation = (
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [stream, setStream] = useState<Stream<Message>>()
   const [loading, setLoading] = useState<boolean>(false)
+
   useEffect(() => {
     const getConvo = async () => {
       if (!client || !peerAddress) {
@@ -71,13 +72,10 @@ const useConversation = (
     streamMessages()
   }, [conversation])
 
-  const handleSend = useCallback(
-    async (message: string) => {
-      if (!conversation) return
-      await conversation.send(message)
-    },
-    [conversation]
-  )
+  const handleSend = async (message: string) => {
+    if (!conversation) return
+    await conversation.send(message)
+  }
 
   return {
     conversation,

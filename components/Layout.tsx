@@ -87,7 +87,7 @@ const Layout: React.FC = ({ children }) => {
     const ref = useRef<T>()
     useEffect(() => {
       ref.current = value
-    })
+    }, [])
     return ref.current
   }
 

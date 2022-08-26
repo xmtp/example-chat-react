@@ -1,6 +1,6 @@
 import { Menu, Transition } from '@headlessui/react'
 import { CogIcon } from '@heroicons/react/solid'
-import { Fragment, useCallback } from 'react'
+import { Fragment } from 'react'
 import { classNames, tagStr } from '../helpers'
 import Blockies from 'react-blockies'
 import Address from './Address'
@@ -73,11 +73,11 @@ const NotConnected = ({ onConnect }: UserMenuProps): JSX.Element => {
 const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
   const { address: walletAddress } = useWallet()
 
-  const onClickCopy = useCallback(() => {
+  const onClickCopy = () => {
     if (walletAddress) {
       navigator.clipboard.writeText(walletAddress)
     }
-  }, [walletAddress])
+  }
 
   return (
     <div className="flex bg-p-600 items-center justify-between rounded-lg h-[8vh] max-h-16 mx-4 mb-5 md:mb-4 px-4 drop-shadow-xl">

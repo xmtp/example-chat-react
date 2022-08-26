@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { classNames } from '../helpers'
 import useWallet from '../hooks/useWallet'
 
@@ -23,17 +23,17 @@ const AddressInput = ({
   const inputElement = useRef(null)
   const [value, setValue] = useState<string>(recipientWalletAddress || '')
 
-  const focusInputElementRef = useCallback(() => {
+  const focusInputElementRef = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(inputElement.current as any)?.focus()
-  }, [inputElement])
+  }
 
   useEffect(() => {
     if (!recipientWalletAddress) {
       focusInputElementRef()
       setValue('')
     }
-  }, [focusInputElementRef, recipientWalletAddress])
+  }, [recipientWalletAddress])
 
   useEffect(() => {
     const setLookupValue = async () => {
@@ -73,16 +73,13 @@ const AddressInput = ({
     userIsSender ? 'border-bt-300' : 'border-gray-300'
   )
 
-  const onAddressChange = useCallback(
-    async (event: React.SyntheticEvent) => {
-      const data = event.target as typeof event.target & {
-        value: string
-      }
-      setValue(data.value.trim())
-      onInputChange && onInputChange(event)
-    },
-    [onInputChange]
-  )
+  const onAddressChange = async (event: React.SyntheticEvent) => {
+    const data = event.target as typeof event.target & {
+      value: string
+    }
+    setValue(data.value.trim())
+    onInputChange && onInputChange(event)
+  }
 
   return (
     <div className="relative mb-5">

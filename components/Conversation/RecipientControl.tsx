@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import AddressInput from '../AddressInput'
 import useWallet from '../../hooks/useWallet'
@@ -33,18 +33,15 @@ const RecipientControl = ({
     return client?.canMessage(address) || false
   }
 
-  const completeSubmit = useCallback(
-    async (address: string, input: HTMLInputElement) => {
-      if (await checkIfOnNetwork(address)) {
-        onSubmit(address)
-        input.blur()
-        setRecipientInputMode(RecipientInputMode.Submitted)
-      } else {
-        setRecipientInputMode(RecipientInputMode.NotOnNetwork)
-      }
-    },
-    [setRecipientInputMode, onSubmit]
-  )
+  const completeSubmit = async (address: string, input: HTMLInputElement) => {
+    if (await checkIfOnNetwork(address)) {
+      onSubmit(address)
+      input.blur()
+      setRecipientInputMode(RecipientInputMode.Submitted)
+    } else {
+      setRecipientInputMode(RecipientInputMode.NotOnNetwork)
+    }
+  }
 
   useEffect(() => {
     const handleAddressLookup = async (address: string) => {
@@ -57,33 +54,30 @@ const RecipientControl = ({
     } else {
       setRecipientInputMode(RecipientInputMode.InvalidEntry)
     }
-  }, [recipientWalletAddress, setRecipientInputMode, setHasName])
+  }, [recipientWalletAddress])
 
-  const handleSubmit = useCallback(
-    async (e: React.SyntheticEvent, value?: string) => {
-      e.preventDefault()
-      const data = e.target as typeof e.target & {
-        recipient: { value: string }
+  const handleSubmit = async (e: React.SyntheticEvent, value?: string) => {
+    e.preventDefault()
+    const data = e.target as typeof e.target & {
+      recipient: { value: string }
+    }
+    const input = e.target as HTMLInputElement
+    const recipientValue = value || data.recipient.value
+    if (recipientValue.endsWith('eth')) {
+      setRecipientInputMode(RecipientInputMode.FindingEntry)
+      const address = await resolveName(recipientValue)
+      if (address) {
+        await completeSubmit(address, input)
+      } else {
+        setRecipientInputMode(RecipientInputMode.InvalidEntry)
       }
-      const input = e.target as HTMLInputElement
-      const recipientValue = value || data.recipient.value
-      if (recipientValue.endsWith('eth')) {
-        setRecipientInputMode(RecipientInputMode.FindingEntry)
-        const address = await resolveName(recipientValue)
-        if (address) {
-          await completeSubmit(address, input)
-        } else {
-          setRecipientInputMode(RecipientInputMode.InvalidEntry)
-        }
-      } else if (
-        recipientValue.startsWith('0x') &&
-        recipientValue.length === 42
-      ) {
-        await completeSubmit(recipientValue, input)
-      }
-    },
-    [setRecipientInputMode, completeSubmit]
-  )
+    } else if (
+      recipientValue.startsWith('0x') &&
+      recipientValue.length === 42
+    ) {
+      await completeSubmit(recipientValue, input)
+    }
+  }
 
   const handleInputChange = async (e: React.SyntheticEvent) => {
     const data = e.target as typeof e.target & {

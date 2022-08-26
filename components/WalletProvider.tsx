@@ -19,7 +19,6 @@ type WalletProviderProps = {
 export const WalletProvider = ({
   children,
 }: WalletProviderProps): JSX.Element => {
-  console.log('Hell yeah')
   const [provider, setProvider] = useState<ethers.providers.Web3Provider>()
   const [signer, setSigner] = useState<Signer>()
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
