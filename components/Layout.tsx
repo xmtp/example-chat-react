@@ -1,5 +1,5 @@
-import { useCallback, useContext, useEffect, useRef } from 'react'
-// import useXmtp from '../hooks/useXmtp'
+import { useCallback, useEffect, useRef } from 'react'
+import useXmtp from '../hooks/useXmtp'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -11,7 +11,6 @@ import NavigationPanel from './NavigationPanel'
 import XmtpInfoPanel from './XmtpInfoPanel'
 import UserMenu from './UserMenu'
 import BackArrow from './BackArrow'
-import XmtpContext from '../contexts/xmtp'
 
 const NavigationColumnLayout: React.FC = ({ children }) => (
   <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
@@ -68,11 +67,7 @@ const ConversationLayout: React.FC = ({ children }) => {
 }
 
 const Layout: React.FC = ({ children }) => {
-  const {
-    connect: connectXmtp,
-    disconnect: disconnectXmtp,
-    client,
-  } = useContext(XmtpContext)
+  const { connect: connectXmtp, disconnect: disconnectXmtp, client } = useXmtp()
   const router = useRouter()
   const {
     address: walletAddress,

@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 import Link from 'next/link'
 import { ChatIcon } from '@heroicons/react/outline'
 import Address from './Address'
@@ -9,8 +9,7 @@ import { classNames, truncate, formatDate, checkPath } from '../helpers'
 import useConversation from '../hooks/useConversation'
 import useEns from '../hooks/useEns'
 import Avatar from './Avatar'
-// import useXmtp from '../hooks/useXmtp'
-import XmtpContext from '../contexts/xmtp'
+import useXmtp from '../hooks/useXmtp'
 
 type ConversationTileProps = {
   conversation: Conversation
@@ -95,7 +94,7 @@ const ConversationTile = ({
 
 const ConversationsList = (): JSX.Element => {
   const router = useRouter()
-  const { client, conversations, getMessages } = useContext(XmtpContext)
+  const { client, conversations, getMessages } = useXmtp()
 
   const orderByLatestMessage = (
     convoA: Conversation,
@@ -110,8 +109,6 @@ const ConversationsList = (): JSX.Element => {
     return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
   }
 
-  // const [refresh, setRefresh] = useState(false)
-
   const reloadIfQueryParamPresent = async () => {
     if (checkPath()) {
       const queryAddress = window.location.pathname.replace('/dm/', '')
@@ -125,7 +122,6 @@ const ConversationsList = (): JSX.Element => {
           (Array.isArray(matchAddress) && matchAddress.length > 0)
         ) {
           router.push(window.location.pathname)
-          // setRefresh(!refresh)
         } else {
           router.push('/')
         }

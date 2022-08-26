@@ -1,9 +1,7 @@
 import { LinkIcon } from '@heroicons/react/outline'
 import { ArrowSmRightIcon } from '@heroicons/react/solid'
-import { useContext } from 'react'
-import XmtpContext from '../contexts/xmtp'
 import useWallet from '../hooks/useWallet'
-// import useXmtp from '../hooks/useXmtp'
+import useXmtp from '../hooks/useXmtp'
 import ConversationsList from './ConversationsList'
 import Loader from './Loader'
 
@@ -66,7 +64,7 @@ const ConnectButton = ({ onConnect }: ConnectButtonProps): JSX.Element => {
 }
 
 const ConversationsPanel = (): JSX.Element => {
-  const { loadingConversations, client } = useContext(XmtpContext)
+  const { loadingConversations, client } = useXmtp()
 
   if (!client) {
     return (
