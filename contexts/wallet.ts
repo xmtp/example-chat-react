@@ -8,7 +8,7 @@ export type WalletContextType = {
   lookupAddress: (address: string) => Promise<string | undefined>
   getAvatarUrl: (address: string) => Promise<string | undefined>
   connect: () => Promise<Signer | undefined>
-  disconnect: () => Promise<void>
+  disconnect: () => void
 }
 
 export const WalletContext = createContext<WalletContextType>({

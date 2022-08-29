@@ -7,9 +7,9 @@ import { Conversation } from '@xmtp/xmtp-js'
 import { Message } from '@xmtp/xmtp-js'
 import { classNames, truncate, formatDate, checkPath } from '../helpers'
 import useConversation from '../hooks/useConversation'
-import useEns from '../hooks/useEns'
 import Avatar from './Avatar'
 import useXmtp from '../hooks/useXmtp'
+import useMessageStore from '../hooks/useMessageStore'
 
 type ConversationTileProps = {
   conversation: Conversation
@@ -25,16 +25,21 @@ const ConversationTile = ({
   isSelected,
   onClick,
 }: ConversationTileProps): JSX.Element | null => {
-  const { loading: isLoadingEns } = useEns(conversation.peerAddress)
   const { messages, loading: isLoadingConversation } = useConversation(
     conversation.peerAddress
   )
-  const loading = isLoadingEns || isLoadingConversation
+
+  if (!messages.length) {
+    return null
+  }
+
   const latestMessage = getLatestMessage(messages)
   const path = `/dm/${conversation.peerAddress}`
+
   if (!latestMessage) {
     return null
   }
+
   return (
     <Link href={path} key={conversation.peerAddress}>
       <a onClick={onClick}>
@@ -55,7 +60,7 @@ const ConversationTile = ({
             'border-b-2',
             'border-gray-100',
             'hover:bg-bt-100',
-            loading ? 'opacity-80' : 'opacity-100',
+            isLoadingConversation ? 'opacity-80' : 'opacity-100',
             isSelected ? 'bg-bt-200' : null
           )}
         >
@@ -70,7 +75,7 @@ const ConversationTile = ({
                 className={classNames(
                   'text-lg md:text-sm font-normal place-self-end',
                   isSelected ? 'text-n-500' : 'text-n-300',
-                  loading ? 'animate-pulse' : ''
+                  isLoadingConversation ? 'animate-pulse' : ''
                 )}
               >
                 {formatDate(latestMessage?.sent)}
@@ -80,7 +85,7 @@ const ConversationTile = ({
               className={classNames(
                 'text-[13px] md:text-sm font-normal text-ellipsis mt-0',
                 isSelected ? 'text-n-500' : 'text-n-300',
-                loading ? 'animate-pulse' : ''
+                isLoadingConversation ? 'animate-pulse' : ''
               )}
             >
               {latestMessage && truncate(latestMessage.content, 75)}
@@ -94,7 +99,8 @@ const ConversationTile = ({
 
 const ConversationsList = (): JSX.Element => {
   const router = useRouter()
-  const { conversations, getMessages } = useXmtp()
+  const { conversations } = useXmtp()
+  const { getMessages } = useMessageStore()
 
   const orderByLatestMessage = (
     convoA: Conversation,

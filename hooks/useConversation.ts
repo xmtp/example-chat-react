@@ -1,5 +1,6 @@
 import { Conversation, Message, Stream } from '@xmtp/xmtp-js'
 import { useState, useEffect } from 'react'
+import useMessageStore from './useMessageStore'
 import useXmtp from './useXmtp'
 
 type OnMessageCallback = () => void
@@ -8,7 +9,8 @@ const useConversation = (
   peerAddress: string,
   onMessageCallback?: OnMessageCallback
 ) => {
-  const { client, getMessages, dispatchMessages } = useXmtp()
+  const { client } = useXmtp()
+  const { getMessages, dispatchMessages } = useMessageStore()
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [stream, setStream] = useState<Stream<Message>>()
   const [loading, setLoading] = useState<boolean>(false)
@@ -33,8 +35,8 @@ const useConversation = (
   }, [])
 
   useEffect(() => {
+    if (!conversation) return
     const listMessages = async () => {
-      if (!conversation) return
       console.log('Listing messages for peer address', conversation.peerAddress)
       setLoading(true)
       const msgs = await conversation.messages()
@@ -49,12 +51,7 @@ const useConversation = (
       }
       setLoading(false)
     }
-    listMessages()
-  }, [conversation])
-
-  useEffect(() => {
     const streamMessages = async () => {
-      if (!conversation) return
       const stream = await conversation.streamMessages()
       setStream(stream)
       for await (const msg of stream) {
@@ -69,6 +66,7 @@ const useConversation = (
         }
       }
     }
+    listMessages()
     streamMessages()
   }, [conversation])
 

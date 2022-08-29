@@ -61,7 +61,7 @@ export const WalletProvider = ({
     return avatarUrl
   }
 
-  const disconnect = async () => {
+  const disconnect = () => {
     if (!web3Modal) return
     web3Modal.clearCachedProvider()
     localStorage.removeItem('walletconnect')
@@ -75,10 +75,8 @@ export const WalletProvider = ({
     router.push('/')
   }
 
-  const handleAccountsChanged = async (accounts: string[]) => {
-    if (address && accounts.indexOf(address) < 0) {
-      await disconnect()
-    }
+  const handleAccountsChanged = () => {
+    disconnect()
   }
 
   const handleChainChanged = ({ chainId: newChainId }: { chainId: number }) => {

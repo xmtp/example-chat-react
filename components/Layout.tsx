@@ -63,8 +63,8 @@ const ConversationLayout: React.FC = ({ children }) => {
 }
 
 const Layout: React.FC = ({ children }) => {
-  const { disconnect: disconnectXmtp, client } = useXmtp()
-  const router = useRouter()
+  const { client } = useXmtp()
+
   const {
     address: walletAddress,
     connect: connectWallet,
@@ -72,9 +72,7 @@ const Layout: React.FC = ({ children }) => {
   } = useWallet()
 
   const handleDisconnect = async () => {
-    disconnectXmtp()
     await disconnectWallet()
-    router.push('/')
   }
 
   const handleConnect = async () => {
