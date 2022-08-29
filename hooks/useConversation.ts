@@ -76,7 +76,6 @@ const useConversation = (
   }
 
   return {
-    conversation,
     loading,
     messages: getMessages(peerAddress),
     sendMessage: handleSend,
