@@ -37,17 +37,22 @@ const useConversation = (
   useEffect(() => {
     if (!conversation) return
     const listMessages = async () => {
-      console.log('Listing messages for peer address', conversation.peerAddress)
       setLoading(true)
       const msgs = await conversation.messages()
-      if (dispatchMessages) {
-        dispatchMessages({
-          peerAddress: conversation.peerAddress,
-          messages: msgs,
-        })
-      }
-      if (onMessageCallback) {
-        onMessageCallback()
+      if (msgs.length !== getMessages(conversation.peerAddress).length) {
+        console.log(
+          'Listing messages for peer address',
+          conversation.peerAddress
+        )
+        if (dispatchMessages) {
+          await dispatchMessages({
+            peerAddress: conversation.peerAddress,
+            messages: msgs,
+          })
+        }
+        if (onMessageCallback) {
+          onMessageCallback()
+        }
       }
       setLoading(false)
     }
