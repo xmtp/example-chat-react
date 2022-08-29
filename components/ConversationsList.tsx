@@ -18,7 +18,7 @@ type ConversationTileProps = {
 }
 
 const getLatestMessage = (messages: Message[]): Message | null =>
-  messages.length ? messages[messages.length - 1] : null
+  messages?.length ? messages[messages.length - 1] : null
 
 const ConversationTile = ({
   conversation,
@@ -100,14 +100,14 @@ const ConversationTile = ({
 const ConversationsList = (): JSX.Element => {
   const router = useRouter()
   const { conversations } = useXmtp()
-  const { getMessages } = useMessageStore()
+  const { messageStore } = useMessageStore()
 
   const orderByLatestMessage = (
     convoA: Conversation,
     convoB: Conversation
   ): number => {
-    const convoAMessages = getMessages(convoA.peerAddress)
-    const convoBMessages = getMessages(convoB.peerAddress)
+    const convoAMessages = messageStore[convoA.peerAddress]
+    const convoBMessages = messageStore[convoB.peerAddress]
     const convoALastMessageDate =
       getLatestMessage(convoAMessages)?.sent || new Date()
     const convoBLastMessageDate =

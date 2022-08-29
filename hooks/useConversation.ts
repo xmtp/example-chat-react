@@ -10,7 +10,7 @@ const useConversation = (
   onMessageCallback?: OnMessageCallback
 ) => {
   const { client } = useXmtp()
-  const { getMessages, dispatchMessages } = useMessageStore()
+  const { messageStore, dispatchMessages } = useMessageStore()
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [stream, setStream] = useState<Stream<Message>>()
   const [loading, setLoading] = useState<boolean>(false)
@@ -39,7 +39,10 @@ const useConversation = (
     const listMessages = async () => {
       setLoading(true)
       const msgs = await conversation.messages()
-      if (msgs.length !== getMessages(conversation.peerAddress).length) {
+      if (
+        messageStore &&
+        msgs.length !== messageStore[conversation.peerAddress]?.length
+      ) {
         console.log(
           'Listing messages for peer address',
           conversation.peerAddress
@@ -82,7 +85,7 @@ const useConversation = (
 
   return {
     loading,
-    messages: getMessages(peerAddress),
+    messages: messageStore[peerAddress] ?? [],
     sendMessage: handleSend,
   }
 }
