@@ -1,7 +1,8 @@
 import { LinkIcon } from '@heroicons/react/outline'
 import { ArrowSmRightIcon } from '@heroicons/react/solid'
-import useWallet from '../hooks/useWallet'
-import useXmtp from '../hooks/useXmtp'
+import { useContext } from 'react'
+import { WalletContext } from '../contexts/wallet'
+import XmtpContext from '../contexts/xmtp'
 import ConversationsList from './ConversationsList'
 import Loader from './Loader'
 
@@ -14,7 +15,7 @@ type ConnectButtonProps = {
 }
 
 const NavigationPanel = ({ onConnect }: NavigationPanelProps): JSX.Element => {
-  const { address: walletAddress } = useWallet()
+  const { address: walletAddress } = useContext(WalletContext)
 
   return (
     <div className="flex-grow flex flex-col h-[82vh] overflow-y-auto">
@@ -64,7 +65,7 @@ const ConnectButton = ({ onConnect }: ConnectButtonProps): JSX.Element => {
 }
 
 const ConversationsPanel = (): JSX.Element => {
-  const { loadingConversations, client } = useXmtp()
+  const { loadingConversations, client } = useContext(XmtpContext)
 
   if (!client) {
     return (

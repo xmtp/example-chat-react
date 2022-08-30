@@ -18,11 +18,11 @@ type WalletProviderProps = {
 
 let provider: ethers.providers.Web3Provider
 let chainId: number
+let signer: Signer | undefined
 
 export const WalletProvider = ({
   children,
 }: WalletProviderProps): JSX.Element => {
-  const [signer, setSigner] = useState<Signer>()
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
   const [address, setAddress] = useState<string>()
   const router = useRouter()
@@ -70,7 +70,7 @@ export const WalletProvider = ({
         localStorage.removeItem(key)
       }
     })
-    setSigner(undefined)
+    signer = undefined
     setAddress(undefined)
     router.push('/')
   }
@@ -92,10 +92,10 @@ export const WalletProvider = ({
       instance.on('accountsChanged', handleAccountsChanged)
       provider = new ethers.providers.Web3Provider(instance, 'any')
       provider.on('network', handleChainChanged)
-      const signer = provider.getSigner()
+      const newSigner = provider.getSigner()
       const { chainId: newChainId } = await provider.getNetwork()
       chainId = newChainId
-      setSigner(signer)
+      signer = newSigner
       setAddress(await signer.getAddress())
       return signer
     } catch (e) {
@@ -160,10 +160,10 @@ export const WalletProvider = ({
       instance.on('accountsChanged', handleAccountsChanged)
       provider = new ethers.providers.Web3Provider(instance, 'any')
       provider.on('network', handleChainChanged)
-      const signer = provider.getSigner()
+      const newSigner = provider.getSigner()
       const { chainId: newChainId } = await provider.getNetwork()
       chainId = newChainId
-      setSigner(signer)
+      signer = newSigner
       setAddress(await signer.getAddress())
     }
     initCached()

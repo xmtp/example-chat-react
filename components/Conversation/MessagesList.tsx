@@ -1,10 +1,10 @@
 import { Message } from '@xmtp/xmtp-js'
-import React, { MutableRefObject } from 'react'
+import React, { MutableRefObject, useContext } from 'react'
 import Emoji from 'react-emoji-render'
 import Avatar from '../Avatar'
 import { formatTime } from '../../helpers'
 import AddressPill from '../AddressPill'
-import useWallet from '../../hooks/useWallet'
+import { WalletContext } from '../../contexts/wallet'
 
 export type MessageListProps = {
   messages: Message[]
@@ -78,7 +78,7 @@ const MessagesList = ({
   messagesEndRef,
 }: MessageListProps): JSX.Element => {
   let lastMessageDate: Date | undefined
-  const { address: walletAddress } = useWallet()
+  const { address: walletAddress } = useContext(WalletContext)
 
   return (
     <div className="flex-grow flex">

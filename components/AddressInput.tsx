@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useContext } from 'react'
+import { WalletContext } from '../contexts/wallet'
 import { classNames } from '../helpers'
-import useWallet from '../hooks/useWallet'
 
 type AddressInputProps = {
   recipientWalletAddress?: string
@@ -19,7 +19,7 @@ const AddressInput = ({
   placeholder,
   onInputChange,
 }: AddressInputProps): JSX.Element => {
-  const { address: walletAddress, lookupAddress } = useWallet()
+  const { address: walletAddress, lookupAddress } = useContext(WalletContext)
   const inputElement = useRef(null)
   const [value, setValue] = useState<string>(recipientWalletAddress || '')
 

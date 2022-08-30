@@ -1,8 +1,6 @@
-import useXmtp from '../hooks/useXmtp'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
-import useWallet from '../hooks/useWallet'
 import { NavigationView, ConversationView } from './Views'
 import { RecipientControl } from './Conversation'
 import NewMessageButton from './NewMessageButton'
@@ -10,6 +8,9 @@ import NavigationPanel from './NavigationPanel'
 import XmtpInfoPanel from './XmtpInfoPanel'
 import UserMenu from './UserMenu'
 import BackArrow from './BackArrow'
+import { useContext } from 'react'
+import { WalletContext } from '../contexts/wallet'
+import XmtpContext from '../contexts/xmtp'
 
 const NavigationColumnLayout: React.FC = ({ children }) => (
   <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
@@ -63,13 +64,13 @@ const ConversationLayout: React.FC = ({ children }) => {
 }
 
 const Layout: React.FC = ({ children }) => {
-  const { client } = useXmtp()
+  const { client } = useContext(XmtpContext)
 
   const {
     address: walletAddress,
     connect: connectWallet,
     disconnect: disconnectWallet,
-  } = useWallet()
+  } = useContext(WalletContext)
 
   const handleDisconnect = async () => {
     await disconnectWallet()

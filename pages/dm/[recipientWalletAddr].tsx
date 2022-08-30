@@ -1,14 +1,14 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Conversation } from '../../components/Conversation'
 import { checkPath } from '../../helpers'
-import useXmtp from '../../hooks/useXmtp'
+import XmtpContext from '../../contexts/xmtp'
 
 const ConversationPage: NextPage = () => {
   const router = useRouter()
-  const { client } = useXmtp()
+  const { client } = useContext(XmtpContext)
   const recipientWalletAddr = router.query.recipientWalletAddr as string
   const [canMessageAddr, setCanMessageAddr] = useState<boolean | undefined>(
     false

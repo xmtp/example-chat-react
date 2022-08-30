@@ -1,14 +1,14 @@
-import { useEffect, useReducer, useState } from 'react'
+import { useContext, useEffect, useReducer, useState } from 'react'
 import { Conversation } from '@xmtp/xmtp-js'
 import { Client } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
 import { getEnv } from '../helpers'
 import { XmtpContext, XmtpContextType } from '../contexts/xmtp'
-import useWallet from '../hooks/useWallet'
+import { WalletContext } from '../contexts/wallet'
 
 export const XmtpProvider: React.FC = ({ children }) => {
   const [client, setClient] = useState<Client>()
-  const { signer } = useWallet()
+  const { signer } = useContext(WalletContext)
   const [loadingConversations, setLoadingConversations] =
     useState<boolean>(false)
 

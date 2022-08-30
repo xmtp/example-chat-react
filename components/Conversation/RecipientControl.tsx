@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { useRouter } from 'next/router'
 import AddressInput from '../AddressInput'
-import useWallet from '../../hooks/useWallet'
-import useXmtp from '../../hooks/useXmtp'
+import { WalletContext } from '../../contexts/wallet'
+import XmtpContext from '../../contexts/xmtp'
 
 type RecipientInputProps = {
   recipientWalletAddress: string | undefined
@@ -21,8 +21,8 @@ const RecipientControl = ({
   recipientWalletAddress,
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
-  const { resolveName, lookupAddress } = useWallet()
-  const { client } = useXmtp()
+  const { resolveName, lookupAddress } = useContext(WalletContext)
+  const { client } = useContext(XmtpContext)
   const router = useRouter()
   const [recipientInputMode, setRecipientInputMode] = useState(
     RecipientInputMode.InvalidEntry

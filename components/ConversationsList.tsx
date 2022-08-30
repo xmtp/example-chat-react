@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Link from 'next/link'
 import { ChatIcon } from '@heroicons/react/outline'
 import Address from './Address'
@@ -8,8 +8,8 @@ import { Message } from '@xmtp/xmtp-js'
 import { classNames, truncate, formatDate, checkPath } from '../helpers'
 import useConversation from '../hooks/useConversation'
 import Avatar from './Avatar'
-import useXmtp from '../hooks/useXmtp'
 import useMessageStore from '../hooks/useMessageStore'
+import XmtpContext from '../contexts/xmtp'
 
 type ConversationTileProps = {
   conversation: Conversation
@@ -99,7 +99,7 @@ const ConversationTile = ({
 
 const ConversationsList = (): JSX.Element => {
   const router = useRouter()
-  const { conversations } = useXmtp()
+  const { conversations } = useContext(XmtpContext)
   const { messageStore } = useMessageStore()
 
   const orderByLatestMessage = (
