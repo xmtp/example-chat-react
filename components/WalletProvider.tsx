@@ -23,7 +23,6 @@ let signer: Signer | undefined
 export const WalletProvider = ({
   children,
 }: WalletProviderProps): JSX.Element => {
-  console.log('Hello')
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
   const [address, setAddress] = useState<string>()
   const router = useRouter()
