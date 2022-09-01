@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useRef, useContext } from 'react'
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useContext,
+  useCallback,
+} from 'react'
 import { WalletContext } from '../contexts/wallet'
 import { classNames } from '../helpers'
 
@@ -49,7 +55,7 @@ const AddressInput = ({
       }
     }
     setLookupValue()
-  }, [value, recipientWalletAddress])
+  }, [value, recipientWalletAddress, lookupAddress])
 
   const userIsSender = recipientWalletAddress === walletAddress
 
@@ -73,13 +79,16 @@ const AddressInput = ({
     userIsSender ? 'border-bt-300' : 'border-gray-300'
   )
 
-  const onAddressChange = async (event: React.SyntheticEvent) => {
-    const data = event.target as typeof event.target & {
-      value: string
-    }
-    setValue(data.value.trim())
-    onInputChange && onInputChange(event)
-  }
+  const onAddressChange = useCallback(
+    async (event: React.SyntheticEvent) => {
+      const data = event.target as typeof event.target & {
+        value: string
+      }
+      setValue(data.value.trim())
+      onInputChange && onInputChange(event)
+    },
+    [onInputChange]
+  )
 
   return (
     <div className="relative mb-5">

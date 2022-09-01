@@ -8,7 +8,7 @@ import NavigationPanel from './NavigationPanel'
 import XmtpInfoPanel from './XmtpInfoPanel'
 import UserMenu from './UserMenu'
 import BackArrow from './BackArrow'
-import { useContext } from 'react'
+import { useCallback, useContext } from 'react'
 import { WalletContext } from '../contexts/wallet'
 import XmtpContext from '../contexts/xmtp'
 
@@ -72,13 +72,13 @@ const Layout: React.FC = ({ children }) => {
     disconnect: disconnectWallet,
   } = useContext(WalletContext)
 
-  const handleDisconnect = async () => {
+  const handleDisconnect = useCallback(async () => {
     await disconnectWallet()
-  }
+  }, [disconnectWallet])
 
-  const handleConnect = async () => {
+  const handleConnect = useCallback(async () => {
     await connectWallet()
-  }
+  }, [connectWallet])
 
   return (
     <>

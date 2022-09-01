@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import AddressInput from '../AddressInput'
 import { WalletContext } from '../../contexts/wallet'
@@ -29,19 +29,25 @@ const RecipientControl = ({
   )
   const [hasName, setHasName] = useState(false)
 
-  const checkIfOnNetwork = async (address: string): Promise<boolean> => {
-    return client?.canMessage(address) || false
-  }
+  const checkIfOnNetwork = useCallback(
+    async (address: string): Promise<boolean> => {
+      return client?.canMessage(address) || false
+    },
+    []
+  )
 
-  const completeSubmit = async (address: string, input: HTMLInputElement) => {
-    if (await checkIfOnNetwork(address)) {
-      onSubmit(address)
-      input.blur()
-      setRecipientInputMode(RecipientInputMode.Submitted)
-    } else {
-      setRecipientInputMode(RecipientInputMode.NotOnNetwork)
-    }
-  }
+  const completeSubmit = useCallback(
+    async (address: string, input: HTMLInputElement) => {
+      if (await checkIfOnNetwork(address)) {
+        onSubmit(address)
+        input.blur()
+        setRecipientInputMode(RecipientInputMode.Submitted)
+      } else {
+        setRecipientInputMode(RecipientInputMode.NotOnNetwork)
+      }
+    },
+    [checkIfOnNetwork, onSubmit]
+  )
 
   useEffect(() => {
     const handleAddressLookup = async (address: string) => {
@@ -54,47 +60,53 @@ const RecipientControl = ({
     } else {
       setRecipientInputMode(RecipientInputMode.InvalidEntry)
     }
-  }, [recipientWalletAddress])
+  }, [lookupAddress, recipientWalletAddress])
 
-  const handleSubmit = async (e: React.SyntheticEvent, value?: string) => {
-    e.preventDefault()
-    const data = e.target as typeof e.target & {
-      recipient: { value: string }
-    }
-    const input = e.target as HTMLInputElement
-    const recipientValue = value || data.recipient.value
-    if (recipientValue.endsWith('eth')) {
-      setRecipientInputMode(RecipientInputMode.FindingEntry)
-      const address = await resolveName(recipientValue)
-      if (address) {
-        await completeSubmit(address, input)
+  const handleSubmit = useCallback(
+    async (e: React.SyntheticEvent, value?: string) => {
+      e.preventDefault()
+      const data = e.target as typeof e.target & {
+        recipient: { value: string }
+      }
+      const input = e.target as HTMLInputElement
+      const recipientValue = value || data.recipient.value
+      if (recipientValue.endsWith('eth')) {
+        setRecipientInputMode(RecipientInputMode.FindingEntry)
+        const address = await resolveName(recipientValue)
+        if (address) {
+          await completeSubmit(address, input)
+        } else {
+          setRecipientInputMode(RecipientInputMode.InvalidEntry)
+        }
+      } else if (
+        recipientValue.startsWith('0x') &&
+        recipientValue.length === 42
+      ) {
+        await completeSubmit(recipientValue, input)
+      }
+    },
+    [completeSubmit, resolveName]
+  )
+
+  const handleInputChange = useCallback(
+    async (e: React.SyntheticEvent) => {
+      const data = e.target as typeof e.target & {
+        value: string
+      }
+      if (router.pathname !== '/dm') {
+        router.push('/dm')
+      }
+      if (
+        data.value.endsWith('.eth') ||
+        (data.value.startsWith('0x') && data.value.length === 42)
+      ) {
+        handleSubmit(e, data.value)
       } else {
         setRecipientInputMode(RecipientInputMode.InvalidEntry)
       }
-    } else if (
-      recipientValue.startsWith('0x') &&
-      recipientValue.length === 42
-    ) {
-      await completeSubmit(recipientValue, input)
-    }
-  }
-
-  const handleInputChange = async (e: React.SyntheticEvent) => {
-    const data = e.target as typeof e.target & {
-      value: string
-    }
-    if (router.pathname !== '/dm') {
-      router.push('/dm')
-    }
-    if (
-      data.value.endsWith('.eth') ||
-      (data.value.startsWith('0x') && data.value.length === 42)
-    ) {
-      handleSubmit(e, data.value)
-    } else {
-      setRecipientInputMode(RecipientInputMode.InvalidEntry)
-    }
-  }
+    },
+    [handleSubmit, router]
+  )
 
   return (
     <div className="flex-1 flex-col shrink justify-center flex h-[72px] bg-zinc-50 md:border-b md:border-gray-200 md:px-4 md:pb-[2px]">
