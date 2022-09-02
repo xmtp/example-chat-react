@@ -10,8 +10,8 @@ assignees: ''
 **Summary**
 A clear and concise description of what the bug is.
 
-**To Reproduce**
-Steps someone else can follow to reproduce the behavior:
+**Steps to reproduce**
+Steps someone else can follow to reproduce the behavior.
 1. ...
 2. ...
 3. ...
@@ -25,7 +25,7 @@ A clear and concise description of what happened instead.
 **Attachments**
 If applicable, add screenshots or videos to help explain your problem.
 
-**Environment:**
+**Environment**
  - OS:
  - Browser:
  - Version:
