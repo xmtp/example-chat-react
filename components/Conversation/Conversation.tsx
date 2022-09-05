@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import useConversation from '../../hooks/useConversation'
 import { MessagesList, MessageComposer } from './'
 import Loader from '../../components/Loader'
@@ -12,10 +12,10 @@ const Conversation = ({
 }: ConversationProps): JSX.Element => {
   const messagesEndRef = useRef(null)
 
-  const scrollToMessagesEndRef = () => {
+  const scrollToMessagesEndRef = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
-  }
+  }, [])
 
   const { messages, sendMessage, loading } = useConversation(
     recipientWalletAddr,

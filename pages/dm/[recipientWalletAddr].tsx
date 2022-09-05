@@ -5,10 +5,12 @@ import { useEffect, useState } from 'react'
 import { Conversation } from '../../components/Conversation'
 import { checkPath } from '../../helpers'
 import XmtpContext from '../../contexts/xmtp'
+import { WalletContext } from '../../contexts/wallet'
 
 const ConversationPage: NextPage = () => {
   const router = useRouter()
   const { client } = useContext(XmtpContext)
+  const { resolveName } = useContext(WalletContext)
   const recipientWalletAddr = router.query.recipientWalletAddr as string
   const [canMessageAddr, setCanMessageAddr] = useState<boolean | undefined>(
     false
@@ -16,13 +18,22 @@ const ConversationPage: NextPage = () => {
 
   const redirectToHome = async () => {
     if (checkPath()) {
-      const queryAddress = window.location.pathname.replace('/dm/', '')
-      const canMessage = await client?.canMessage(queryAddress)
-      if (!canMessage || !queryAddress) {
+      let queryAddress = window.location.pathname.replace('/dm/', '')
+      if (queryAddress.includes('.eth')) {
+        queryAddress = (await resolveName(queryAddress)) ?? ''
+      }
+      if (!queryAddress) {
         setCanMessageAddr(false)
         router.push('/')
       } else {
-        setCanMessageAddr(true)
+        const canMessage = await client?.canMessage(queryAddress)
+        if (!canMessage) {
+          setCanMessageAddr(false)
+          router.push('/')
+        } else {
+          setCanMessageAddr(true)
+          router.push(`/dm/${queryAddress}`)
+        }
       }
     }
   }

@@ -1,6 +1,7 @@
 import { Conversation, Message, Stream } from '@xmtp/xmtp-js'
 import { useState, useEffect, useContext } from 'react'
 import XmtpContext from '../contexts/xmtp'
+import { checkIfPathIsEns } from '../helpers'
 import useMessageStore from './useMessageStore'
 
 type OnMessageCallback = () => void
@@ -17,7 +18,7 @@ const useConversation = (
 
   useEffect(() => {
     const getConvo = async () => {
-      if (!client || !peerAddress) {
+      if (!client || !peerAddress || checkIfPathIsEns(peerAddress)) {
         return
       }
       setConversation(await client.conversations.newConversation(peerAddress))
@@ -76,7 +77,7 @@ const useConversation = (
     }
     listMessages()
     streamMessages()
-  }, [conversation])
+  }, [conversation, dispatchMessages, onMessageCallback])
 
   const handleSend = async (message: string) => {
     if (!conversation) return
