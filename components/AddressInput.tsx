@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from 'react'
 import { WalletContext } from '../contexts/wallet'
-import { classNames } from '../helpers'
+import { checkIfPathIsEns, classNames } from '../helpers'
 
 type AddressInputProps = {
   recipientWalletAddress?: string
@@ -44,7 +44,7 @@ const AddressInput = ({
   useEffect(() => {
     const setLookupValue = async () => {
       if (!lookupAddress) return
-      if (recipientWalletAddress) {
+      if (recipientWalletAddress && !checkIfPathIsEns(recipientWalletAddress)) {
         const name = await lookupAddress(recipientWalletAddress)
         setValue(name || recipientWalletAddress)
       } else if (value.startsWith('0x') && value.length === 42) {
