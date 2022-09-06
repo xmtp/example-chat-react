@@ -119,10 +119,7 @@ const ConversationsList = (): JSX.Element => {
     if (checkPath()) {
       const queryAddress = window.location.pathname.replace('/dm/', '')
       if (queryAddress) {
-        const matchAddress = conversations.filter(
-          (convo) => queryAddress == convo.peerAddress
-        )
-        if (Array.isArray(matchAddress) && matchAddress.length > 0) {
+        if (conversations && conversations.has(queryAddress)) {
           router.push(window.location.pathname)
         }
       }
@@ -135,18 +132,20 @@ const ConversationsList = (): JSX.Element => {
 
   return (
     <div>
-      {conversations && conversations.length > 0 ? (
-        conversations.sort(orderByLatestMessage).map((convo) => {
-          const isSelected =
-            router.query.recipientWalletAddr == convo.peerAddress
-          return (
-            <ConversationTile
-              key={convo.peerAddress}
-              conversation={convo}
-              isSelected={isSelected}
-            />
-          )
-        })
+      {conversations && conversations.size > 0 ? (
+        Array.from(conversations.values())
+          .sort(orderByLatestMessage)
+          .map((convo) => {
+            const isSelected =
+              router.query.recipientWalletAddr == convo.peerAddress
+            return (
+              <ConversationTile
+                key={convo.peerAddress}
+                conversation={convo}
+                isSelected={isSelected}
+              />
+            )
+          })
       ) : (
         <NoConversationsMessage />
       )}

@@ -9,13 +9,13 @@ export type MessageStoreEvent = {
 
 export type XmtpContextType = {
   client: Client | undefined
-  conversations: Conversation[]
+  conversations: Map<string, Conversation> | null
   loadingConversations: boolean
 }
 
 export const XmtpContext = createContext<XmtpContextType>({
   client: undefined,
-  conversations: [],
+  conversations: null,
   loadingConversations: false,
 })
 

@@ -13,17 +13,25 @@ export const XmtpProvider: React.FC = ({ children }) => {
     useState<boolean>(false)
 
   const [conversations, dispatchConversations] = useReducer(
-    (state: Conversation[], newConvos: Conversation[] | undefined) => {
+    (
+      state: Map<string, Conversation>,
+      newConvos: Conversation[] | undefined
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ): any => {
       if (newConvos === undefined) {
-        return []
+        return null
       }
-      newConvos = newConvos.filter(
-        (convo) =>
-          state.findIndex((otherConvo) => {
-            return convo.peerAddress === otherConvo.peerAddress
-          }) < 0 && convo.peerAddress != client?.address
-      )
-      return newConvos === undefined ? [] : state.concat(newConvos)
+      newConvos.forEach((convo) => {
+        if (convo.peerAddress !== client?.address) {
+          if (state && !state.has(convo.peerAddress)) {
+            state.set(convo.peerAddress, convo)
+          } else if (state === null) {
+            state = new Map()
+            state.set(convo.peerAddress, convo)
+          }
+        }
+      })
+      return state ?? null
     },
     []
   )
