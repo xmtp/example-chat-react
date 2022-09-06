@@ -1,16 +1,15 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { WalletContext } from '../contexts/wallet'
 import { classNames } from '../helpers'
 import Address from './Address'
 
 type addressPillProps = {
   address: string
-  userIsSender: boolean
 }
 
-const AddressPill = ({
-  address,
-  userIsSender,
-}: addressPillProps): JSX.Element => {
+const AddressPill = ({ address }: addressPillProps): JSX.Element => {
+  const { address: walletAddress } = useContext(WalletContext)
+  const userIsSender = address === walletAddress
   return (
     <Address
       className={classNames(
