@@ -26,9 +26,9 @@ A clear and concise description of what happened instead.
 If applicable, add screenshots or videos to help explain your problem.
 
 **Environment**
- - OS:
- - Browser:
- - Version:
+ - OS version:
+ - Browser type and version:
+ - `xmtp-js` version (if known):
  - Deployment URL (if applicable):
 
 **Additional context**
