@@ -27,7 +27,7 @@ If applicable, add screenshots or videos to help explain your problem.
 
 **Environment**
  - OS version:
- - Browser type and version:
+ - Browser version:
  - `xmtp-js` version (if known):
  - Deployment URL (if applicable):
 
