@@ -141,9 +141,14 @@ const ConversationsList = (): JSX.Element => {
     reloadIfQueryParamPresent()
   }, [window.location.pathname])
 
+  if (!conversations || conversations.size == 0) {
+    return <NoConversationsMessage />
+  }
+
   return (
-    <div>
-      {conversations && conversations.size > 0 ? (
+    <>
+      {conversations &&
+        conversations.size > 0 &&
         Array.from(conversations.values())
           .sort(orderByLatestMessage)
           .map((convo) => {
@@ -156,17 +161,14 @@ const ConversationsList = (): JSX.Element => {
                 isSelected={isSelected}
               />
             )
-          })
-      ) : (
-        <NoConversationsMessage />
-      )}
-    </div>
+          })}
+    </>
   )
 }
 
 const NoConversationsMessage = (): JSX.Element => {
   return (
-    <div className="flex flex-col flex-grow justify-center">
+    <div className="flex flex-col flex-grow justify-center h-[100%]">
       <div className="flex flex-col items-center px-4 text-center">
         <ChatIcon
           className="h-8 w-8 mb-1 stroke-n-200 md:stroke-n-300"
@@ -176,7 +178,7 @@ const NoConversationsMessage = (): JSX.Element => {
           Your message list is empty
         </p>
         <p className="text-lx md:text-md text-n-200 font-normal">
-          There are no messages in this wallet
+          There are no messages for this address
         </p>
       </div>
     </div>

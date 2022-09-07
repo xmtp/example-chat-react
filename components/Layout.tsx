@@ -43,9 +43,9 @@ const ConversationLayout: React.FC = ({ children }) => {
     router.push(address ? `/dm/${address}` : '/dm/')
   }
 
-  const handleBackArrowClick = () => {
+  const handleBackArrowClick = useCallback(() => {
     router.push('/')
-  }
+  }, [router])
 
   return (
     <>
