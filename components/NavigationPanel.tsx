@@ -16,10 +16,11 @@ type ConnectButtonProps = {
 
 const NavigationPanel = ({ onConnect }: NavigationPanelProps): JSX.Element => {
   const { address: walletAddress } = useContext(WalletContext)
+  const { client } = useContext(XmtpContext)
 
   return (
     <div className="flex-grow flex flex-col h-[82vh] overflow-y-auto">
-      {walletAddress ? (
+      {walletAddress && client !== null ? (
         <ConversationsPanel />
       ) : (
         <NoWalletConnectedMessage>
@@ -67,7 +68,7 @@ const ConnectButton = ({ onConnect }: ConnectButtonProps): JSX.Element => {
 const ConversationsPanel = (): JSX.Element => {
   const { loadingConversations, client } = useContext(XmtpContext)
 
-  if (!client) {
+  if (client === undefined) {
     return (
       <Loader
         headingText="Awaiting signatures..."

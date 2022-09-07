@@ -1,4 +1,4 @@
-import { useContext, useEffect, useReducer, useState } from 'react'
+import { useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { Conversation } from '@xmtp/xmtp-js'
 import { Client } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
@@ -7,7 +7,7 @@ import { XmtpContext, XmtpContextType } from '../contexts/xmtp'
 import { WalletContext } from '../contexts/wallet'
 
 export const XmtpProvider: React.FC = ({ children }) => {
-  const [client, setClient] = useState<Client>()
+  const [client, setClient] = useState<Client | null>()
   const { signer } = useContext(WalletContext)
   const [loadingConversations, setLoadingConversations] =
     useState<boolean>(false)
@@ -36,10 +36,16 @@ export const XmtpProvider: React.FC = ({ children }) => {
     []
   )
 
-  const initClient = async (wallet: Signer) => {
-    if (!wallet) return
-    setClient(await Client.create(wallet, { env: getEnv() }))
-  }
+  const initClient = useCallback(async (wallet: Signer) => {
+    if (wallet) {
+      try {
+        setClient(await Client.create(wallet, { env: getEnv() }))
+      } catch (e) {
+        console.error(e)
+        setClient(null)
+      }
+    }
+  }, [])
 
   const disconnect = () => {
     setClient(undefined)
@@ -48,7 +54,7 @@ export const XmtpProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     signer ? initClient(signer) : disconnect()
-  }, [signer])
+  }, [initClient, signer])
 
   useEffect(() => {
     if (!client) return
@@ -69,6 +75,7 @@ export const XmtpProvider: React.FC = ({ children }) => {
     client,
     conversations,
     loadingConversations,
+    initClient,
   })
 
   useEffect(() => {
@@ -76,8 +83,9 @@ export const XmtpProvider: React.FC = ({ children }) => {
       client,
       conversations,
       loadingConversations,
+      initClient,
     })
-  }, [client, conversations, loadingConversations])
+  }, [client, conversations, initClient, loadingConversations])
 
   return (
     <XmtpContext.Provider value={providerState}>

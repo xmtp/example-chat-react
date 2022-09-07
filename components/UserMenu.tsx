@@ -7,6 +7,7 @@ import Address from './Address'
 import useEns from '../hooks/useEns'
 import { Tooltip } from './Tooltip/Tooltip'
 import { WalletContext } from '../contexts/wallet'
+import packageJson from '../package.json'
 
 type UserMenuProps = {
   onConnect?: () => Promise<void>
@@ -155,6 +156,16 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                   leaveTo="transform opacity-0 scale-95"
                 >
                   <Menu.Items className="origin-bottom-right absolute right-0 bottom-12 mb-4 w-40 rounded-md shadow-lg bg-white divide-y-2 divide-zinc-50 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="px-1 py-1 ">
+                      <Menu.Item>
+                        <span className="block rounded-md px-2 py-2 text-sm text-n-600 text-right font-normal">
+                          Version{' '}
+                          {packageJson.dependencies['@xmtp/xmtp-js'].substring(
+                            1
+                          )}
+                        </span>
+                      </Menu.Item>
+                    </div>
                     <div className="px-1 py-1 ">
                       <Menu.Item>
                         {({ active }) => (
