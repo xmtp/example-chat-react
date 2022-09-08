@@ -7,13 +7,11 @@ import AddressPill from '../AddressPill'
 
 export type MessageListProps = {
   messages: Message[]
-  walletAddress: string | undefined
   messagesEndRef: MutableRefObject<null>
 }
 
 type MessageTileProps = {
   message: Message
-  isSender: boolean
 }
 
 const isOnSameDay = (d1?: Date, d2?: Date): boolean => {
@@ -23,15 +21,12 @@ const isOnSameDay = (d1?: Date, d2?: Date): boolean => {
 const formatDate = (d?: Date) =>
   d?.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 
-const MessageTile = ({ message, isSender }: MessageTileProps): JSX.Element => (
+const MessageTile = ({ message }: MessageTileProps): JSX.Element => (
   <div className="flex items-start mx-auto mb-4">
     <Avatar peerAddress={message.senderAddress as string} />
     <div className="ml-2">
       <div>
-        <AddressPill
-          address={message.senderAddress as string}
-          userIsSender={isSender}
-        />
+        <AddressPill address={message.senderAddress as string} />
         <span className="text-sm font-normal place-self-end text-n-300 text-md uppercase">
           {formatTime(message.sent)}
         </span>
@@ -75,7 +70,6 @@ const ConversationBeginningNotice = (): JSX.Element => (
 
 const MessagesList = ({
   messages,
-  walletAddress,
   messagesEndRef,
 }: MessageListProps): JSX.Element => {
   let lastMessageDate: Date | undefined
@@ -83,25 +77,19 @@ const MessagesList = ({
   return (
     <div className="flex-grow flex">
       <div className="pb-6 md:pb-0 w-full flex flex-col self-end">
-        <div className="relative w-full bg-white px-4 pt-6 overflow-y-auto flex">
+        <div className="max-h-[80vh] relative w-full bg-white px-4 pt-6 overflow-y-auto flex">
           <div className="w-full">
             {messages && messages.length ? (
               <ConversationBeginningNotice />
             ) : null}
             {messages?.map((msg: Message) => {
-              const isSender = msg.senderAddress === walletAddress
-              const tile = (
-                <MessageTile message={msg} key={msg.id} isSender={isSender} />
-              )
               const dateHasChanged = !isOnSameDay(lastMessageDate, msg.sent)
               lastMessageDate = msg.sent
-              return dateHasChanged ? (
-                <div key={msg.id}>
-                  <DateDivider date={msg.sent} />
-                  {tile}
-                </div>
-              ) : (
-                tile
+              return (
+                <>
+                  {dateHasChanged ? <DateDivider date={msg.sent} /> : null}
+                  <MessageTile message={msg} key={msg.id} />
+                </>
               )
             })}
             <div ref={messagesEndRef} />
@@ -111,4 +99,5 @@ const MessagesList = ({
     </div>
   )
 }
+
 export default React.memo(MessagesList)

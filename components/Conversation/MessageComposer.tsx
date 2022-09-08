@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { classNames } from '../../helpers'
 import messageComposerStyles from '../../styles/MessageComposer.module.css'
 import upArrowGreen from '../../public/up-arrow-green.svg'
@@ -15,22 +15,18 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
 
   useEffect(() => setMessage(''), [router.query.recipientWalletAddr])
 
-  const onMessageChange = useCallback(
-    (e: React.FormEvent<HTMLInputElement>) => setMessage(e.currentTarget.value),
-    []
-  )
+  const onMessageChange = (e: React.FormEvent<HTMLInputElement>) =>
+    setMessage(e.currentTarget.value)
 
-  const onSubmit = useCallback(
-    async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
-      if (!message) {
-        return
-      }
-      setMessage('')
-      await onSend(message)
-    },
-    [onSend, message]
-  )
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!message) {
+      return
+    }
+    setMessage('')
+    await onSend(message)
+  }
+
   return (
     <div
       className={classNames(

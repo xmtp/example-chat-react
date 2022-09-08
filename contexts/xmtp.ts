@@ -1,7 +1,7 @@
-import { createContext, Dispatch } from 'react'
+import { createContext } from 'react'
 import { Client, Message } from '@xmtp/xmtp-js'
-import { Signer } from 'ethers'
 import { Conversation } from '@xmtp/xmtp-js'
+import { Signer } from 'ethers'
 
 export type MessageStoreEvent = {
   peerAddress: string
@@ -9,26 +9,17 @@ export type MessageStoreEvent = {
 }
 
 export type XmtpContextType = {
-  wallet: Signer | undefined
-  walletAddress: string | undefined
-  client: Client | undefined
-  conversations: Conversation[]
+  client: Client | undefined | null
+  conversations: Map<string, Conversation> | null
   loadingConversations: boolean
-  getMessages: (peerAddress: string) => Message[]
-  dispatchMessages?: Dispatch<MessageStoreEvent>
-  connect: (wallet: Signer) => void
-  disconnect: () => void
+  initClient: (wallet: Signer) => void
 }
 
 export const XmtpContext = createContext<XmtpContextType>({
-  wallet: undefined,
-  walletAddress: undefined,
   client: undefined,
-  conversations: [],
+  conversations: null,
   loadingConversations: false,
-  getMessages: () => [],
-  connect: () => undefined,
-  disconnect: () => undefined,
+  initClient: () => undefined,
 })
 
 export default XmtpContext

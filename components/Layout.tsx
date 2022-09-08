@@ -1,9 +1,6 @@
-import { useCallback, useEffect, useRef } from 'react'
-import useXmtp from '../hooks/useXmtp'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
-import useWallet from '../hooks/useWallet'
 import { NavigationView, ConversationView } from './Views'
 import { RecipientControl } from './Conversation'
 import NewMessageButton from './NewMessageButton'
@@ -11,6 +8,9 @@ import NavigationPanel from './NavigationPanel'
 import XmtpInfoPanel from './XmtpInfoPanel'
 import UserMenu from './UserMenu'
 import BackArrow from './BackArrow'
+import { useCallback, useContext } from 'react'
+import { WalletContext } from '../contexts/wallet'
+import XmtpContext from '../contexts/xmtp'
 
 const NavigationColumnLayout: React.FC = ({ children }) => (
   <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
@@ -39,12 +39,9 @@ const ConversationLayout: React.FC = ({ children }) => {
   const router = useRouter()
   const recipientWalletAddress = router.query.recipientWalletAddr as string
 
-  const handleSubmit = useCallback(
-    async (address: string) => {
-      router.push(address ? `/dm/${address}` : '/dm/')
-    },
-    [router]
-  )
+  const handleSubmit = async (address: string) => {
+    router.push(address ? `/dm/${address}` : '/dm/')
+  }
 
   const handleBackArrowClick = useCallback(() => {
     router.push('/')
@@ -67,51 +64,21 @@ const ConversationLayout: React.FC = ({ children }) => {
 }
 
 const Layout: React.FC = ({ children }) => {
+  const { client } = useContext(XmtpContext)
+
   const {
-    connect: connectXmtp,
-    disconnect: disconnectXmtp,
-    walletAddress,
-    client,
-  } = useXmtp()
-  const router = useRouter()
-  const {
-    signer,
+    address: walletAddress,
     connect: connectWallet,
     disconnect: disconnectWallet,
-  } = useWallet()
+  } = useContext(WalletContext)
 
   const handleDisconnect = useCallback(async () => {
-    disconnectXmtp()
     await disconnectWallet()
-    router.push('/')
-  }, [disconnectWallet, disconnectXmtp, router])
+  }, [disconnectWallet])
 
   const handleConnect = useCallback(async () => {
     await connectWallet()
   }, [connectWallet])
-
-  const usePrevious = <T,>(value: T): T | undefined => {
-    const ref = useRef<T>()
-    useEffect(() => {
-      ref.current = value
-    })
-    return ref.current
-  }
-  const prevSigner = usePrevious(signer)
-
-  useEffect(() => {
-    if (!signer && prevSigner) {
-      disconnectXmtp()
-    }
-    if (!signer || signer === prevSigner) return
-    const connect = async () => {
-      const prevAddress = await prevSigner?.getAddress()
-      const address = await signer.getAddress()
-      if (address === prevAddress) return
-      connectXmtp(signer)
-    }
-    connect()
-  }, [signer, prevSigner, connectXmtp, disconnectXmtp])
 
   return (
     <>

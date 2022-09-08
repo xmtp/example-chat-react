@@ -1,8 +1,10 @@
-import { useCallback, useState, useEffect } from 'react'
+import { useState, useEffect, useContext, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import AddressInput from '../AddressInput'
-import useWallet from '../../hooks/useWallet'
-import useXmtp from '../../hooks/useXmtp'
+import { WalletContext } from '../../contexts/wallet'
+import XmtpContext from '../../contexts/xmtp'
+import { checkIfPathIsEns } from '../../helpers'
+
 type RecipientInputProps = {
   recipientWalletAddress: string | undefined
   onSubmit: (address: string) => Promise<void>
@@ -20,8 +22,8 @@ const RecipientControl = ({
   recipientWalletAddress,
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
-  const { resolveName, lookupAddress } = useWallet()
-  const { client } = useXmtp()
+  const { resolveName, lookupAddress } = useContext(WalletContext)
+  const { client } = useContext(XmtpContext)
   const router = useRouter()
   const [recipientInputMode, setRecipientInputMode] = useState(
     RecipientInputMode.InvalidEntry
@@ -32,7 +34,7 @@ const RecipientControl = ({
     async (address: string): Promise<boolean> => {
       return client?.canMessage(address) || false
     },
-    [client]
+    []
   )
 
   const completeSubmit = useCallback(
@@ -45,7 +47,7 @@ const RecipientControl = ({
         setRecipientInputMode(RecipientInputMode.NotOnNetwork)
       }
     },
-    [checkIfOnNetwork, setRecipientInputMode, onSubmit]
+    [checkIfOnNetwork, onSubmit]
   )
 
   useEffect(() => {
@@ -53,13 +55,13 @@ const RecipientControl = ({
       const name = await lookupAddress(address)
       setHasName(!!name)
     }
-    if (recipientWalletAddress) {
+    if (recipientWalletAddress && !checkIfPathIsEns(recipientWalletAddress)) {
       setRecipientInputMode(RecipientInputMode.Submitted)
       handleAddressLookup(recipientWalletAddress)
     } else {
       setRecipientInputMode(RecipientInputMode.InvalidEntry)
     }
-  }, [recipientWalletAddress, setRecipientInputMode, lookupAddress, setHasName])
+  }, [lookupAddress, recipientWalletAddress])
 
   const handleSubmit = useCallback(
     async (e: React.SyntheticEvent, value?: string) => {
@@ -84,25 +86,28 @@ const RecipientControl = ({
         await completeSubmit(recipientValue, input)
       }
     },
-    [setRecipientInputMode, resolveName, completeSubmit]
+    [completeSubmit, resolveName]
   )
 
-  const handleInputChange = async (e: React.SyntheticEvent) => {
-    const data = e.target as typeof e.target & {
-      value: string
-    }
-    if (router.pathname !== '/dm') {
-      router.push('/dm')
-    }
-    if (
-      data.value.endsWith('.eth') ||
-      (data.value.startsWith('0x') && data.value.length === 42)
-    ) {
-      handleSubmit(e, data.value)
-    } else {
-      setRecipientInputMode(RecipientInputMode.InvalidEntry)
-    }
-  }
+  const handleInputChange = useCallback(
+    async (e: React.SyntheticEvent) => {
+      const data = e.target as typeof e.target & {
+        value: string
+      }
+      if (router.pathname !== '/dm') {
+        router.push('/dm')
+      }
+      if (
+        data.value.endsWith('.eth') ||
+        (data.value.startsWith('0x') && data.value.length === 42)
+      ) {
+        handleSubmit(e, data.value)
+      } else {
+        setRecipientInputMode(RecipientInputMode.InvalidEntry)
+      }
+    },
+    [handleSubmit, router]
+  )
 
   return (
     <div className="flex-1 flex-col shrink justify-center flex h-[72px] bg-zinc-50 md:border-b md:border-gray-200 md:px-4 md:pb-[2px]">
@@ -124,7 +129,6 @@ const RecipientControl = ({
             id="recipient-field"
             className="block w-[95%] pl-7 pr-3 pt-[3px] md:pt-[2px] md:pt-[1px] bg-transparent caret-n-600 text-n-600 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent text-lg font-mono"
             name="recipient"
-            lookupAddress={lookupAddress}
             onInputChange={handleInputChange}
           />
           <button type="submit" className="hidden" />
