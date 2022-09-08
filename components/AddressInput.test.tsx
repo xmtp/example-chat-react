@@ -4,9 +4,6 @@ import { waitFor } from '@testing-library/dom'
 import AddressInput from './AddressInput'
 import assert from 'assert'
 
-const lookupAddress = async (address: string) =>
-  address === '0xfoo' ? 'foo.eth' : undefined
-
 describe('AddressInput', () => {
   it('renders no initial value', () => {
     act(() => {
@@ -28,10 +25,7 @@ describe('AddressInput', () => {
     let input: HTMLInputElement | null
     act(() => {
       const { container } = render(
-        <AddressInput
-          recipientWalletAddress={'0xfoo'}
-          lookupAddress={lookupAddress}
-        />
+        <AddressInput recipientWalletAddress={'0xfoo'} />
       )
       input = container.querySelector('input')
     })
@@ -42,16 +36,10 @@ describe('AddressInput', () => {
     let input: HTMLInputElement | null
     act(() => {
       const rerenderWithInputValue = (value: string) =>
-        rerender(
-          <AddressInput
-            recipientWalletAddress={value}
-            lookupAddress={lookupAddress}
-          />
-        )
+        rerender(<AddressInput recipientWalletAddress={value} />)
       const { container, rerender } = render(
         <AddressInput
           recipientWalletAddress={'0xbar'}
-          lookupAddress={lookupAddress}
           onInputChange={async (event: React.SyntheticEvent) => {
             const data = event.target as typeof event.target & {
               value: string

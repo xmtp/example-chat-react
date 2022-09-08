@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
-import useWallet from './useWallet'
+import { useState, useEffect, useContext } from 'react'
+import { WalletContext } from '../contexts/wallet'
 
 const useEns = (addressOrName: string | undefined) => {
-  const { resolveName, lookupAddress, getAvatarUrl } = useWallet()
+  const { resolveName, lookupAddress, getAvatarUrl } = useContext(WalletContext)
   const [address, setAddress] = useState<string>('')
   const [name, setName] = useState<string>('')
   const [avatarUrl, setAvatarUrl] = useState<string>('')
@@ -41,10 +41,10 @@ const useEns = (addressOrName: string | undefined) => {
   }, [
     probableName,
     probableAddress,
+    name,
     resolveName,
     lookupAddress,
     getAvatarUrl,
-    name,
   ])
 
   return {

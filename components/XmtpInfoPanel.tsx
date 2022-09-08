@@ -1,5 +1,4 @@
 import packageJson from '../package.json'
-import useXmtp from '../hooks/useXmtp'
 import { classNames } from '../helpers'
 import {
   LinkIcon,
@@ -8,6 +7,8 @@ import {
   ChevronRightIcon,
   ArrowSmRightIcon,
 } from '@heroicons/react/solid'
+import { WalletContext } from '../contexts/wallet'
+import { useContext } from 'react'
 
 type XmtpInfoRowProps = {
   icon: JSX.Element
@@ -51,14 +52,14 @@ const InfoRow = ({
 )
 
 const XmtpInfoPanel = ({ onConnect }: XmtpInfoPanelProps): JSX.Element => {
-  const { walletAddress, client } = useXmtp()
+  const { address: walletAddress } = useContext(WalletContext)
   const InfoRows = [
     {
       icon: <LinkIcon />,
       headingText: 'Connect your wallet',
       subHeadingText: 'Verify your wallet to start using the XMTP protocol',
       onClick: onConnect,
-      disabled: !!walletAddress && !client,
+      disabled: !!walletAddress,
     },
     {
       icon: <BookOpenIcon />,
@@ -102,7 +103,9 @@ const XmtpInfoPanel = ({ onConnect }: XmtpInfoPanelProps): JSX.Element => {
         })}
       </div>
       <div className="flex justify-between items-center mt-4">
-        <div className="text-n-600 text-sm">v{packageJson.version}</div>
+        <div className="text-n-600 text-sm">
+          Version {packageJson.dependencies['@xmtp/xmtp-js'].substring(1)}
+        </div>
         <a
           href="https://blog.xmtp.com/contact/"
           target="_blank"

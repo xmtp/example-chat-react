@@ -1,13 +1,12 @@
-import { useCallback } from 'react'
 import { useRouter } from 'next/router'
 
 const NewMessageButton = (): JSX.Element => {
   const router = useRouter()
 
-  const onNewMessageButtonClick = useCallback(() => {
+  const onNewMessageButtonClick = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     router.push('/dm/')
-  }, [router])
+  }
 
   return (
     <button

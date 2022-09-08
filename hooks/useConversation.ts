@@ -1,6 +1,8 @@
 import { Conversation, Message, Stream } from '@xmtp/xmtp-js'
-import { useContext, useCallback, useState, useEffect } from 'react'
-import { XmtpContext } from '../contexts/xmtp'
+import { useState, useEffect, useContext } from 'react'
+import XmtpContext from '../contexts/xmtp'
+import { checkIfPathIsEns } from '../helpers'
+import useMessageStore from './useMessageStore'
 
 type OnMessageCallback = () => void
 
@@ -8,19 +10,21 @@ const useConversation = (
   peerAddress: string,
   onMessageCallback?: OnMessageCallback
 ) => {
-  const { client, getMessages, dispatchMessages } = useContext(XmtpContext)
+  const { client } = useContext(XmtpContext)
+  const { messageStore, dispatchMessages } = useMessageStore()
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [stream, setStream] = useState<Stream<Message>>()
   const [loading, setLoading] = useState<boolean>(false)
+
   useEffect(() => {
     const getConvo = async () => {
-      if (!client) {
+      if (!client || !peerAddress || checkIfPathIsEns(peerAddress)) {
         return
       }
       setConversation(await client.conversations.newConversation(peerAddress))
     }
     getConvo()
-  }, [client, peerAddress])
+  }, [peerAddress])
 
   useEffect(() => {
     const closeStream = async () => {
@@ -29,32 +33,34 @@ const useConversation = (
     }
     closeStream()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [peerAddress])
+  }, [])
 
   useEffect(() => {
+    if (!conversation) return
     const listMessages = async () => {
-      if (!conversation) return
-      console.log('Listing messages for peer address', conversation.peerAddress)
       setLoading(true)
       const msgs = await conversation.messages()
-      if (dispatchMessages) {
-        dispatchMessages({
-          peerAddress: conversation.peerAddress,
-          messages: msgs,
-        })
-      }
-
-      if (onMessageCallback) {
-        onMessageCallback()
+      if (
+        messageStore &&
+        msgs.length !== messageStore[conversation.peerAddress]?.length
+      ) {
+        console.log(
+          'Listing messages for peer address',
+          conversation.peerAddress
+        )
+        if (dispatchMessages) {
+          await dispatchMessages({
+            peerAddress: conversation.peerAddress,
+            messages: msgs,
+          })
+        }
+        if (onMessageCallback) {
+          onMessageCallback()
+        }
       }
       setLoading(false)
     }
-    listMessages()
-  }, [conversation, dispatchMessages, onMessageCallback, setLoading])
-
-  useEffect(() => {
     const streamMessages = async () => {
-      if (!conversation) return
       const stream = await conversation.streamMessages()
       setStream(stream)
       for await (const msg of stream) {
@@ -64,27 +70,23 @@ const useConversation = (
             messages: [msg],
           })
         }
-
         if (onMessageCallback) {
           onMessageCallback()
         }
       }
     }
+    listMessages()
     streamMessages()
-  }, [conversation, peerAddress, dispatchMessages, onMessageCallback])
+  }, [conversation, dispatchMessages, onMessageCallback])
 
-  const handleSend = useCallback(
-    async (message: string) => {
-      if (!conversation) return
-      await conversation.send(message)
-    },
-    [conversation]
-  )
+  const handleSend = async (message: string) => {
+    if (!conversation) return
+    await conversation.send(message)
+  }
 
   return {
-    conversation,
     loading,
-    messages: getMessages(peerAddress),
+    messages: messageStore[peerAddress] ?? [],
     sendMessage: handleSend,
   }
 }

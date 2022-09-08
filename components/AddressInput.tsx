@@ -1,6 +1,12 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react'
-import useXmtp from '../hooks/useXmtp'
-import { classNames } from '../helpers'
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useContext,
+  useCallback,
+} from 'react'
+import { WalletContext } from '../contexts/wallet'
+import { checkIfPathIsEns, classNames } from '../helpers'
 
 type AddressInputProps = {
   recipientWalletAddress?: string
@@ -8,7 +14,6 @@ type AddressInputProps = {
   name?: string
   className?: string
   placeholder?: string
-  lookupAddress?: (address: string) => Promise<string | undefined>
   onInputChange?: (e: React.SyntheticEvent) => Promise<void>
 }
 
@@ -18,29 +23,28 @@ const AddressInput = ({
   name,
   className,
   placeholder,
-  lookupAddress,
   onInputChange,
 }: AddressInputProps): JSX.Element => {
-  const { walletAddress } = useXmtp()
+  const { address: walletAddress, lookupAddress } = useContext(WalletContext)
   const inputElement = useRef(null)
   const [value, setValue] = useState<string>(recipientWalletAddress || '')
 
-  const focusInputElementRef = useCallback(() => {
+  const focusInputElementRef = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(inputElement.current as any)?.focus()
-  }, [inputElement])
+  }
 
   useEffect(() => {
     if (!recipientWalletAddress) {
       focusInputElementRef()
       setValue('')
     }
-  }, [focusInputElementRef, recipientWalletAddress])
+  }, [recipientWalletAddress])
 
   useEffect(() => {
     const setLookupValue = async () => {
       if (!lookupAddress) return
-      if (recipientWalletAddress) {
+      if (recipientWalletAddress && !checkIfPathIsEns(recipientWalletAddress)) {
         const name = await lookupAddress(recipientWalletAddress)
         setValue(name || recipientWalletAddress)
       } else if (value.startsWith('0x') && value.length === 42) {

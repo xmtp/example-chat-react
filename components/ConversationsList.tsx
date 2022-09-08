@@ -1,19 +1,22 @@
-import { classNames, truncate, formatDate, checkPath } from '../helpers'
+import React, { useContext, useEffect } from 'react'
 import Link from 'next/link'
+import { ChatIcon } from '@heroicons/react/outline'
 import Address from './Address'
 import { useRouter } from 'next/router'
 import { Conversation } from '@xmtp/xmtp-js'
-import useConversation from '../hooks/useConversation'
-import { XmtpContext } from '../contexts/xmtp'
 import { Message } from '@xmtp/xmtp-js'
-import useEns from '../hooks/useEns'
+import {
+  classNames,
+  truncate,
+  formatDate,
+  checkPath,
+  checkIfPathIsEns,
+} from '../helpers'
+import useConversation from '../hooks/useConversation'
 import Avatar from './Avatar'
-import { useContext, useEffect, useState } from 'react'
-import useXmtp from '../hooks/useXmtp'
-
-type ConversationsListProps = {
-  conversations: Conversation[]
-}
+import useMessageStore from '../hooks/useMessageStore'
+import XmtpContext from '../contexts/xmtp'
+import { WalletContext } from '../contexts/wallet'
 
 type ConversationTileProps = {
   conversation: Conversation
@@ -22,23 +25,28 @@ type ConversationTileProps = {
 }
 
 const getLatestMessage = (messages: Message[]): Message | null =>
-  messages.length ? messages[messages.length - 1] : null
+  messages?.length ? messages[messages.length - 1] : null
 
 const ConversationTile = ({
   conversation,
   isSelected,
   onClick,
 }: ConversationTileProps): JSX.Element | null => {
-  const { loading: isLoadingEns } = useEns(conversation.peerAddress)
   const { messages, loading: isLoadingConversation } = useConversation(
     conversation.peerAddress
   )
-  const loading = isLoadingEns || isLoadingConversation
+
+  if (!messages.length) {
+    return null
+  }
+
   const latestMessage = getLatestMessage(messages)
   const path = `/dm/${conversation.peerAddress}`
+
   if (!latestMessage) {
     return null
   }
+
   return (
     <Link href={path} key={conversation.peerAddress}>
       <a onClick={onClick}>
@@ -59,7 +67,7 @@ const ConversationTile = ({
             'border-b-2',
             'border-gray-100',
             'hover:bg-bt-100',
-            loading ? 'opacity-80' : 'opacity-100',
+            isLoadingConversation ? 'opacity-80' : 'opacity-100',
             isSelected ? 'bg-bt-200' : null
           )}
         >
@@ -74,7 +82,7 @@ const ConversationTile = ({
                 className={classNames(
                   'text-lg md:text-sm font-normal place-self-end',
                   isSelected ? 'text-n-500' : 'text-n-300',
-                  loading ? 'animate-pulse' : ''
+                  isLoadingConversation ? 'animate-pulse' : ''
                 )}
               >
                 {formatDate(latestMessage?.sent)}
@@ -84,7 +92,7 @@ const ConversationTile = ({
               className={classNames(
                 'text-[13px] md:text-sm font-normal text-ellipsis mt-0',
                 isSelected ? 'text-n-500' : 'text-n-300',
-                loading ? 'animate-pulse' : ''
+                isLoadingConversation ? 'animate-pulse' : ''
               )}
             >
               {latestMessage && truncate(latestMessage.content, 75)}
@@ -96,42 +104,34 @@ const ConversationTile = ({
   )
 }
 
-const ConversationsList = ({
-  conversations,
-}: ConversationsListProps): JSX.Element => {
+const ConversationsList = (): JSX.Element => {
   const router = useRouter()
-  const { getMessages } = useContext(XmtpContext)
+  const { conversations } = useContext(XmtpContext)
+  const { messageStore } = useMessageStore()
+  const { resolveName } = useContext(WalletContext)
+
   const orderByLatestMessage = (
     convoA: Conversation,
     convoB: Conversation
   ): number => {
-    const convoAMessages = getMessages(convoA.peerAddress)
-    const convoBMessages = getMessages(convoB.peerAddress)
+    const convoAMessages = messageStore[convoA.peerAddress]
+    const convoBMessages = messageStore[convoB.peerAddress]
     const convoALastMessageDate =
       getLatestMessage(convoAMessages)?.sent || new Date()
     const convoBLastMessageDate =
       getLatestMessage(convoBMessages)?.sent || new Date()
     return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
   }
-  const { client } = useXmtp()
-  const [refresh, setRefresh] = useState(false)
 
   const reloadIfQueryParamPresent = async () => {
     if (checkPath()) {
-      const queryAddress = window.location.pathname.replace('/dm/', '')
+      let queryAddress = window.location.pathname.replace('/dm/', '')
+      if (checkIfPathIsEns(queryAddress)) {
+        queryAddress = (await resolveName(queryAddress)) ?? ''
+      }
       if (queryAddress) {
-        const canMessage = await client?.canMessage(queryAddress)
-        const matchAddress = conversations.filter(
-          (convo) => queryAddress == convo.peerAddress
-        )
-        if (
-          canMessage ||
-          (Array.isArray(matchAddress) && matchAddress.length > 0)
-        ) {
+        if (conversations && conversations.has(queryAddress)) {
           router.push(window.location.pathname)
-          setRefresh(!refresh)
-        } else {
-          router.push('/')
         }
       }
     }
@@ -141,22 +141,48 @@ const ConversationsList = ({
     reloadIfQueryParamPresent()
   }, [window.location.pathname])
 
+  if (!conversations || conversations.size == 0) {
+    return <NoConversationsMessage />
+  }
+
   return (
-    <div>
+    <>
       {conversations &&
-        conversations.sort(orderByLatestMessage).map((convo) => {
-          const isSelected =
-            router.query.recipientWalletAddr == convo.peerAddress
-          return (
-            <ConversationTile
-              key={convo.peerAddress}
-              conversation={convo}
-              isSelected={isSelected}
-            />
-          )
-        })}
+        conversations.size > 0 &&
+        Array.from(conversations.values())
+          .sort(orderByLatestMessage)
+          .map((convo) => {
+            const isSelected =
+              router.query.recipientWalletAddr == convo.peerAddress
+            return (
+              <ConversationTile
+                key={convo.peerAddress}
+                conversation={convo}
+                isSelected={isSelected}
+              />
+            )
+          })}
+    </>
+  )
+}
+
+const NoConversationsMessage = (): JSX.Element => {
+  return (
+    <div className="flex flex-col flex-grow justify-center h-[100%]">
+      <div className="flex flex-col items-center px-4 text-center">
+        <ChatIcon
+          className="h-8 w-8 mb-1 stroke-n-200 md:stroke-n-300"
+          aria-hidden="true"
+        />
+        <p className="text-xl md:text-lg text-n-200 md:text-n-300 font-bold">
+          Your message list is empty
+        </p>
+        <p className="text-lx md:text-md text-n-200 font-normal">
+          There are no messages for this address
+        </p>
+      </div>
     </div>
   )
 }
 
-export default ConversationsList
+export default React.memo(ConversationsList)

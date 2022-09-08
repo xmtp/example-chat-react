@@ -1,62 +1,65 @@
-import { useCallback, useEffect, useReducer, useState } from 'react'
+import { useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { Conversation } from '@xmtp/xmtp-js'
 import { Client } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
 import { getEnv } from '../helpers'
 import { XmtpContext, XmtpContextType } from '../contexts/xmtp'
-import useMessageStore from '../hooks/useMessageStore'
+import { WalletContext } from '../contexts/wallet'
 
 export const XmtpProvider: React.FC = ({ children }) => {
-  const [wallet, setWallet] = useState<Signer>()
-  const [walletAddress, setWalletAddress] = useState<string>()
-  const [client, setClient] = useState<Client>()
-  const { getMessages, dispatchMessages } = useMessageStore()
+  const [client, setClient] = useState<Client | null>()
+  const { signer } = useContext(WalletContext)
   const [loadingConversations, setLoadingConversations] =
     useState<boolean>(false)
 
   const [conversations, dispatchConversations] = useReducer(
-    (state: Conversation[], newConvos: Conversation[] | undefined) => {
+    (
+      state: Map<string, Conversation>,
+      newConvos: Conversation[] | undefined
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ): any => {
       if (newConvos === undefined) {
-        return []
+        return null
       }
-      newConvos = newConvos.filter(
-        (convo) =>
-          state.findIndex((otherConvo) => {
-            return convo.peerAddress === otherConvo.peerAddress
-          }) < 0 && convo.peerAddress != client?.address
-      )
-      return newConvos === undefined ? [] : state.concat(newConvos)
+      newConvos.forEach((convo) => {
+        if (convo.peerAddress !== client?.address) {
+          if (state && !state.has(convo.peerAddress)) {
+            state.set(convo.peerAddress, convo)
+          } else if (state === null) {
+            state = new Map()
+            state.set(convo.peerAddress, convo)
+          }
+        }
+      })
+      return state ?? null
     },
     []
   )
 
-  const connect = useCallback(
-    async (wallet: Signer) => {
-      setWallet(wallet)
-      const walletAddr = await wallet.getAddress()
-      setWalletAddress(walletAddr)
-    },
-    [setWallet, setWalletAddress]
-  )
+  const initClient = useCallback(async (wallet: Signer) => {
+    if (wallet) {
+      try {
+        setClient(await Client.create(wallet, { env: getEnv() }))
+      } catch (e) {
+        console.error(e)
+        setClient(null)
+      }
+    }
+  }, [])
 
-  const disconnect = useCallback(async () => {
-    setWallet(undefined)
-    setWalletAddress(undefined)
+  const disconnect = () => {
     setClient(undefined)
     dispatchConversations(undefined)
-  }, [setWallet, setWalletAddress, setClient, dispatchConversations])
+  }
 
   useEffect(() => {
-    const initClient = async () => {
-      if (!wallet) return
-      setClient(await Client.create(wallet, { env: getEnv() }))
-    }
-    initClient()
-  }, [wallet])
+    signer ? initClient(signer) : disconnect()
+  }, [initClient, signer])
 
   useEffect(() => {
+    if (!client) return
+
     const listConversations = async () => {
-      if (!client) return
       console.log('Listing conversations')
       setLoadingConversations(true)
       const convos = await client.conversations.list()
@@ -66,54 +69,23 @@ export const XmtpProvider: React.FC = ({ children }) => {
       setLoadingConversations(false)
     }
     listConversations()
-  }, [client, walletAddress])
-
-  useEffect(() => {
-    const streamConversations = async () => {
-      if (!client) return
-      const stream = await client.conversations.stream()
-      for await (const convo of stream) {
-        dispatchConversations([convo])
-      }
-    }
-    streamConversations()
-  }, [client, walletAddress])
+  }, [client])
 
   const [providerState, setProviderState] = useState<XmtpContextType>({
-    wallet,
-    walletAddress,
     client,
     conversations,
     loadingConversations,
-    getMessages,
-    dispatchMessages,
-    connect,
-    disconnect,
+    initClient,
   })
 
   useEffect(() => {
     setProviderState({
-      wallet,
-      walletAddress,
       client,
       conversations,
       loadingConversations,
-      getMessages,
-      dispatchMessages,
-      connect,
-      disconnect,
+      initClient,
     })
-  }, [
-    wallet,
-    walletAddress,
-    client,
-    conversations,
-    loadingConversations,
-    getMessages,
-    dispatchMessages,
-    connect,
-    disconnect,
-  ])
+  }, [client, conversations, initClient, loadingConversations])
 
   return (
     <XmtpContext.Provider value={providerState}>
