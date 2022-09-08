@@ -16,6 +16,9 @@ type WalletProviderProps = {
   children?: React.ReactNode
 }
 
+// This variables are not added in state on purpose.
+// It saves few re-renders which then trigger the children to re-render
+// Consider the above while moving it to state variables
 let provider: ethers.providers.Web3Provider
 let chainId: number
 let signer: Signer | undefined
@@ -61,6 +64,7 @@ export const WalletProvider = ({
     return avatarUrl
   }, [])
 
+  // Note, this triggers a re-render on acccount change and on diconnect.
   const disconnect = useCallback(() => {
     if (!web3Modal) return
     web3Modal.clearCachedProvider()
