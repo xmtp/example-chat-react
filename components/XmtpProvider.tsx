@@ -1,16 +1,14 @@
 import { Reducer, useEffect, useReducer, useState } from 'react'
 import { Conversation } from '@xmtp/xmtp-js'
 import { Client } from '@xmtp/xmtp-js'
-import { Signer } from 'ethers'
-import { XmtpContext } from '../contexts/xmtp'
+import { XmtpContext, XmtpContextType } from '../contexts/xmtp'
 
-type XmtpProviderProps = {
-  signer?: Signer
-}
+type XmtpProviderProps = Pick<XmtpContextType, 'signer' | 'lookupAddress'>
 
 export const XmtpProvider: React.FC<XmtpProviderProps> = ({
   children,
   signer,
+  lookupAddress,
 }) => {
   const [client, setClient] = useState<Client | null>()
   const [recipient, setRecipient] = useState<string>()
@@ -56,6 +54,7 @@ export const XmtpProvider: React.FC<XmtpProviderProps> = ({
         client,
         recipient,
         setRecipient,
+        lookupAddress,
         conversations,
         loadingConversations,
       }}

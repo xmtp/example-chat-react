@@ -3,12 +3,19 @@ import { Client } from '@xmtp/xmtp-js'
 import { Conversation } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
 
+export type Account = {
+  name?: string
+  avatar?: string
+}
+
 export type XmtpContextType = {
   signer: Signer | undefined
   client: Client | undefined | null
 
   recipient: string | undefined
   setRecipient: (recipient: string | undefined) => void
+
+  lookupAddress?: (address: string) => Promise<Account>
 
   conversations: Map<string, Conversation> | null
   loadingConversations: boolean

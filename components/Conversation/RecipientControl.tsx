@@ -1,6 +1,7 @@
 import { useState, useContext, useCallback, useEffect } from 'react'
 import AddressInput from '../AddressInput'
 import XmtpContext from '../../contexts/xmtp'
+import useLookup from '../../hooks/useLookup'
 
 type RecipientInputProps = {
   value: string | undefined
@@ -12,6 +13,9 @@ const RecipientControl = ({
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
   const { client } = useContext(XmtpContext)
+  const {
+    data: { name },
+  } = useLookup(value)
   const [error, setError] = useState<Error>()
 
   useEffect(() => {
@@ -46,7 +50,7 @@ const RecipientControl = ({
           </div>
           {value ? (
             <span className="absolute top-[4px] md:top-[2px] left-[26px] md:left-[23px] rounded-2xl px-[5px] md:px-2 border text-md focus:outline-none focus:ring-0 font-bold font-mono overflow-visible text-center bg-zinc-50 border-gray-300">
-              {value}
+              {name || value}
             </span>
           ) : (
             <AddressInput
