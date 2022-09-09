@@ -5,13 +5,7 @@ import Address from './Address'
 import { useRouter } from 'next/router'
 import { Conversation } from '@xmtp/xmtp-js'
 import { Message } from '@xmtp/xmtp-js'
-import {
-  classNames,
-  truncate,
-  formatDate,
-  checkPath,
-  checkIfPathIsEns,
-} from '../helpers'
+import { classNames, truncate, formatDate, checkPath } from '../helpers'
 import useConversation from '../hooks/useConversation'
 import Avatar from './Avatar'
 import useMessageStore from '../hooks/useMessageStore'
@@ -123,10 +117,7 @@ const ConversationsList = (): JSX.Element => {
 
   const reloadIfQueryParamPresent = async () => {
     if (checkPath()) {
-      let queryAddress = window.location.pathname.replace('/dm/', '')
-      if (checkIfPathIsEns(queryAddress)) {
-        queryAddress = ''
-      }
+      const queryAddress = window.location.pathname.replace('/dm/', '')
       if (queryAddress) {
         if (conversations && conversations.has(queryAddress)) {
           router.push(window.location.pathname)

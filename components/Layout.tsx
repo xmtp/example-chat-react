@@ -34,10 +34,7 @@ const TopBarLayout: React.FC = ({ children }) => (
   </div>
 )
 
-const ConversationLayout: React.FC<{ signer?: Signer }> = ({
-  children,
-  signer,
-}) => {
+const ConversationLayout: React.FC = ({ children }) => {
   const router = useRouter()
   const recipientWalletAddress = router.query.recipientWalletAddr as string
 
@@ -56,7 +53,6 @@ const ConversationLayout: React.FC<{ signer?: Signer }> = ({
           <BackArrow onClick={handleBackArrowClick} />
         </div>
         <RecipientControl
-          signer={signer}
           recipientWalletAddress={recipientWalletAddress}
           onSubmit={handleSubmit}
         />
@@ -88,7 +84,7 @@ const Layout: React.FC<{ signer?: Signer }> = ({ children, signer }) => {
         </NavigationView>
         <ConversationView>
           {signer && client ? (
-            <ConversationLayout signer={signer}>{children}</ConversationLayout>
+            <ConversationLayout>{children}</ConversationLayout>
           ) : (
             <XmtpInfoPanel signer={signer} />
           )}

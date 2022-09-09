@@ -17,13 +17,13 @@ const NavigationPanel = ({ signer }: NavigationPanelProps): JSX.Element => {
       {signer && client !== null ? (
         <ConversationsPanel />
       ) : (
-        <NoWalletConnectedMessage>Not connected</NoWalletConnectedMessage>
+        <NoWalletConnectedMessage />
       )}
     </div>
   )
 }
 
-const NoWalletConnectedMessage: React.FC = ({ children }) => {
+const NoWalletConnectedMessage: React.FC = () => {
   return (
     <div className="flex flex-col flex-grow justify-center">
       <div className="flex flex-col items-center px-4 text-center">
@@ -38,7 +38,6 @@ const NoWalletConnectedMessage: React.FC = ({ children }) => {
           Please connect a wallet to begin
         </p>
       </div>
-      {children}
     </div>
   )
 }
