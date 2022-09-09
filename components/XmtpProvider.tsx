@@ -13,6 +13,7 @@ export const XmtpProvider: React.FC<XmtpProviderProps> = ({
   signer,
 }) => {
   const [client, setClient] = useState<Client | null>()
+  const [recipient, setRecipient] = useState<string>()
   const [loadingConversations, setLoadingConversations] =
     useState<boolean>(false)
 
@@ -53,6 +54,8 @@ export const XmtpProvider: React.FC<XmtpProviderProps> = ({
       value={{
         signer,
         client,
+        recipient,
+        setRecipient,
         conversations,
         loadingConversations,
       }}
