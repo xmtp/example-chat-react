@@ -1,137 +1,67 @@
-import { useState, useEffect, useContext, useCallback } from 'react'
-import { useRouter } from 'next/router'
+import { useState, useContext, useCallback, useEffect } from 'react'
 import AddressInput from '../AddressInput'
 import XmtpContext from '../../contexts/xmtp'
-import { checkIfPathIsEns } from '../../helpers'
-import { Signer } from 'ethers'
 
 type RecipientInputProps = {
-  signer?: Signer
   recipientWalletAddress: string | undefined
   onSubmit: (address: string) => Promise<void>
 }
 
-const RecipientInputMode = {
-  InvalidEntry: 0,
-  ValidEntry: 1,
-  FindingEntry: 2,
-  Submitted: 3,
-  NotOnNetwork: 4,
-}
-
 const RecipientControl = ({
-  signer,
   recipientWalletAddress,
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
   const { client } = useContext(XmtpContext)
-  const router = useRouter()
-  const [recipientInputMode, setRecipientInputMode] = useState(
-    RecipientInputMode.InvalidEntry
-  )
-
-  const checkIfOnNetwork = useCallback(
-    async (address: string): Promise<boolean> => {
-      return client?.canMessage(address) || false
-    },
-    []
-  )
-
-  const completeSubmit = useCallback(
-    async (address: string, input: HTMLInputElement) => {
-      if (await checkIfOnNetwork(address)) {
-        onSubmit(address)
-        input.blur()
-        setRecipientInputMode(RecipientInputMode.Submitted)
-      } else {
-        setRecipientInputMode(RecipientInputMode.NotOnNetwork)
-      }
-    },
-    [checkIfOnNetwork, onSubmit]
-  )
+  const [error, setError] = useState<Error>()
 
   useEffect(() => {
-    if (recipientWalletAddress && !checkIfPathIsEns(recipientWalletAddress)) {
-      setRecipientInputMode(RecipientInputMode.Submitted)
-    } else {
-      setRecipientInputMode(RecipientInputMode.InvalidEntry)
-    }
+    if (recipientWalletAddress) setError(undefined)
+    return () => setError(undefined)
   }, [recipientWalletAddress])
 
-  const handleSubmit = useCallback(
-    async (e: React.SyntheticEvent, value?: string) => {
-      e.preventDefault()
-      const data = e.target as typeof e.target & {
-        recipient: { value: string }
-      }
-      const input = e.target as HTMLInputElement
-      const recipientValue = value || data.recipient.value
-      if (recipientValue.startsWith('0x') && recipientValue.length === 42) {
-        await completeSubmit(recipientValue, input)
-      }
-    },
-    [completeSubmit]
-  )
-
   const handleInputChange = useCallback(
-    async (e: React.SyntheticEvent) => {
-      const data = e.target as typeof e.target & {
-        value: string
-      }
-      if (router.pathname !== '/dm') {
-        router.push('/dm')
-      }
-      if (data.value.startsWith('0x') && data.value.length === 42) {
-        handleSubmit(e, data.value)
-      } else {
-        setRecipientInputMode(RecipientInputMode.InvalidEntry)
-      }
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const address = e.target.value
+      if (!address.startsWith('0x'))
+        return setError(new Error('Please enter a valid wallet address'))
+      if (address.length !== 42)
+        return setError(new Error('Please enter a valid wallet address'))
+
+      const onNetwork = client ? await client.canMessage(address) : false
+      if (!onNetwork)
+        return setError(new Error('Recipient is not on the XMTP network'))
+
+      onSubmit(address)
+      e.target.blur()
     },
-    [handleSubmit, router]
+    [onSubmit, client]
   )
 
   return (
     <div className="flex-1 flex-col shrink justify-center flex h-[72px] bg-zinc-50 md:border-b md:border-gray-200 md:px-4 md:pb-[2px]">
-      <form
-        className="w-full flex pl-2 md:pl-0 h-8 pt-1"
-        action="#"
-        method="GET"
-        onSubmit={handleSubmit}
-      >
-        <label htmlFor="recipient-field" className="sr-only">
-          Recipient
-        </label>
+      <div className="w-full flex pl-2 md:pl-0 h-8 pt-1">
         <div className="relative w-full text-n-300 focus-within:text-n-600">
           <div className="absolute top-1 left-0 flex items-center pointer-events-none text-md md:text-sm font-medium md:font-semibold">
             To:
           </div>
-          <AddressInput
-            signer={signer}
-            recipientWalletAddress={recipientWalletAddress}
-            id="recipient-field"
-            className="block w-[95%] pl-7 pr-3 pt-[3px] md:pt-[2px] md:pt-[1px] bg-transparent caret-n-600 text-n-600 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent text-lg font-mono"
-            name="recipient"
-            onInputChange={handleInputChange}
-          />
-          <button type="submit" className="hidden" />
+          {recipientWalletAddress ? (
+            <span className="absolute top-[4px] md:top-[2px] left-[26px] md:left-[23px] rounded-2xl px-[5px] md:px-2 border text-md focus:outline-none focus:ring-0 font-bold font-mono overflow-visible text-center bg-zinc-50 border-gray-300">
+              {recipientWalletAddress}
+            </span>
+          ) : (
+            <AddressInput
+              id="recipient"
+              name="recipient"
+              value={recipientWalletAddress}
+              onChange={handleInputChange}
+            />
+          )}
         </div>
-      </form>
+      </div>
 
-      {recipientInputMode === RecipientInputMode.Submitted ? (
-        <div className="text-md text-n-300 text-sm font-mono ml-10 md:ml-8 pb-1 md:pb-[1px]">
-          {recipientWalletAddress}
-        </div>
-      ) : (
-        <div className="text-sm md:text-xs text-n-300 ml-[29px] pl-2 md:pl-0 pb-1 md:pb-[3px]">
-          {recipientInputMode === RecipientInputMode.NotOnNetwork &&
-            'Recipient is not on the XMTP network'}
-          {recipientInputMode === RecipientInputMode.FindingEntry &&
-            'Finding ENS domain...'}
-          {recipientInputMode === RecipientInputMode.InvalidEntry &&
-            'Please enter a valid wallet address'}
-          {recipientInputMode === RecipientInputMode.ValidEntry && <br />}
-        </div>
-      )}
+      <div className="text-sm md:text-xs text-n-300 ml-[29px] pl-2 md:pl-0 pb-1 md:pb-[3px]">
+        {error && error.message}
+      </div>
     </div>
   )
 }
