@@ -1,8 +1,7 @@
+import PaperAirplaneIcon from '@heroicons/react/outline/PaperAirplaneIcon'
 import React, { useContext, useEffect, useState } from 'react'
 import { classNames } from '../../helpers'
 import messageComposerStyles from '../../styles/MessageComposer.module.css'
-import upArrowGreen from '../../public/up-arrow-green.svg'
-import upArrowGrey from '../../public/up-arrow-grey.svg'
 import XmtpContext from '../../contexts/xmtp'
 
 type MessageComposerProps = {
@@ -68,12 +67,13 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
           onChange={onMessageChange}
           required
         />
-        <button type="submit" className={messageComposerStyles.arrow}>
-          <img
-            src={message ? upArrowGreen : upArrowGrey}
-            alt="send"
-            height={32}
-            width={32}
+        <button
+          type="submit"
+          className={messageComposerStyles.arrow}
+          disabled={!message}
+        >
+          <PaperAirplaneIcon
+            className={`rotate-90 ${message ? 'text-b-500' : 'text-b-100'}`}
           />
         </button>
       </form>

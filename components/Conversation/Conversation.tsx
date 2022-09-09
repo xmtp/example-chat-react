@@ -1,8 +1,9 @@
 import React, { useCallback, useContext, useEffect, useRef } from 'react'
 import useConversation from '../../hooks/useConversation'
-import { MessagesList, MessageComposer } from './'
 import Loader from '../../components/Loader'
 import XmtpContext from '../../contexts/xmtp'
+import MessagesList from './MessagesList'
+import MessageComposer from './MessageComposer'
 
 const Conversation = (): JSX.Element => {
   const { signer, recipient } = useContext(XmtpContext)

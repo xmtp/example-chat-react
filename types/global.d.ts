@@ -1,21 +1,3 @@
-declare module '*.svg' {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const content: any
-  export default content
-}
-
-declare module '*.png' {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const content: any
-  export default content
-}
-
-declare module '*.jpeg' {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const content: any
-  export default content
-}
-
 declare module 'react-blockies' {
   import React from 'react'
   interface BlockiesProps {
@@ -30,4 +12,8 @@ declare module 'react-blockies' {
   const Blockies: React.FC<BlockiesProps>
 
   export default Blockies
+}
+
+interface Window {
+  ethereum: import('@metamask/providers').BaseProvider
 }
