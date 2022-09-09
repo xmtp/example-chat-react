@@ -18,10 +18,7 @@ const ConversationPage: NextPage = () => {
 
   const redirectToHome = async () => {
     if (checkPath()) {
-      let queryAddress = window.location.pathname.replace('/dm/', '')
-      if (queryAddress.includes('.eth')) {
-        queryAddress = (await resolveName(queryAddress)) ?? ''
-      }
+      const queryAddress = window.location.pathname.replace('/dm/', '')
       if (!queryAddress) {
         setCanMessageAddr(false)
         router.push('/')

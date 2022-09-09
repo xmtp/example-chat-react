@@ -41,22 +41,6 @@ const AddressInput = ({
     }
   }, [recipientWalletAddress])
 
-  useEffect(() => {
-    const setLookupValue = async () => {
-      if (!lookupAddress) return
-      if (recipientWalletAddress && !checkIfPathIsEns(recipientWalletAddress)) {
-        const name = await lookupAddress(recipientWalletAddress)
-        setValue(name || recipientWalletAddress)
-      } else if (value.startsWith('0x') && value.length === 42) {
-        const name = await lookupAddress(value)
-        if (name) {
-          setValue(name)
-        }
-      }
-    }
-    setLookupValue()
-  }, [value, recipientWalletAddress, lookupAddress])
-
   const userIsSender = recipientWalletAddress === walletAddress
 
   const recipientPillInputStyle = classNames(

@@ -51,17 +51,12 @@ const RecipientControl = ({
   )
 
   useEffect(() => {
-    const handleAddressLookup = async (address: string) => {
-      const name = await lookupAddress(address)
-      setHasName(!!name)
-    }
     if (recipientWalletAddress && !checkIfPathIsEns(recipientWalletAddress)) {
       setRecipientInputMode(RecipientInputMode.Submitted)
-      handleAddressLookup(recipientWalletAddress)
     } else {
       setRecipientInputMode(RecipientInputMode.InvalidEntry)
     }
-  }, [lookupAddress, recipientWalletAddress])
+  }, [recipientWalletAddress])
 
   const handleSubmit = useCallback(
     async (e: React.SyntheticEvent, value?: string) => {
@@ -71,22 +66,11 @@ const RecipientControl = ({
       }
       const input = e.target as HTMLInputElement
       const recipientValue = value || data.recipient.value
-      if (recipientValue.endsWith('eth')) {
-        setRecipientInputMode(RecipientInputMode.FindingEntry)
-        const address = await resolveName(recipientValue)
-        if (address) {
-          await completeSubmit(address, input)
-        } else {
-          setRecipientInputMode(RecipientInputMode.InvalidEntry)
-        }
-      } else if (
-        recipientValue.startsWith('0x') &&
-        recipientValue.length === 42
-      ) {
+      if (recipientValue.startsWith('0x') && recipientValue.length === 42) {
         await completeSubmit(recipientValue, input)
       }
     },
-    [completeSubmit, resolveName]
+    [completeSubmit]
   )
 
   const handleInputChange = useCallback(
@@ -97,10 +81,7 @@ const RecipientControl = ({
       if (router.pathname !== '/dm') {
         router.push('/dm')
       }
-      if (
-        data.value.endsWith('.eth') ||
-        (data.value.startsWith('0x') && data.value.length === 42)
-      ) {
+      if (data.value.startsWith('0x') && data.value.length === 42) {
         handleSubmit(e, data.value)
       } else {
         setRecipientInputMode(RecipientInputMode.InvalidEntry)
@@ -137,7 +118,7 @@ const RecipientControl = ({
 
       {recipientInputMode === RecipientInputMode.Submitted ? (
         <div className="text-md text-n-300 text-sm font-mono ml-10 md:ml-8 pb-1 md:pb-[1px]">
-          {hasName ? recipientWalletAddress : <br />}
+          {recipientWalletAddress}
         </div>
       ) : (
         <div className="text-sm md:text-xs text-n-300 ml-[29px] pl-2 md:pl-0 pb-1 md:pb-[3px]">

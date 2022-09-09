@@ -16,7 +16,6 @@ import useConversation from '../hooks/useConversation'
 import Avatar from './Avatar'
 import useMessageStore from '../hooks/useMessageStore'
 import XmtpContext from '../contexts/xmtp'
-import { WalletContext } from '../contexts/wallet'
 
 type ConversationTileProps = {
   conversation: Conversation
@@ -108,7 +107,6 @@ const ConversationsList = (): JSX.Element => {
   const router = useRouter()
   const { conversations } = useContext(XmtpContext)
   const { messageStore } = useMessageStore()
-  const { resolveName } = useContext(WalletContext)
 
   const orderByLatestMessage = (
     convoA: Conversation,
@@ -127,7 +125,7 @@ const ConversationsList = (): JSX.Element => {
     if (checkPath()) {
       let queryAddress = window.location.pathname.replace('/dm/', '')
       if (checkIfPathIsEns(queryAddress)) {
-        queryAddress = (await resolveName(queryAddress)) ?? ''
+        queryAddress = ''
       }
       if (queryAddress) {
         if (conversations && conversations.has(queryAddress)) {

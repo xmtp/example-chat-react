@@ -23,32 +23,12 @@ const AvatarBlock = ({ walletAddress }: AvatarBlockProps) => {
   )
 }
 
-const NotConnected = ({ onConnect }: UserMenuProps): JSX.Element => {
+const NotConnected = (): JSX.Element => {
   return (
-    <>
-      <div>
         <div className="flex items-center">
           <div className="bg-y-100 rounded-full h-2 w-2 mr-1"></div>
           <p className="text-sm font-bold text-y-100">You are not connected.</p>
         </div>
-
-        <a onClick={onConnect}>
-          <p className="text-sm font-normal text-y-100 hover:text-y-200 ml-3 cursor-pointer">
-            Sign in with your wallet
-          </p>
-        </a>
-      </div>
-      <button
-        className="max-w-xs flex items-center text-sm rounded focus:outline-none"
-        onClick={onConnect}
-      >
-        <span className="sr-only">Connect</span>
-        <CogIcon
-          className="h-6 w-6 md:h-5 md:w-5 fill-n-100 hover:fill-n-200"
-          aria-hidden="true"
-        />
-      </button>
-    </>
   )
 }
 
@@ -56,9 +36,8 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
   const { address: walletAddress } = useContext(WalletContext)
 
   const onClickCopy = () => {
-    if (walletAddress) {
+    if (!walletAddress) return
       navigator.clipboard.writeText(walletAddress)
-    }
   }
 
   return (
@@ -162,21 +141,6 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                         )}
                       </Menu.Item>
                     </div>
-                    <div className="px-1 py-1 ">
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            onClick={onDisconnect}
-                            className={classNames(
-                              active ? 'bg-zinc-50 cursor-pointer' : '',
-                              'block rounded-md px-2 py-2 text-sm text-l-300 text-right font-semibold'
-                            )}
-                          >
-                            Disconnect wallet
-                          </a>
-                        )}
-                      </Menu.Item>
-                    </div>
                   </Menu.Items>
                 </Transition>
               </div>
@@ -184,7 +148,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
           )}
         </Menu>
       ) : (
-        <NotConnected onConnect={onConnect} />
+        <NotConnected />
       )}
     </div>
   )
