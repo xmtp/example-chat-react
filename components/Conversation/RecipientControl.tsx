@@ -38,9 +38,9 @@ const RecipientControl = ({
   )
 
   return (
-    <div className="flex-1 flex-col shrink justify-center flex h-[72px] bg-zinc-50 md:border-b md:border-gray-200 md:px-4 md:pb-[2px]">
+    <div className="flex-1 flex-col shrink justify-center flex h-[10vh] max-h-20 bg-zinc-50 md:border-b md:border-gray-200 md:px-4 md:pb-[2px]">
       <div className="w-full flex pl-2 md:pl-0 h-8 pt-1">
-        <div className="relative w-full text-n-300 focus-within:text-n-600">
+        <div className="relative w-full text-n-300">
           <div className="absolute top-1 left-0 flex items-center pointer-events-none text-md md:text-sm font-medium md:font-semibold">
             To:
           </div>
