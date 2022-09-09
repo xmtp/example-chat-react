@@ -6,7 +6,6 @@ import { RecipientControl } from './Conversation'
 import NewMessageButton from './NewMessageButton'
 import NavigationPanel from './NavigationPanel'
 import XmtpInfoPanel from './XmtpInfoPanel'
-import UserMenu from './UserMenu'
 import BackArrow from './BackArrow'
 import { useCallback, useContext } from 'react'
 import XmtpContext from '../contexts/xmtp'
@@ -85,7 +84,6 @@ const Layout: React.FC<{ signer?: Signer }> = ({ children, signer }) => {
               {signer && client && <NewMessageButton />}
             </NavigationHeaderLayout>
             <NavigationPanel signer={signer} />
-            <UserMenu signer={signer} />
           </NavigationColumnLayout>
         </NavigationView>
         <ConversationView>

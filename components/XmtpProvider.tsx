@@ -2,7 +2,6 @@ import { useCallback, useEffect, useReducer, useState } from 'react'
 import { Conversation } from '@xmtp/xmtp-js'
 import { Client } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
-import { getEnv } from '../helpers'
 import { XmtpContext, XmtpContextType } from '../contexts/xmtp'
 
 type XmtpProviderProps = {
@@ -44,7 +43,7 @@ export const XmtpProvider: React.FC<XmtpProviderProps> = ({
   const initClient = useCallback(async (signer: Signer) => {
     if (!signer) return
     try {
-      setClient(await Client.create(signer, { env: getEnv() }))
+      setClient(await Client.create(signer))
     } catch (e) {
       console.error(e)
       setClient(null)
