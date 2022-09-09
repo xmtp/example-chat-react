@@ -4,11 +4,15 @@ import { useEffect, useMemo, useState } from 'react'
 const useWallet = (): Signer | undefined => {
   const [signer, setSigner] = useState<Signer>()
   const provider = useMemo(
-    () => new ethers.providers.Web3Provider(window.ethereum),
+    () =>
+      typeof window !== 'undefined'
+        ? new ethers.providers.Web3Provider(window.ethereum)
+        : null,
     []
   )
 
   useEffect(() => {
+    if (!provider) return
     provider
       .send('eth_requestAccounts', [])
       .then(() => setSigner(provider.getSigner()))

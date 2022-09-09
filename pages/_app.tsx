@@ -1,16 +1,17 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
-import dynamic from 'next/dynamic'
-
-const AppWithoutSSR = dynamic(() => import('../components/App'), {
-  ssr: false,
-})
+import useWallet from '../hooks/useWallet'
+import XmtpProvider from '../components/XmtpProvider'
+import Layout from '../components/Layout'
 
 function AppWrapper({ Component, pageProps }: AppProps) {
+  const signer = useWallet()
   return (
-    <AppWithoutSSR>
-      <Component {...pageProps} />
-    </AppWithoutSSR>
+    <XmtpProvider signer={signer}>
+      <Layout signer={signer}>
+        <Component {...pageProps} />
+      </Layout>
+    </XmtpProvider>
   )
 }
 
