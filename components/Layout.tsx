@@ -2,10 +2,14 @@ import { NavigationView, ConversationView } from './Views'
 import { Conversation, RecipientControl } from './Conversation'
 import NavigationPanel from './NavigationPanel'
 import BackArrow from './BackArrow'
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import XmtpContext from '../contexts/xmtp'
 
-const Layout: React.FC = () => {
+type Props = {
+  recipient?: string
+}
+
+const Layout: React.FC<Props> = ({ recipient: originalRecipient }) => {
   const { client, signer, recipient, setRecipient } = useContext(XmtpContext)
   const [createMode, setCreateMode] = useState<boolean>(false)
 
@@ -18,6 +22,10 @@ const Layout: React.FC = () => {
     reset()
     setCreateMode(true)
   }, [reset, setCreateMode])
+
+  useEffect(() => {
+    setRecipient(originalRecipient)
+  }, [setRecipient, originalRecipient])
 
   return (
     <>
