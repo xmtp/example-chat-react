@@ -17,6 +17,12 @@ const useWallet = (): Signer | undefined => {
       .send('eth_requestAccounts', [])
       .then(() => setSigner(provider.getSigner()))
   }, [provider])
+
+  useEffect(() => {
+    if (!provider) return
+    window.ethereum.on('accountsChanged', () => setSigner(provider.getSigner()))
+  }, [provider])
+
   return signer
 }
 
