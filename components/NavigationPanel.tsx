@@ -1,16 +1,11 @@
 import { LinkIcon } from '@heroicons/react/outline'
-import { Signer } from 'ethers'
 import { useContext } from 'react'
 import XmtpContext from '../contexts/xmtp'
 import ConversationsList from './ConversationsList'
 import Loader from './Loader'
 
-type NavigationPanelProps = {
-  signer?: Signer
-}
-
-const NavigationPanel = ({ signer }: NavigationPanelProps): JSX.Element => {
-  const { client } = useContext(XmtpContext)
+const NavigationPanel = (): JSX.Element => {
+  const { client, signer } = useContext(XmtpContext)
 
   return (
     <div className="flex-grow flex flex-col h-[82vh] overflow-y-auto">

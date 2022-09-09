@@ -8,7 +8,7 @@ function AppWrapper({ Component, pageProps }: AppProps) {
   const signer = useWallet()
   return (
     <XmtpProvider signer={signer}>
-      <Layout signer={signer}>
+      <Layout>
         <Component {...pageProps} />
       </Layout>
     </XmtpProvider>

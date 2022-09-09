@@ -1,6 +1,10 @@
 import { Message } from '@xmtp/xmtp-js'
 import { useReducer } from 'react'
-import { MessageStoreEvent } from '../contexts/xmtp'
+
+type MessageStoreEvent = {
+  peerAddress: string
+  messages: Message[]
+}
 
 type MessageStore = { [address: string]: Message[] }
 

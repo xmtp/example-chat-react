@@ -41,9 +41,7 @@ const ConversationPage: NextPage = () => {
 
   if (!canMessageAddr || !client || !signer) return <div />
   else {
-    return (
-      <Conversation signer={signer} recipientWalletAddr={recipientWalletAddr} />
-    )
+    return <Conversation recipientWalletAddr={recipientWalletAddr} />
   }
 }
 

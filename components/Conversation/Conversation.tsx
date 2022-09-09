@@ -1,18 +1,17 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useContext, useEffect, useRef } from 'react'
 import useConversation from '../../hooks/useConversation'
 import { MessagesList, MessageComposer } from './'
 import Loader from '../../components/Loader'
-import { Signer } from 'ethers'
+import XmtpContext from '../../contexts/xmtp'
 
 type ConversationProps = {
-  signer: Signer
   recipientWalletAddr: string
 }
 
 const Conversation = ({
-  signer,
   recipientWalletAddr,
 }: ConversationProps): JSX.Element => {
+  const { signer } = useContext(XmtpContext)
   const messagesEndRef = useRef(null)
 
   const scrollToMessagesEndRef = useCallback(() => {
@@ -35,9 +34,8 @@ const Conversation = ({
     initScroll()
   }, [recipientWalletAddr, hasMessages])
 
-  if (!recipientWalletAddr) {
-    return <div />
-  }
+  if (!signer) return <div />
+  if (!recipientWalletAddr) return <div />
 
   if (loading && !messages?.length) {
     return (

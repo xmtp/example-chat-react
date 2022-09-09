@@ -5,10 +5,9 @@ import NavigationPanel from './NavigationPanel'
 import BackArrow from './BackArrow'
 import { useCallback, useContext } from 'react'
 import XmtpContext from '../contexts/xmtp'
-import { Signer } from 'ethers'
 
-const Layout: React.FC<{ signer?: Signer }> = ({ children, signer }) => {
-  const { client } = useContext(XmtpContext)
+const Layout: React.FC = ({ children }) => {
+  const { client, signer } = useContext(XmtpContext)
   const router = useRouter()
 
   const recipientWalletAddress = router.query.recipientWalletAddr as string
@@ -41,7 +40,7 @@ const Layout: React.FC<{ signer?: Signer }> = ({ children, signer }) => {
                 </button>
               )}
             </div>
-            <NavigationPanel signer={signer} />
+            <NavigationPanel />
           </div>
         </aside>
       </NavigationView>

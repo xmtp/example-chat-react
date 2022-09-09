@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useReducer, useState } from 'react'
+import { Reducer, useEffect, useReducer, useState } from 'react'
 import { Conversation } from '@xmtp/xmtp-js'
 import { Client } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
-import { XmtpContext, XmtpContextType } from '../contexts/xmtp'
+import { XmtpContext } from '../contexts/xmtp'
 
 type XmtpProviderProps = {
   signer?: Signer
@@ -16,82 +16,47 @@ export const XmtpProvider: React.FC<XmtpProviderProps> = ({
   const [loadingConversations, setLoadingConversations] =
     useState<boolean>(false)
 
-  const [conversations, dispatchConversations] = useReducer(
-    (
-      state: Map<string, Conversation>,
-      newConvos: Conversation[] | undefined
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ): any => {
-      if (newConvos === undefined) {
-        return null
-      }
-      newConvos.forEach((convo) => {
-        if (convo.peerAddress !== client?.address) {
-          if (state && !state.has(convo.peerAddress)) {
-            state.set(convo.peerAddress, convo)
-          } else if (state === null) {
-            state = new Map()
-            state.set(convo.peerAddress, convo)
-          }
-        }
-      })
-      return state ?? null
-    },
-    []
-  )
-
-  const initClient = useCallback(async (signer: Signer) => {
-    if (!signer) return
-    try {
-      setClient(await Client.create(signer))
-    } catch (e) {
-      console.error(e)
-      setClient(null)
-    }
-  }, [])
-
-  const disconnect = () => {
-    setClient(undefined)
-    dispatchConversations(undefined)
-  }
+  const [conversations, dispatchConversation] = useReducer<
+    Reducer<Map<string, Conversation>, Conversation | undefined>
+  >((state, conversation) => {
+    if (conversation === undefined) return new Map()
+    if (conversation.peerAddress === client?.address) return state
+    state.set(conversation.peerAddress, conversation)
+    return state
+  }, new Map())
 
   useEffect(() => {
-    signer ? initClient(signer) : disconnect()
-  }, [initClient, signer])
+    if (signer) {
+      Client.create(signer)
+        .then(setClient)
+        .catch(() => setClient(null))
+    } else {
+      setClient(undefined)
+      dispatchConversation(undefined)
+    }
+    return () => setClient(undefined)
+  }, [signer])
 
   useEffect(() => {
     if (!client) return
 
-    const listConversations = async () => {
-      console.log('Listing conversations')
-      setLoadingConversations(true)
-      const convos = await client.conversations.list()
-      convos.forEach((convo: Conversation) => {
-        dispatchConversations([convo])
-      })
-      setLoadingConversations(false)
-    }
-    listConversations()
+    setLoadingConversations(true)
+    client.conversations
+      .list()
+      .then((x) => x.forEach(dispatchConversation))
+      .finally(() => setLoadingConversations(false))
+    return () => dispatchConversation(undefined)
   }, [client])
 
-  const [providerState, setProviderState] = useState<XmtpContextType>({
-    client,
-    conversations,
-    loadingConversations,
-    initClient,
-  })
-
-  useEffect(() => {
-    setProviderState({
-      client,
-      conversations,
-      loadingConversations,
-      initClient,
-    })
-  }, [client, conversations, initClient, loadingConversations])
-
   return (
-    <XmtpContext.Provider value={providerState}>
+    <XmtpContext.Provider
+      value={{
+        signer,
+        client,
+        conversations,
+        loadingConversations,
+      }}
+    >
       {children}
     </XmtpContext.Provider>
   )
