@@ -6,7 +6,7 @@ import useMessageStore from './useMessageStore'
 type OnMessageCallback = () => void
 
 const useConversation = (
-  peerAddress: string,
+  peerAddress?: string,
   onMessageCallback?: OnMessageCallback
 ) => {
   const { client } = useContext(XmtpContext)
@@ -85,7 +85,7 @@ const useConversation = (
 
   return {
     loading,
-    messages: messageStore[peerAddress] ?? [],
+    messages: peerAddress ? messageStore[peerAddress] ?? [] : [],
     sendMessage: handleSend,
   }
 }

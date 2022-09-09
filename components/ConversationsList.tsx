@@ -1,11 +1,9 @@
-import React, { useContext, useEffect } from 'react'
-import Link from 'next/link'
+import React, { useContext } from 'react'
 import { ChatIcon } from '@heroicons/react/outline'
 import Address from './Address'
-import { useRouter } from 'next/router'
 import { Conversation } from '@xmtp/xmtp-js'
 import { Message } from '@xmtp/xmtp-js'
-import { classNames, truncate, formatDate, checkPath } from '../helpers'
+import { classNames, truncate, formatDate } from '../helpers'
 import useConversation from '../hooks/useConversation'
 import Avatar from './Avatar'
 import useMessageStore from '../hooks/useMessageStore'
@@ -29,77 +27,69 @@ const ConversationTile = ({
     conversation.peerAddress
   )
 
-  if (!messages.length) {
-    return null
-  }
+  if (!messages.length) return null
 
   const latestMessage = getLatestMessage(messages)
-  const path = `/dm/${conversation.peerAddress}`
 
-  if (!latestMessage) {
-    return null
-  }
+  if (!latestMessage) return null
 
   return (
-    <Link href={path} key={conversation.peerAddress}>
-      <a onClick={onClick}>
-        <div
-          className={classNames(
-            'h-20',
-            'py-2',
-            'px-4',
-            'md:max-w-sm',
-            'mx-auto',
-            'bg-white',
-            'space-y-2',
-            'py-2',
-            'flex',
-            'items-center',
-            'space-y-0',
-            'space-x-4',
-            'border-b-2',
-            'border-gray-100',
-            'hover:bg-bt-100',
-            isLoadingConversation ? 'opacity-80' : 'opacity-100',
-            isSelected ? 'bg-bt-200' : null
-          )}
-        >
-          <Avatar peerAddress={conversation.peerAddress} />
-          <div className="py-4 sm:text-left text w-full">
-            <div className="grid-cols-2 grid">
-              <Address
-                address={conversation.peerAddress}
-                className="text-black text-lg md:text-md font-bold place-self-start"
-              />
-              <span
-                className={classNames(
-                  'text-lg md:text-sm font-normal place-self-end',
-                  isSelected ? 'text-n-500' : 'text-n-300',
-                  isLoadingConversation ? 'animate-pulse' : ''
-                )}
-              >
-                {formatDate(latestMessage?.sent)}
-              </span>
-            </div>
-            <p
+    <a onClick={onClick} key={conversation.peerAddress}>
+      <div
+        className={classNames(
+          'h-20',
+          'py-2',
+          'px-4',
+          'md:max-w-sm',
+          'mx-auto',
+          'bg-white',
+          'space-y-2',
+          'py-2',
+          'flex',
+          'items-center',
+          'space-y-0',
+          'space-x-4',
+          'border-b-2',
+          'border-gray-100',
+          'hover:bg-bt-100',
+          isLoadingConversation ? 'opacity-80' : 'opacity-100',
+          isSelected ? 'bg-bt-200' : null
+        )}
+      >
+        <Avatar peerAddress={conversation.peerAddress} />
+        <div className="py-4 sm:text-left text w-full">
+          <div className="grid-cols-2 grid">
+            <Address
+              address={conversation.peerAddress}
+              className="text-black text-lg md:text-md font-bold place-self-start"
+            />
+            <span
               className={classNames(
-                'text-[13px] md:text-sm font-normal text-ellipsis mt-0',
+                'text-lg md:text-sm font-normal place-self-end',
                 isSelected ? 'text-n-500' : 'text-n-300',
                 isLoadingConversation ? 'animate-pulse' : ''
               )}
             >
-              {latestMessage && truncate(latestMessage.content, 75)}
-            </p>
+              {formatDate(latestMessage?.sent)}
+            </span>
           </div>
+          <p
+            className={classNames(
+              'text-[13px] md:text-sm font-normal text-ellipsis mt-0',
+              isSelected ? 'text-n-500' : 'text-n-300',
+              isLoadingConversation ? 'animate-pulse' : ''
+            )}
+          >
+            {latestMessage && truncate(latestMessage.content, 75)}
+          </p>
         </div>
-      </a>
-    </Link>
+      </div>
+    </a>
   )
 }
 
 const ConversationsList = (): JSX.Element => {
-  const router = useRouter()
-  const { conversations } = useContext(XmtpContext)
+  const { conversations, recipient, setRecipient } = useContext(XmtpContext)
   const { messageStore } = useMessageStore()
 
   const orderByLatestMessage = (
@@ -115,21 +105,6 @@ const ConversationsList = (): JSX.Element => {
     return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
   }
 
-  const reloadIfQueryParamPresent = async () => {
-    if (checkPath()) {
-      const queryAddress = window.location.pathname.replace('/dm/', '')
-      if (queryAddress) {
-        if (conversations && conversations.has(queryAddress)) {
-          router.push(window.location.pathname)
-        }
-      }
-    }
-  }
-
-  useEffect(() => {
-    reloadIfQueryParamPresent()
-  }, [window.location.pathname])
-
   if (!conversations || conversations.size == 0) {
     return <NoConversationsMessage />
   }
@@ -141,13 +116,13 @@ const ConversationsList = (): JSX.Element => {
         Array.from(conversations.values())
           .sort(orderByLatestMessage)
           .map((convo) => {
-            const isSelected =
-              router.query.recipientWalletAddr == convo.peerAddress
+            const isSelected = recipient == convo.peerAddress
             return (
               <ConversationTile
                 key={convo.peerAddress}
                 conversation={convo}
                 isSelected={isSelected}
+                onClick={() => setRecipient(convo.peerAddress)}
               />
             )
           })}

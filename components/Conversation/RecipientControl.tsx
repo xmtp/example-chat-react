@@ -3,21 +3,21 @@ import AddressInput from '../AddressInput'
 import XmtpContext from '../../contexts/xmtp'
 
 type RecipientInputProps = {
-  recipientWalletAddress: string | undefined
-  onSubmit: (address: string) => Promise<void>
+  value: string | undefined
+  onSubmit: (address: string) => void
 }
 
 const RecipientControl = ({
-  recipientWalletAddress,
+  value,
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
   const { client } = useContext(XmtpContext)
   const [error, setError] = useState<Error>()
 
   useEffect(() => {
-    if (recipientWalletAddress) setError(undefined)
+    if (value) setError(undefined)
     return () => setError(undefined)
-  }, [recipientWalletAddress])
+  }, [value])
 
   const handleInputChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,15 +44,15 @@ const RecipientControl = ({
           <div className="absolute top-1 left-0 flex items-center pointer-events-none text-md md:text-sm font-medium md:font-semibold">
             To:
           </div>
-          {recipientWalletAddress ? (
+          {value ? (
             <span className="absolute top-[4px] md:top-[2px] left-[26px] md:left-[23px] rounded-2xl px-[5px] md:px-2 border text-md focus:outline-none focus:ring-0 font-bold font-mono overflow-visible text-center bg-zinc-50 border-gray-300">
-              {recipientWalletAddress}
+              {value}
             </span>
           ) : (
             <AddressInput
               id="recipient"
               name="recipient"
-              value={recipientWalletAddress}
+              value={value}
               onChange={handleInputChange}
             />
           )}

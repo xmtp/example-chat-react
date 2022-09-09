@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { classNames } from '../../helpers'
 import messageComposerStyles from '../../styles/MessageComposer.module.css'
 import upArrowGreen from '../../public/up-arrow-green.svg'
 import upArrowGrey from '../../public/up-arrow-grey.svg'
-import { useRouter } from 'next/router'
+import XmtpContext from '../../contexts/xmtp'
 
 type MessageComposerProps = {
   onSend: (msg: string) => Promise<void>
 }
 
 const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
+  const { recipient } = useContext(XmtpContext)
   const [message, setMessage] = useState('')
-  const router = useRouter()
 
-  useEffect(() => setMessage(''), [router.query.recipientWalletAddr])
+  useEffect(() => setMessage(''), [recipient])
 
   const onMessageChange = (e: React.FormEvent<HTMLInputElement>) =>
     setMessage(e.currentTarget.value)
