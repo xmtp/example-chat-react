@@ -1,15 +1,14 @@
 import { Transition } from '@headlessui/react'
 import { Fragment } from 'react'
-import { useRouter } from 'next/router'
 
-type NavigationViewProps = {
-  children?: React.ReactNode
-}
+type NavigationViewProps = React.PropsWithChildren<{
+  show: boolean
+}>
 
-const NavigationView = ({ children }: NavigationViewProps): JSX.Element => {
-  const router = useRouter()
-  const show = router.pathname === '/'
-
+const NavigationView = ({
+  children,
+  show,
+}: NavigationViewProps): JSX.Element => {
   return (
     <>
       <Transition.Root show={show} as={Fragment}>

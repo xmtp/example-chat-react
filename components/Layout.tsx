@@ -1,43 +1,16 @@
 import { useRouter } from 'next/router'
-import Head from 'next/head'
-import Link from 'next/link'
 import { NavigationView, ConversationView } from './Views'
 import { RecipientControl } from './Conversation'
-import NewMessageButton from './NewMessageButton'
 import NavigationPanel from './NavigationPanel'
-import XmtpInfoPanel from './XmtpInfoPanel'
 import BackArrow from './BackArrow'
 import { useCallback, useContext } from 'react'
 import XmtpContext from '../contexts/xmtp'
 import { Signer } from 'ethers'
 
-const NavigationColumnLayout: React.FC = ({ children }) => (
-  <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
-    <div className="flex flex-col flex-grow md:border-r md:border-gray-200 bg-white overflow-y-auto">
-      {children}
-    </div>
-  </aside>
-)
-
-const NavigationHeaderLayout: React.FC = ({ children }) => (
-  <div className="h-[10vh] max-h-20 bg-zinc-50 border-b border-gray-200 flex items-center justify-between flex-shrink-0 px-4">
-    <Link href="/" passHref={true}>
-      <span className="text-md font-bold font-mono overflow-visible">
-        Messages
-      </span>
-    </Link>
-    {children}
-  </div>
-)
-
-const TopBarLayout: React.FC = ({ children }) => (
-  <div className="sticky top-0 z-10 flex-shrink-0 flex bg-zinc-50 border-b border-gray-200 md:bg-white md:border-0">
-    {children}
-  </div>
-)
-
-const ConversationLayout: React.FC = ({ children }) => {
+const Layout: React.FC<{ signer?: Signer }> = ({ children, signer }) => {
+  const { client } = useContext(XmtpContext)
   const router = useRouter()
+
   const recipientWalletAddress = router.query.recipientWalletAddr as string
 
   const handleSubmit = async (address: string) => {
@@ -48,50 +21,46 @@ const ConversationLayout: React.FC = ({ children }) => {
     router.push('/')
   }, [router])
 
-  return (
-    <>
-      <TopBarLayout>
-        <div className="md:hidden flex items-center ml-3">
-          <BackArrow onClick={handleBackArrowClick} />
-        </div>
-        <RecipientControl
-          recipientWalletAddress={recipientWalletAddress}
-          onSubmit={handleSubmit}
-        />
-      </TopBarLayout>
-      {children}
-    </>
-  )
-}
+  const onNewMessageButtonClick = () => router.push('/dm/')
 
-const Layout: React.FC<{ signer?: Signer }> = ({ children, signer }) => {
-  const { client } = useContext(XmtpContext)
   return (
     <>
-      <Head>
-        <title>Chat via XMTP</title>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1"
-        />
-      </Head>
-      <div>
-        <NavigationView>
-          <NavigationColumnLayout>
-            <NavigationHeaderLayout>
-              {signer && client && <NewMessageButton />}
-            </NavigationHeaderLayout>
+      <NavigationView show={router.pathname === '/'}>
+        <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
+          <div className="flex flex-col flex-grow md:border-r md:border-gray-200 bg-white overflow-y-auto">
+            <div className="h-[10vh] max-h-20 bg-zinc-50 border-b border-gray-200 flex items-center justify-between flex-shrink-0 px-4">
+              <span className="text-md font-bold font-mono overflow-visible">
+                Messages
+              </span>
+              {signer && client && (
+                <button
+                  className="inline-flex items-center space-between h-7 md:h-6 px-4 py-1 my-4 bg-p-400 border border-p-300 hover:bg-p-300 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-n-100 focus-visible:ring-offset-p-600 focus-visible:border-n-100 focus-visible:outline-none active:bg-p-500 active:border-p-500 active:ring-0 text-sm md:text-xs md:font-semibold tracking-wide text-white rounded"
+                  onClick={onNewMessageButtonClick}
+                >
+                  + New
+                </button>
+              )}
+            </div>
             <NavigationPanel signer={signer} />
-          </NavigationColumnLayout>
-        </NavigationView>
-        <ConversationView>
-          {signer && client ? (
-            <ConversationLayout>{children}</ConversationLayout>
-          ) : (
-            <XmtpInfoPanel signer={signer} />
-          )}
-        </ConversationView>
-      </div>
+          </div>
+        </aside>
+      </NavigationView>
+      <ConversationView show={router.pathname !== '/'}>
+        {signer && client && (
+          <>
+            <div className="sticky top-0 z-10 flex-shrink-0 flex bg-zinc-50 border-b border-gray-200 md:bg-white md:border-0">
+              <div className="md:hidden flex items-center ml-3">
+                <BackArrow onClick={handleBackArrowClick} />
+              </div>
+              <RecipientControl
+                recipientWalletAddress={recipientWalletAddress}
+                onSubmit={handleSubmit}
+              />
+            </div>
+            {children}
+          </>
+        )}
+      </ConversationView>
     </>
   )
 }
