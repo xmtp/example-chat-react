@@ -7,8 +7,7 @@ import {
   ChevronRightIcon,
   ArrowSmRightIcon,
 } from '@heroicons/react/solid'
-import { WalletContext } from '../contexts/wallet'
-import { useContext } from 'react'
+import { Signer } from 'ethers'
 
 type XmtpInfoRowProps = {
   icon: JSX.Element
@@ -19,6 +18,7 @@ type XmtpInfoRowProps = {
 }
 
 type XmtpInfoPanelProps = {
+  signer?: Signer
   onConnect?: () => Promise<void>
 }
 
@@ -51,15 +51,17 @@ const InfoRow = ({
   </a>
 )
 
-const XmtpInfoPanel = ({ onConnect }: XmtpInfoPanelProps): JSX.Element => {
-  const { address: walletAddress } = useContext(WalletContext)
+const XmtpInfoPanel = ({
+  onConnect,
+  signer,
+}: XmtpInfoPanelProps): JSX.Element => {
   const InfoRows = [
     {
       icon: <LinkIcon />,
       headingText: 'Connect your wallet',
       subHeadingText: 'Verify your wallet to start using the XMTP protocol',
       onClick: onConnect,
-      disabled: !!walletAddress,
+      disabled: !!signer,
     },
     {
       icon: <BookOpenIcon />,

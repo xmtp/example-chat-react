@@ -1,26 +1,20 @@
 import { LinkIcon } from '@heroicons/react/outline'
-import { ArrowSmRightIcon } from '@heroicons/react/solid'
+import { Signer } from 'ethers'
 import { useContext } from 'react'
-import { WalletContext } from '../contexts/wallet'
 import XmtpContext from '../contexts/xmtp'
 import ConversationsList from './ConversationsList'
 import Loader from './Loader'
 
 type NavigationPanelProps = {
-  onConnect: () => Promise<void>
+  signer?: Signer
 }
 
-type ConnectButtonProps = {
-  onConnect: () => Promise<void>
-}
-
-const NavigationPanel = ({ onConnect }: NavigationPanelProps): JSX.Element => {
-  const { address: walletAddress } = useContext(WalletContext)
+const NavigationPanel = ({ signer }: NavigationPanelProps): JSX.Element => {
   const { client } = useContext(XmtpContext)
 
   return (
     <div className="flex-grow flex flex-col h-[82vh] overflow-y-auto">
-      {walletAddress && client !== null ? (
+      {signer && client !== null ? (
         <ConversationsPanel />
       ) : (
         <NoWalletConnectedMessage>Not connected</NoWalletConnectedMessage>

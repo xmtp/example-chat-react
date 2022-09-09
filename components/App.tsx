@@ -1,18 +1,17 @@
 import XmtpProvider from './XmtpProvider'
 import Layout from '../components/Layout'
-import { WalletProvider } from './WalletProvider'
+import useWallet from '../hooks/useWallet'
 
 type AppProps = {
   children?: React.ReactNode
 }
 
 function App({ children }: AppProps) {
+  const signer = useWallet()
   return (
-    <WalletProvider>
-      <XmtpProvider>
-        <Layout>{children}</Layout>
-      </XmtpProvider>
-    </WalletProvider>
+    <XmtpProvider signer={signer}>
+      <Layout signer={signer}>{children}</Layout>
+    </XmtpProvider>
   )
 }
 

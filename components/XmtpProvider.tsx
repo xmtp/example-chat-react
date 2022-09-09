@@ -1,14 +1,19 @@
-import { useCallback, useContext, useEffect, useReducer, useState } from 'react'
+import { useCallback, useEffect, useReducer, useState } from 'react'
 import { Conversation } from '@xmtp/xmtp-js'
 import { Client } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
 import { getEnv } from '../helpers'
 import { XmtpContext, XmtpContextType } from '../contexts/xmtp'
-import { WalletContext } from '../contexts/wallet'
 
-export const XmtpProvider: React.FC = ({ children }) => {
+type XmtpProviderProps = {
+  signer?: Signer
+}
+
+export const XmtpProvider: React.FC<XmtpProviderProps> = ({
+  children,
+  signer,
+}) => {
   const [client, setClient] = useState<Client | null>()
-  const { signer } = useContext(WalletContext)
   const [loadingConversations, setLoadingConversations] =
     useState<boolean>(false)
 
@@ -36,14 +41,13 @@ export const XmtpProvider: React.FC = ({ children }) => {
     []
   )
 
-  const initClient = useCallback(async (wallet: Signer) => {
-    if (wallet) {
-      try {
-        setClient(await Client.create(wallet, { env: getEnv() }))
-      } catch (e) {
-        console.error(e)
-        setClient(null)
-      }
+  const initClient = useCallback(async (signer: Signer) => {
+    if (!signer) return
+    try {
+      setClient(await Client.create(signer, { env: getEnv() }))
+    } catch (e) {
+      console.error(e)
+      setClient(null)
     }
   }, [])
 

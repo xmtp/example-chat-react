@@ -2,12 +2,15 @@ import React, { useCallback, useEffect, useRef } from 'react'
 import useConversation from '../../hooks/useConversation'
 import { MessagesList, MessageComposer } from './'
 import Loader from '../../components/Loader'
+import { Signer } from 'ethers'
 
 type ConversationProps = {
+  signer: Signer
   recipientWalletAddr: string
 }
 
 const Conversation = ({
+  signer,
   recipientWalletAddr,
 }: ConversationProps): JSX.Element => {
   const messagesEndRef = useRef(null)
@@ -48,7 +51,11 @@ const Conversation = ({
 
   return (
     <main className="flex flex-col flex-1 bg-white h-screen">
-      <MessagesList messagesEndRef={messagesEndRef} messages={messages} />
+      <MessagesList
+        signer={signer}
+        messagesEndRef={messagesEndRef}
+        messages={messages}
+      />
       <MessageComposer onSend={sendMessage} />
     </main>
   )

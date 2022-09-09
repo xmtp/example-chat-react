@@ -1,11 +1,12 @@
 import { useState, useEffect, useContext, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import AddressInput from '../AddressInput'
-import { WalletContext } from '../../contexts/wallet'
 import XmtpContext from '../../contexts/xmtp'
 import { checkIfPathIsEns } from '../../helpers'
+import { Signer } from 'ethers'
 
 type RecipientInputProps = {
+  signer?: Signer
   recipientWalletAddress: string | undefined
   onSubmit: (address: string) => Promise<void>
 }
@@ -19,16 +20,15 @@ const RecipientInputMode = {
 }
 
 const RecipientControl = ({
+  signer,
   recipientWalletAddress,
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
-  const { resolveName, lookupAddress } = useContext(WalletContext)
   const { client } = useContext(XmtpContext)
   const router = useRouter()
   const [recipientInputMode, setRecipientInputMode] = useState(
     RecipientInputMode.InvalidEntry
   )
-  const [hasName, setHasName] = useState(false)
 
   const checkIfOnNetwork = useCallback(
     async (address: string): Promise<boolean> => {
@@ -106,6 +106,7 @@ const RecipientControl = ({
             To:
           </div>
           <AddressInput
+            signer={signer}
             recipientWalletAddress={recipientWalletAddress}
             id="recipient-field"
             className="block w-[95%] pl-7 pr-3 pt-[3px] md:pt-[2px] md:pt-[1px] bg-transparent caret-n-600 text-n-600 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent text-lg font-mono"

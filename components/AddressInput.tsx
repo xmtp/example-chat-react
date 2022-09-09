@@ -1,14 +1,10 @@
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useContext,
-  useCallback,
-} from 'react'
-import { WalletContext } from '../contexts/wallet'
-import { checkIfPathIsEns, classNames } from '../helpers'
+import { Signer } from 'ethers'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
+import { classNames } from '../helpers'
+import useAddress from '../hooks/useAddress'
 
 type AddressInputProps = {
+  signer?: Signer
   recipientWalletAddress?: string
   id?: string
   name?: string
@@ -18,6 +14,7 @@ type AddressInputProps = {
 }
 
 const AddressInput = ({
+  signer,
   recipientWalletAddress,
   id,
   name,
@@ -25,7 +22,7 @@ const AddressInput = ({
   placeholder,
   onInputChange,
 }: AddressInputProps): JSX.Element => {
-  const { address: walletAddress, lookupAddress } = useContext(WalletContext)
+  const walletAddress = useAddress(signer)
   const inputElement = useRef(null)
   const [value, setValue] = useState<string>(recipientWalletAddress || '')
 

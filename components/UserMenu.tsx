@@ -1,15 +1,16 @@
 import { Menu, Transition } from '@headlessui/react'
 import { CogIcon } from '@heroicons/react/solid'
-import { Fragment, useContext } from 'react'
+import { Fragment } from 'react'
 import { classNames, tagStr } from '../helpers'
 import Blockies from 'react-blockies'
 import Address from './Address'
 import { Tooltip } from './Tooltip/Tooltip'
 import packageJson from '../package.json'
+import { Signer } from 'ethers'
+import useAddress from '../hooks/useAddress'
 
 type UserMenuProps = {
-  onConnect?: () => Promise<void>
-  onDisconnect?: () => Promise<void>
+  signer?: Signer
 }
 
 type AvatarBlockProps = {
@@ -18,26 +19,26 @@ type AvatarBlockProps = {
 }
 
 const AvatarBlock = ({ walletAddress }: AvatarBlockProps) => {
-    return (
+  return (
     <Blockies seed={walletAddress} size={8} className="rounded-full mr-2" />
   )
 }
 
 const NotConnected = (): JSX.Element => {
   return (
-        <div className="flex items-center">
-          <div className="bg-y-100 rounded-full h-2 w-2 mr-1"></div>
-          <p className="text-sm font-bold text-y-100">You are not connected.</p>
-        </div>
+    <div className="flex items-center">
+      <div className="bg-y-100 rounded-full h-2 w-2 mr-1"></div>
+      <p className="text-sm font-bold text-y-100">You are not connected.</p>
+    </div>
   )
 }
 
-const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
-  const { address: walletAddress } = useContext(WalletContext)
+const UserMenu = ({ signer }: UserMenuProps): JSX.Element => {
+  const walletAddress = useAddress(signer)
 
   const onClickCopy = () => {
     if (!walletAddress) return
-      navigator.clipboard.writeText(walletAddress)
+    navigator.clipboard.writeText(walletAddress)
   }
 
   return (

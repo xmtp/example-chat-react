@@ -1,14 +1,16 @@
-import React, { useContext } from 'react'
-import { WalletContext } from '../contexts/wallet'
+import { Signer } from 'ethers'
+import React from 'react'
 import { classNames } from '../helpers'
+import useAddress from '../hooks/useAddress'
 import Address from './Address'
 
 type addressPillProps = {
   address: string
+  signer: Signer
 }
 
-const AddressPill = ({ address }: addressPillProps): JSX.Element => {
-  const { address: walletAddress } = useContext(WalletContext)
+const AddressPill = ({ address, signer }: addressPillProps): JSX.Element => {
+  const walletAddress = useAddress(signer)
   const userIsSender = address === walletAddress
   return (
     <Address

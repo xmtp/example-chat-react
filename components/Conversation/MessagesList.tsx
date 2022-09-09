@@ -1,16 +1,19 @@
 import { Message } from '@xmtp/xmtp-js'
-import React, { MutableRefObject } from 'react'
+import React, { Fragment, MutableRefObject } from 'react'
 import Emoji from 'react-emoji-render'
 import Avatar from '../Avatar'
 import { formatTime } from '../../helpers'
 import AddressPill from '../AddressPill'
+import { Signer } from 'ethers'
 
 export type MessageListProps = {
+  signer: Signer
   messages: Message[]
   messagesEndRef: MutableRefObject<null>
 }
 
 type MessageTileProps = {
+  signer: Signer
   message: Message
 }
 
@@ -21,12 +24,15 @@ const isOnSameDay = (d1?: Date, d2?: Date): boolean => {
 const formatDate = (d?: Date) =>
   d?.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 
-const MessageTile = ({ message }: MessageTileProps): JSX.Element => (
+const MessageTile = ({ message, signer }: MessageTileProps): JSX.Element => (
   <div className="flex items-start mx-auto mb-4">
     <Avatar peerAddress={message.senderAddress as string} />
     <div className="ml-2">
       <div>
-        <AddressPill address={message.senderAddress as string} />
+        <AddressPill
+          signer={signer}
+          address={message.senderAddress as string}
+        />
         <span className="text-sm font-normal place-self-end text-n-300 text-md uppercase">
           {formatTime(message.sent)}
         </span>
@@ -69,6 +75,7 @@ const ConversationBeginningNotice = (): JSX.Element => (
 )
 
 const MessagesList = ({
+  signer,
   messages,
   messagesEndRef,
 }: MessageListProps): JSX.Element => {
@@ -86,10 +93,10 @@ const MessagesList = ({
               const dateHasChanged = !isOnSameDay(lastMessageDate, msg.sent)
               lastMessageDate = msg.sent
               return (
-                <>
+                <Fragment key={msg.id}>
                   {dateHasChanged ? <DateDivider date={msg.sent} /> : null}
-                  <MessageTile message={msg} key={msg.id} />
-                </>
+                  <MessageTile signer={signer} message={msg} />
+                </Fragment>
               )
             })}
             <div ref={messagesEndRef} />

@@ -5,16 +5,16 @@ import { useEffect, useState } from 'react'
 import { Conversation } from '../../components/Conversation'
 import { checkPath } from '../../helpers'
 import XmtpContext from '../../contexts/xmtp'
-import { WalletContext } from '../../contexts/wallet'
+import useWallet from '../../hooks/useWallet'
 
 const ConversationPage: NextPage = () => {
   const router = useRouter()
   const { client } = useContext(XmtpContext)
-  const { resolveName } = useContext(WalletContext)
   const recipientWalletAddr = router.query.recipientWalletAddr as string
   const [canMessageAddr, setCanMessageAddr] = useState<boolean | undefined>(
     false
   )
+  const signer = useWallet()
 
   const redirectToHome = async () => {
     if (checkPath()) {
@@ -39,9 +39,11 @@ const ConversationPage: NextPage = () => {
     redirectToHome()
   }, [window.location.pathname])
 
-  if (!canMessageAddr || !client) return <div />
+  if (!canMessageAddr || !client || !signer) return <div />
   else {
-    return <Conversation recipientWalletAddr={recipientWalletAddr} />
+    return (
+      <Conversation signer={signer} recipientWalletAddr={recipientWalletAddr} />
+    )
   }
 }
 

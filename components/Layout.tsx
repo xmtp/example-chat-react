@@ -10,6 +10,7 @@ import UserMenu from './UserMenu'
 import BackArrow from './BackArrow'
 import { useCallback, useContext } from 'react'
 import XmtpContext from '../contexts/xmtp'
+import { Signer } from 'ethers'
 
 const NavigationColumnLayout: React.FC = ({ children }) => (
   <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
@@ -34,7 +35,10 @@ const TopBarLayout: React.FC = ({ children }) => (
   </div>
 )
 
-const ConversationLayout: React.FC = ({ children }) => {
+const ConversationLayout: React.FC<{ signer?: Signer }> = ({
+  children,
+  signer,
+}) => {
   const router = useRouter()
   const recipientWalletAddress = router.query.recipientWalletAddr as string
 
@@ -53,6 +57,7 @@ const ConversationLayout: React.FC = ({ children }) => {
           <BackArrow onClick={handleBackArrowClick} />
         </div>
         <RecipientControl
+          signer={signer}
           recipientWalletAddress={recipientWalletAddress}
           onSubmit={handleSubmit}
         />
@@ -62,7 +67,7 @@ const ConversationLayout: React.FC = ({ children }) => {
   )
 }
 
-const Layout: React.FC = ({ children }) => {
+const Layout: React.FC<{ signer?: Signer }> = ({ children, signer }) => {
   const { client } = useContext(XmtpContext)
   return (
     <>
@@ -77,20 +82,17 @@ const Layout: React.FC = ({ children }) => {
         <NavigationView>
           <NavigationColumnLayout>
             <NavigationHeaderLayout>
-              {walletAddress && client && <NewMessageButton />}
+              {signer && client && <NewMessageButton />}
             </NavigationHeaderLayout>
-            <NavigationPanel onConnect={handleConnect} />
-            <UserMenu
-              onConnect={handleConnect}
-              onDisconnect={handleDisconnect}
-            />
+            <NavigationPanel signer={signer} />
+            <UserMenu signer={signer} />
           </NavigationColumnLayout>
         </NavigationView>
         <ConversationView>
-          {walletAddress && client ? (
-            <ConversationLayout>{children}</ConversationLayout>
+          {signer && client ? (
+            <ConversationLayout signer={signer}>{children}</ConversationLayout>
           ) : (
-            <XmtpInfoPanel onConnect={handleConnect} />
+            <XmtpInfoPanel signer={signer} />
           )}
         </ConversationView>
       </div>
