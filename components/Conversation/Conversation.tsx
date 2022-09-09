@@ -22,11 +22,8 @@ const Conversation = (): JSX.Element => {
 
   useEffect(() => {
     if (!hasMessages) return
-    const initScroll = () => {
-      scrollToMessagesEndRef()
-    }
-    initScroll()
-  }, [recipient, hasMessages])
+    scrollToMessagesEndRef()
+  }, [scrollToMessagesEndRef, recipient, hasMessages])
 
   if (!signer) return <div />
   if (!recipient) return <div />
