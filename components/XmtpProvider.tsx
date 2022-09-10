@@ -1,9 +1,31 @@
+import { name } from '../package.json'
+import storage from 'localforage'
 import { Reducer, useEffect, useReducer, useState } from 'react'
-import { Conversation } from '@xmtp/xmtp-js'
 import { Client } from '@xmtp/xmtp-js'
+import type { Conversation } from '@xmtp/xmtp-js'
 import { XmtpContext, XmtpContextType } from '../contexts/xmtp'
+import { Signer } from 'ethers'
 
 type XmtpProviderProps = Pick<XmtpContextType, 'signer' | 'lookupAddress'>
+
+storage.config({
+  name,
+  storeName: 'xmtp-identities',
+  description: 'store identities for xmtp',
+})
+
+const createClient = async (signer: Signer) => {
+  const address = await signer.getAddress()
+  const storageKey = address.toLowerCase()
+  if (!(await storage.getItem(storageKey))) {
+    const keys = await Client.getKeys(signer)
+    await storage.setItem(storageKey, keys)
+  }
+  const keys = await storage.getItem<Uint8Array>(storageKey)
+  return keys
+    ? Client.create(null, { privateKeyOverride: keys })
+    : Client.create(signer)
+}
 
 export const XmtpProvider: React.FC<XmtpProviderProps> = ({
   children,
@@ -26,7 +48,7 @@ export const XmtpProvider: React.FC<XmtpProviderProps> = ({
 
   useEffect(() => {
     if (signer) {
-      Client.create(signer)
+      createClient(signer)
         .then(setClient)
         .catch(() => setClient(null))
     } else {
