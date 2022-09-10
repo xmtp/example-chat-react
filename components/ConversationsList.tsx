@@ -7,6 +7,7 @@ import useConversation from '../hooks/useConversation'
 import Avatar from './Avatar'
 import useMessageStore from '../hooks/useMessageStore'
 import XmtpContext from '../contexts/xmtp'
+import Emoji from 'react-emoji-render'
 
 type ConversationTileProps = {
   conversation: Conversation
@@ -79,7 +80,9 @@ const ConversationTile = ({
               isLoadingConversation ? 'animate-pulse' : ''
             )}
           >
-            {latestMessage && truncate(latestMessage.content, 75)}
+            <Emoji
+              text={latestMessage && truncate(latestMessage.content, 75)}
+            />
           </p>
         </div>
       </div>
