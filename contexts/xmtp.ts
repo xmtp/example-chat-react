@@ -1,6 +1,5 @@
 import { createContext } from 'react'
-import { Client } from '@xmtp/xmtp-js'
-import { Conversation } from '@xmtp/xmtp-js'
+import type { Client, Conversation } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
 
 export type Account = {

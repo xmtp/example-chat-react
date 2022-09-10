@@ -1,4 +1,4 @@
-import { Message } from '@xmtp/xmtp-js'
+import type { Message } from '@xmtp/xmtp-js'
 import { useReducer } from 'react'
 
 type MessageStoreEvent = {
