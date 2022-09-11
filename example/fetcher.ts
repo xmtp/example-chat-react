@@ -34,7 +34,7 @@ export const fetchEns = async (
   try {
     const [name, avatar] = await Promise.all([
       provider.lookupAddress(address),
-      provider.getAvatar(address),
+      (provider as any).getAvatar(address), // TODO: fix this type
     ])
     return { name: name || undefined, avatar: avatar || undefined }
   } catch (e) {
