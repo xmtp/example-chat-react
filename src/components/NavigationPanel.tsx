@@ -1,3 +1,4 @@
+import React from 'react'
 import { LinkIcon } from '@heroicons/react/outline'
 import { useContext } from 'react'
 import XmtpContext from '../contexts/xmtp'

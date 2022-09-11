@@ -1,4 +1,4 @@
-import packageJson from '../package.json'
+import React from 'react'
 import storage from 'localforage'
 import { Reducer, useEffect, useReducer, useState } from 'react'
 import { Client } from '@xmtp/xmtp-js'
@@ -9,7 +9,7 @@ import { Signer } from 'ethers'
 type XmtpProviderProps = Pick<XmtpContextType, 'signer' | 'lookupAddress'>
 
 storage.config({
-  name: packageJson.name,
+  name: '@nft/chat',
   storeName: 'xmtp-identities',
   description: 'store identities for xmtp',
 })

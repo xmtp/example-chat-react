@@ -1,3 +1,4 @@
+import React from 'react'
 import { NavigationView, ConversationView } from './Views'
 import { Conversation, RecipientControl } from './Conversation'
 import NavigationPanel from './NavigationPanel'

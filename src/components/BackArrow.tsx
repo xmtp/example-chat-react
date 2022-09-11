@@ -1,3 +1,4 @@
+import React from 'react'
 import { ChevronLeftIcon } from '@heroicons/react/outline'
 
 type BackArrowProps = {

@@ -1,3 +1,4 @@
+import React from 'react'
 import { useState, useContext, useCallback, useEffect } from 'react'
 import AddressInput from '../AddressInput'
 import XmtpContext from '../../contexts/xmtp'

@@ -1,7 +1,6 @@
 import PaperAirplaneIcon from '@heroicons/react/outline/PaperAirplaneIcon'
 import React, { useContext, useEffect, useState } from 'react'
 import { classNames } from '../../helpers'
-import messageComposerStyles from '../../styles/MessageComposer.module.css'
 import XmtpContext from '../../contexts/xmtp'
 
 type MessageComposerProps = {
@@ -46,22 +45,30 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
           'border',
           'py-2',
           'pl-4',
-          'mr-3',
-          messageComposerStyles.bubble
+          'mr-3'
         )}
+        style={{
+          borderRadius: '24px',
+          backgroundColor: '#fafafa',
+          border: '1px solid #e5e7eb',
+          height: '40px',
+          padding: '10px 8px 10px 16px',
+        }}
         autoComplete="off"
         onSubmit={onSubmit}
       >
         <input
           type="text"
           placeholder="Type something..."
-          className={classNames(
-            'block',
-            'w-full',
-            'text-md',
-            'md:text-sm',
-            messageComposerStyles.input
-          )}
+          className={classNames('block', 'w-full', 'text-md', 'md:text-sm')}
+          style={{
+            fontSize: '14px',
+            border: 'none',
+            background: 'none',
+            paddingLeft: '0',
+            marginTop: '-2.8px',
+            height: '25px',
+          }}
           name="message"
           value={message}
           onChange={onMessageChange}
@@ -69,7 +76,7 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
         />
         <button
           type="submit"
-          className={messageComposerStyles.arrow}
+          style={{ marginTop: '-2.8px', width: '25px', height: '25px' }}
           disabled={!message}
         >
           <PaperAirplaneIcon

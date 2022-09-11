@@ -1,4 +1,5 @@
-import loaderStyles from '../styles/Loader.module.css'
+import SpinnerIcon from '@heroicons/react/outline/RefreshIcon'
+import React from 'react'
 
 type LoaderProps = {
   isLoading: boolean
@@ -14,18 +15,14 @@ export const Spinner = ({ isLoading }: LoaderProps): JSX.Element | null => {
   if (!isLoading) {
     return null
   }
-
-  // This feels janky af, but I'm gonna run with it rather than import some bloated library just to make a spinner.
   return (
-    <div className={loaderStyles['lds-roller']}>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
+    <div className="flex justify-center">
+      <SpinnerIcon
+        className="h-8 w-8 mb-1 stroke-n-200 md:stroke-n-300 animate-spin"
+        style={{
+          animationDirection: 'reverse',
+        }}
+      />
     </div>
   )
 }

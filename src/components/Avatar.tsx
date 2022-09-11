@@ -1,3 +1,4 @@
+import React from 'react'
 import Blockies from 'react-blockies'
 import useLookup from '../hooks/useLookup'
 
