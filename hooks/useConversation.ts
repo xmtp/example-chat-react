@@ -71,7 +71,7 @@ const useConversation = (
         }
         if (latestMsgId !== msg.id) {
           if (Notification.permission === 'granted') {
-            if (msg.senderAddress === walletAddress) {
+            if (msg.senderAddress !== walletAddress) {
               new Notification('New Message On XMTP', {
                 body: `From ${msg.senderAddress}`,
                 icon: '/xmtp-icon.png',
