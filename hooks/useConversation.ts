@@ -19,6 +19,12 @@ const useConversation = (
   const { messageStore, dispatchMessages } = useMessageStore()
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
+  const [browserVisible, setBrowserVisible] = useState<boolean>(true)
+
+  useEffect(() => {
+    window.addEventListener('focus', () => setBrowserVisible(true))
+    window.addEventListener('blur', () => setBrowserVisible(false))
+  }, [])
 
   useEffect(() => {
     const getConvo = async () => {
@@ -71,7 +77,7 @@ const useConversation = (
         }
         if (latestMsgId !== msg.id) {
           if (Notification.permission === 'granted') {
-            if (msg.senderAddress !== walletAddress) {
+            if (msg.senderAddress !== walletAddress && !browserVisible) {
               new Notification('New Message On XMTP', {
                 body: `From ${msg.senderAddress}`,
                 icon: '/xmtp-icon.png',
