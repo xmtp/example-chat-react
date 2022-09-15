@@ -39,16 +39,19 @@ export const XmtpProvider: React.FC = ({ children }) => {
     []
   )
 
-  const initClient = useCallback(async (wallet: Signer) => {
-    if (wallet) {
-      try {
-        setClient(await Client.create(wallet, { env: getEnv() }))
-      } catch (e) {
-        console.error(e)
-        setClient(null)
+  const initClient = useCallback(
+    async (wallet: Signer) => {
+      if (wallet && !client) {
+        try {
+          setClient(await Client.create(wallet, { env: getEnv() }))
+        } catch (e) {
+          console.error(e)
+          setClient(null)
+        }
       }
-    }
-  }, [])
+    },
+    [client]
+  )
 
   const disconnect = () => {
     setClient(undefined)
@@ -57,7 +60,7 @@ export const XmtpProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     signer ? initClient(signer) : disconnect()
-  }, [initClient, signer])
+  }, [signer])
 
   useEffect(() => {
     if (!client) return
