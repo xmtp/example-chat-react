@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useReducer, useState } from 'react'
-import { Conversation } from '@xmtp/xmtp-js'
+import { Conversation, Message } from '@xmtp/xmtp-js'
 import { Client } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
 import { getEnv } from '../helpers'
@@ -11,6 +11,9 @@ export const XmtpProvider: React.FC = ({ children }) => {
   const { signer } = useContext(WalletContext)
   const [loadingConversations, setLoadingConversations] =
     useState<boolean>(false)
+  const [convoMessages, setConvoMessages] = useState<Map<string, Message[]>>(
+    new Map()
+  )
 
   const [conversations, dispatchConversations] = useReducer(
     (
@@ -63,9 +66,12 @@ export const XmtpProvider: React.FC = ({ children }) => {
       console.log('Listing conversations')
       setLoadingConversations(true)
       const convos = await client.conversations.list()
-      convos.forEach((convo: Conversation) => {
+      for (const convo of convos) {
+        const messages = await convo.messages()
+        convoMessages.set(convo.peerAddress, messages)
+        setConvoMessages(convoMessages)
         dispatchConversations([convo])
-      })
+      }
       setLoadingConversations(false)
     }
     listConversations()
@@ -76,6 +82,7 @@ export const XmtpProvider: React.FC = ({ children }) => {
     conversations,
     loadingConversations,
     initClient,
+    convoMessages,
   })
 
   useEffect(() => {
@@ -84,8 +91,9 @@ export const XmtpProvider: React.FC = ({ children }) => {
       conversations,
       loadingConversations,
       initClient,
+      convoMessages,
     })
-  }, [client, conversations, initClient, loadingConversations])
+  }, [client, conversations, convoMessages, initClient, loadingConversations])
 
   return (
     <XmtpContext.Provider value={providerState}>
