@@ -24,7 +24,7 @@ const useConversation = (
       setConversation(await client.conversations.newConversation(peerAddress))
     }
     getConvo()
-  }, [client, peerAddress])
+  }, [peerAddress])
 
   useEffect(() => {
     const closeStream = async () => {
@@ -68,7 +68,7 @@ const useConversation = (
     }
     listMessages()
     streamMessages()
-  }, [conversation, dispatchMessages, convoMessages, onMessageCallback])
+  }, [conversation, convoMessages])
 
   const handleSend = async (message: string) => {
     if (!conversation) return

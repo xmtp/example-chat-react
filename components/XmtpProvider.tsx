@@ -22,7 +22,7 @@ export const XmtpProvider: React.FC = ({ children }) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): any => {
       if (newConvos === undefined) {
-        return null
+        return new Map()
       }
       newConvos.forEach((convo) => {
         if (convo.peerAddress !== client?.address) {
@@ -34,7 +34,7 @@ export const XmtpProvider: React.FC = ({ children }) => {
           }
         }
       })
-      return state ?? null
+      return state ?? new Map()
     },
     []
   )
