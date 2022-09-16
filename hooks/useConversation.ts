@@ -14,8 +14,8 @@ const useConversation = (
   peerAddress: string,
   onMessageCallback?: OnMessageCallback
 ) => {
-  const { client } = useContext(XmtpContext)
   const { address: walletAddress } = useContext(WalletContext)
+  const { client, convoMessages } = useContext(XmtpContext)
   const { messageStore, dispatchMessages } = useMessageStore()
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
@@ -38,31 +38,22 @@ const useConversation = (
 
   useEffect(() => {
     if (!conversation) return
-    const listMessages = async () => {
+    const listMessages = () => {
       setLoading(true)
-      const msgs = await conversation.messages()
-      if (
-        messageStore &&
-        msgs.length !== messageStore[conversation.peerAddress]?.length
-      ) {
-        console.log(
-          'Listing messages for peer address',
-          conversation.peerAddress
-        )
-        if (dispatchMessages) {
-          await dispatchMessages({
-            peerAddress: conversation.peerAddress,
-            messages: msgs,
-          })
-        }
-        if (onMessageCallback) {
-          onMessageCallback()
-        }
+      console.log('Listing messages for peer address', conversation.peerAddress)
+      if (dispatchMessages) {
+        dispatchMessages({
+          peerAddress: conversation.peerAddress,
+          messages: convoMessages.get(conversation.peerAddress) ?? [],
+        })
+      }
+      if (onMessageCallback) {
+        onMessageCallback()
       }
       setLoading(false)
     }
     listMessages()
-  }, [conversation])
+  }, [conversation, convoMessages])
 
   useEffect(() => {
     if (!conversation) return
@@ -70,20 +61,22 @@ const useConversation = (
       stream = await conversation.streamMessages()
       for await (const msg of stream) {
         if (dispatchMessages) {
-          dispatchMessages({
+          await dispatchMessages({
             peerAddress: conversation.peerAddress,
             messages: [msg],
           })
         }
-        if (latestMsgId !== msg.id) {
-          if (Notification.permission === 'granted') {
-            if (msg.senderAddress !== walletAddress && !browserVisible) {
-              new Notification('New Message On XMTP', {
-                body: `From ${msg.senderAddress}`,
-                icon: '/xmtp-icon.png',
-              })
-            }
-          }
+        if (
+          latestMsgId !== msg.id &&
+          Notification.permission === 'granted' &&
+          msg.senderAddress !== walletAddress &&
+          !browserVisible
+        ) {
+          new Notification('New Message On XMTP', {
+            body: `From ${msg.senderAddress}`,
+            icon: '/xmtp-icon.png',
+          })
+
           latestMsgId = msg.id
         }
         if (onMessageCallback) {
@@ -92,7 +85,6 @@ const useConversation = (
       }
     }
     streamMessages()
-
     return () => {
       const closeStream = async () => {
         if (!stream) return
@@ -100,7 +92,13 @@ const useConversation = (
       }
       closeStream()
     }
-  }, [conversation])
+  }, [
+    browserVisible,
+    conversation,
+    dispatchMessages,
+    onMessageCallback,
+    walletAddress,
+  ])
 
   const handleSend = async (message: string) => {
     if (!conversation) return
