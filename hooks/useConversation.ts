@@ -2,7 +2,7 @@ import { Conversation, Message, Stream } from '@xmtp/xmtp-js'
 import { useState, useEffect, useContext } from 'react'
 import { WalletContext } from '../contexts/wallet'
 import XmtpContext from '../contexts/xmtp'
-import { checkIfPathIsEns } from '../helpers'
+import { checkIfPathIsEns, shortAddress } from '../helpers'
 import useMessageStore from './useMessageStore'
 
 type OnMessageCallback = () => void
@@ -14,7 +14,7 @@ const useConversation = (
   peerAddress: string,
   onMessageCallback?: OnMessageCallback
 ) => {
-  const { address: walletAddress } = useContext(WalletContext)
+  const { address: walletAddress, lookupAddress } = useContext(WalletContext)
   const { client, convoMessages } = useContext(XmtpContext)
   const { messageStore, dispatchMessages } = useMessageStore()
   const [conversation, setConversation] = useState<Conversation | null>(null)
@@ -71,8 +71,9 @@ const useConversation = (
           msg.senderAddress !== walletAddress &&
           !browserVisible
         ) {
-          new Notification('New Message On XMTP', {
-            body: `From ${msg.senderAddress}`,
+          const name = await lookupAddress(msg.senderAddress ?? '')
+          new Notification('XMTP', {
+            body: `From ${name || shortAddress(msg.senderAddress ?? '')}`,
             icon: '/xmtp-icon.png',
           })
 
