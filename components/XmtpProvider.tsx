@@ -77,7 +77,17 @@ export const XmtpProvider: React.FC = ({ children }) => {
       }
       setLoadingConversations(false)
     }
+    const streamConversations = async () => {
+      const stream = await client.conversations.stream()
+      for await (const convo of stream) {
+        const messages = await convo.messages()
+        convoMessages.set(convo.peerAddress, messages)
+        setConvoMessages(convoMessages)
+        dispatchConversations([convo])
+      }
+    }
     listConversations()
+    streamConversations()
   }, [client])
 
   const [providerState, setProviderState] = useState<XmtpContextType>({
