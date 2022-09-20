@@ -40,7 +40,6 @@ const useConversation = (
     if (!conversation) return
     const listMessages = () => {
       setLoading(true)
-      console.log('Listing messages for peer address', conversation.peerAddress)
       if (dispatchMessages) {
         dispatchMessages({
           peerAddress: conversation.peerAddress,
