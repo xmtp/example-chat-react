@@ -30,7 +30,7 @@ const Conversation = ({
       scrollToMessagesEndRef()
     }
     initScroll()
-  }, [recipientWalletAddr, hasMessages])
+  }, [recipientWalletAddr, hasMessages, scrollToMessagesEndRef])
 
   if (!recipientWalletAddr) {
     return <div />

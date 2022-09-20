@@ -6,7 +6,8 @@ import WalletLink from 'walletlink'
 import { WalletContext } from '../contexts/wallet'
 import { useRouter } from 'next/router'
 
-const ETH_CHAIN_ID = 1 // Ethereum mainnet
+// Ethereum mainnet
+const ETH_CHAIN_ID = 1
 
 const cachedLookupAddress = new Map<string, string | undefined>()
 const cachedResolveName = new Map<string, string | undefined>()

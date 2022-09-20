@@ -10,7 +10,7 @@ const useConversation = (
   peerAddress: string,
   onMessageCallback?: OnMessageCallback
 ) => {
-  const { client } = useContext(XmtpContext)
+  const { client, convoMessages } = useContext(XmtpContext)
   const { messageStore, dispatchMessages } = useMessageStore()
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [stream, setStream] = useState<Stream<Message>>()
@@ -37,26 +37,16 @@ const useConversation = (
 
   useEffect(() => {
     if (!conversation) return
-    const listMessages = async () => {
+    const listMessages = () => {
       setLoading(true)
-      const msgs = await conversation.messages()
-      if (
-        messageStore &&
-        msgs.length !== messageStore[conversation.peerAddress]?.length
-      ) {
-        console.log(
-          'Listing messages for peer address',
-          conversation.peerAddress
-        )
-        if (dispatchMessages) {
-          await dispatchMessages({
-            peerAddress: conversation.peerAddress,
-            messages: msgs,
-          })
-        }
-        if (onMessageCallback) {
-          onMessageCallback()
-        }
+      if (dispatchMessages) {
+        dispatchMessages({
+          peerAddress: conversation.peerAddress,
+          messages: convoMessages.get(conversation.peerAddress) ?? [],
+        })
+      }
+      if (onMessageCallback) {
+        onMessageCallback()
       }
       setLoading(false)
     }
@@ -65,7 +55,7 @@ const useConversation = (
       setStream(stream)
       for await (const msg of stream) {
         if (dispatchMessages) {
-          dispatchMessages({
+          await dispatchMessages({
             peerAddress: conversation.peerAddress,
             messages: [msg],
           })
@@ -77,7 +67,7 @@ const useConversation = (
     }
     listMessages()
     streamMessages()
-  }, [conversation, dispatchMessages, onMessageCallback])
+  }, [conversation, convoMessages])
 
   const handleSend = async (message: string) => {
     if (!conversation) return
