@@ -64,12 +64,13 @@ const ConversationLayout: React.FC = ({ children }) => {
 }
 
 const Layout: React.FC = ({ children }) => {
-  const { client } = useContext(XmtpContext)
+  const { client, initClient } = useContext(XmtpContext)
 
   const {
     address: walletAddress,
     connect: connectWallet,
     disconnect: disconnectWallet,
+    signer,
   } = useContext(WalletContext)
 
   const handleDisconnect = useCallback(async () => {
@@ -78,7 +79,8 @@ const Layout: React.FC = ({ children }) => {
 
   const handleConnect = useCallback(async () => {
     await connectWallet()
-  }, [connectWallet])
+    signer && (await initClient(signer))
+  }, [connectWallet, initClient, signer])
 
   return (
     <>

@@ -13,6 +13,7 @@ export type XmtpContextType = {
   conversations: Map<string, Conversation> | null
   loadingConversations: boolean
   initClient: (wallet: Signer) => void
+  convoMessages: Map<string, Message[]>
 }
 
 export const XmtpContext = createContext<XmtpContextType>({
@@ -20,6 +21,7 @@ export const XmtpContext = createContext<XmtpContextType>({
   conversations: null,
   loadingConversations: false,
   initClient: () => undefined,
+  convoMessages: new Map(),
 })
 
 export default XmtpContext

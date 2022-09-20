@@ -14,7 +14,6 @@ import {
 } from '../helpers'
 import useConversation from '../hooks/useConversation'
 import Avatar from './Avatar'
-import useMessageStore from '../hooks/useMessageStore'
 import XmtpContext from '../contexts/xmtp'
 import { WalletContext } from '../contexts/wallet'
 
@@ -106,16 +105,15 @@ const ConversationTile = ({
 
 const ConversationsList = (): JSX.Element => {
   const router = useRouter()
-  const { conversations } = useContext(XmtpContext)
-  const { messageStore } = useMessageStore()
+  const { conversations, convoMessages } = useContext(XmtpContext)
   const { resolveName } = useContext(WalletContext)
 
   const orderByLatestMessage = (
     convoA: Conversation,
     convoB: Conversation
   ): number => {
-    const convoAMessages = messageStore[convoA.peerAddress]
-    const convoBMessages = messageStore[convoB.peerAddress]
+    const convoAMessages = convoMessages.get(convoA.peerAddress) ?? []
+    const convoBMessages = convoMessages.get(convoB.peerAddress) ?? []
     const convoALastMessageDate =
       getLatestMessage(convoAMessages)?.sent || new Date()
     const convoBLastMessageDate =
