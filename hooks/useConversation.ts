@@ -3,7 +3,6 @@ import { useState, useEffect, useContext } from 'react'
 import { WalletContext } from '../contexts/wallet'
 import XmtpContext from '../contexts/xmtp'
 import { checkIfPathIsEns, shortAddress } from '../helpers'
-import useMessageStore from './useMessageStore'
 
 type OnMessageCallback = () => void
 
@@ -15,10 +14,9 @@ const useConversation = (
   onMessageCallback?: OnMessageCallback
 ) => {
   const { address: walletAddress, lookupAddress } = useContext(WalletContext)
-  const { client, convoMessages } = useContext(XmtpContext)
-  const { messageStore, dispatchMessages } = useMessageStore()
+  const { client, convoMessages, setConvoMessages } = useContext(XmtpContext)
   const [conversation, setConversation] = useState<Conversation | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading] = useState<boolean>(false)
   const [browserVisible, setBrowserVisible] = useState<boolean>(true)
 
   useEffect(() => {
@@ -34,36 +32,18 @@ const useConversation = (
       setConversation(await client.conversations.newConversation(peerAddress))
     }
     getConvo()
-  }, [peerAddress])
-
-  useEffect(() => {
-    if (!conversation) return
-    const listMessages = () => {
-      setLoading(true)
-      if (dispatchMessages) {
-        dispatchMessages({
-          peerAddress: conversation.peerAddress,
-          messages: convoMessages.get(conversation.peerAddress) ?? [],
-        })
-      }
-      if (onMessageCallback) {
-        onMessageCallback()
-      }
-      setLoading(false)
-    }
-    listMessages()
-  }, [conversation, convoMessages])
+  }, [client, peerAddress])
 
   useEffect(() => {
     if (!conversation) return
     const streamMessages = async () => {
       stream = await conversation.streamMessages()
       for await (const msg of stream) {
-        if (dispatchMessages) {
-          await dispatchMessages({
-            peerAddress: conversation.peerAddress,
-            messages: [msg],
-          })
+        if (setConvoMessages) {
+          const newMessages = convoMessages.get(conversation.peerAddress) ?? []
+          newMessages.push(msg)
+          convoMessages.set(conversation.peerAddress, newMessages)
+          setConvoMessages(new Map(convoMessages))
         }
         if (
           latestMsgId !== msg.id &&
@@ -95,8 +75,10 @@ const useConversation = (
   }, [
     browserVisible,
     conversation,
-    dispatchMessages,
+    convoMessages,
+    lookupAddress,
     onMessageCallback,
+    setConvoMessages,
     walletAddress,
   ])
 
@@ -107,7 +89,6 @@ const useConversation = (
 
   return {
     loading,
-    messages: messageStore[peerAddress] ?? [],
     sendMessage: handleSend,
   }
 }
