@@ -42,7 +42,12 @@ const useConversation = (
         if (setConvoMessages) {
           const newMessages = convoMessages.get(conversation.peerAddress) ?? []
           newMessages.push(msg)
-          convoMessages.set(conversation.peerAddress, newMessages)
+          const uniqueMessages = [
+            ...Array.from(
+              new Map(newMessages.map((item) => [item['id'], item])).values()
+            ),
+          ]
+          convoMessages.set(conversation.peerAddress, uniqueMessages)
           setConvoMessages(new Map(convoMessages))
         }
         if (
