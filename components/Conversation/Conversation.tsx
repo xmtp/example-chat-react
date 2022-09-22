@@ -1,5 +1,10 @@
-import React, { useCallback, useContext, useEffect, useRef } from 'react'
-// import useConversation from '../../hooks/useConversation'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react'
 import { MessagesList, MessageComposer } from './'
 import Loader from '../../components/Loader'
 import XmtpContext from '../../contexts/xmtp'
@@ -26,17 +31,17 @@ const Conversation = ({
 
   const { convoMessages, loadingConversations } = useContext(XmtpContext)
 
-  const hasMessages = recipientWalletAddr
-    ? (convoMessages.get(recipientWalletAddr) ?? []).length > 0
-    : false
+  const messages = useMemo(
+    () => convoMessages.get(recipientWalletAddr) ?? [],
+    [convoMessages, recipientWalletAddr]
+  )
+
+  const hasMessages = messages.length > 0
 
   useEffect(() => {
-    if (!hasMessages) return
-    const initScroll = () => {
-      scrollToMessagesEndRef()
-    }
-    initScroll()
-  }, [recipientWalletAddr, hasMessages, scrollToMessagesEndRef])
+    if (!messages || !messagesEndRef.current) return
+    scrollToMessagesEndRef()
+  }, [recipientWalletAddr, scrollToMessagesEndRef, messages])
 
   if (!recipientWalletAddr) {
     return <div />
@@ -54,10 +59,7 @@ const Conversation = ({
 
   return (
     <main className="flex flex-col flex-1 bg-white h-screen">
-      <MessagesList
-        messagesEndRef={messagesEndRef}
-        messages={convoMessages.get(recipientWalletAddr) ?? []}
-      />
+      <MessagesList messagesEndRef={messagesEndRef} messages={messages} />
       <MessageComposer onSend={sendMessage} />
     </main>
   )
