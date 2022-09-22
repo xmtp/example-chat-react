@@ -40,7 +40,9 @@ const Conversation = ({
 
   useEffect(() => {
     if (!messages || !messagesEndRef.current) return
-    scrollToMessagesEndRef()
+    setTimeout(() => {
+      scrollToMessagesEndRef()
+    }, 1000)
   }, [recipientWalletAddr, scrollToMessagesEndRef, messages])
 
   if (!recipientWalletAddr) {
