@@ -53,8 +53,8 @@ const useConversation = (
         if (
           latestMsgId !== msg.id &&
           Notification.permission === 'granted' &&
-          msg.senderAddress === walletAddress &&
-          browserVisible
+          msg.senderAddress !== walletAddress &&
+          !browserVisible
         ) {
           const name = await lookupAddress(msg.senderAddress ?? '')
           debugger
