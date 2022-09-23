@@ -58,7 +58,12 @@ export const XmtpProvider: React.FC = ({ children }) => {
             setConversations(new Map(conversations))
           }
         })
-      ).then(() => setLoadingConversations(false))
+      ).then(() => {
+        setLoadingConversations(false)
+        if (Notification.permission === 'default') {
+          Notification.requestPermission()
+        }
+      })
     }
     const streamConversations = async () => {
       const stream = await client.conversations.stream()
