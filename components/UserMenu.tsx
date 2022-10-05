@@ -159,7 +159,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                     <div className="px-1 py-1 ">
                       <Menu.Item>
                         <span className="block rounded-md px-2 py-2 text-sm text-n-600 text-right font-normal">
-                          Version{' '}
+                          xmtp-js v
                           {packageJson.dependencies['@xmtp/xmtp-js'].substring(
                             1
                           )}
