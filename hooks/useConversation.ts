@@ -2,7 +2,7 @@ import { Conversation, Message, Stream } from '@xmtp/xmtp-js'
 import { useState, useEffect, useContext } from 'react'
 import { WalletContext } from '../contexts/wallet'
 import XmtpContext from '../contexts/xmtp'
-import { checkIfPathIsEns, shortAddress } from '../helpers'
+import { checkIfPathIsEns, shortAddress, truncate } from '../helpers'
 
 type OnMessageCallback = () => void
 
@@ -57,11 +57,11 @@ const useConversation = (
           !browserVisible
         ) {
           const name = await lookupAddress(msg.senderAddress ?? '')
-          debugger
           new Notification('XMTP', {
-            body: `From ${name || shortAddress(msg.senderAddress ?? '')}\n${
-              msg.content
-            }`,
+            body: `${name || shortAddress(msg.senderAddress ?? '')}\n${truncate(
+              msg.content,
+              75
+            )}`,
             icon: '/xmtp-icon.png',
           })
 
