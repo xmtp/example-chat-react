@@ -87,7 +87,9 @@ const MessagesList = ({
               lastMessageDate = msg.sent
               return (
                 <>
-                  {dateHasChanged ? <DateDivider date={msg.sent} /> : null}
+                  {dateHasChanged ? (
+                    <DateDivider key={msg.id + 'divider'} date={msg.sent} />
+                  ) : null}
                   <MessageTile message={msg} key={msg.id} />
                 </>
               )

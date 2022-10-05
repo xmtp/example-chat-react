@@ -1,7 +1,14 @@
-import React, { useCallback, useEffect, useRef } from 'react'
-import useConversation from '../../hooks/useConversation'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react'
 import { MessagesList, MessageComposer } from './'
 import Loader from '../../components/Loader'
+import XmtpContext from '../../contexts/xmtp'
+import useConversation from '../../hooks/useConversation'
 
 type ConversationProps = {
   recipientWalletAddr: string
@@ -17,26 +24,32 @@ const Conversation = ({
     ;(messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
-  const { messages, sendMessage, loading } = useConversation(
+  const { sendMessage } = useConversation(
     recipientWalletAddr,
     scrollToMessagesEndRef
+  )
+
+  const { convoMessages, loadingConversations } = useContext(XmtpContext)
+
+  const messages = useMemo(
+    () => convoMessages.get(recipientWalletAddr) ?? [],
+    [convoMessages, recipientWalletAddr]
   )
 
   const hasMessages = messages.length > 0
 
   useEffect(() => {
-    if (!hasMessages) return
-    const initScroll = () => {
+    if (!messages || !messagesEndRef.current) return
+    setTimeout(() => {
       scrollToMessagesEndRef()
-    }
-    initScroll()
-  }, [recipientWalletAddr, hasMessages, scrollToMessagesEndRef])
+    }, 1000)
+  }, [recipientWalletAddr, scrollToMessagesEndRef, messages])
 
   if (!recipientWalletAddr) {
     return <div />
   }
 
-  if (loading && !messages?.length) {
+  if (loadingConversations && !hasMessages) {
     return (
       <Loader
         headingText="Loading messages..."

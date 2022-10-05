@@ -12,7 +12,6 @@ import {
   checkPath,
   checkIfPathIsEns,
 } from '../helpers'
-import useConversation from '../hooks/useConversation'
 import Avatar from './Avatar'
 import XmtpContext from '../contexts/xmtp'
 import { WalletContext } from '../contexts/wallet'
@@ -31,15 +30,15 @@ const ConversationTile = ({
   isSelected,
   onClick,
 }: ConversationTileProps): JSX.Element | null => {
-  const { messages, loading: isLoadingConversation } = useConversation(
-    conversation.peerAddress
-  )
+  const { convoMessages, loadingConversations } = useContext(XmtpContext)
 
-  if (!messages.length) {
+  if (!convoMessages.get(conversation.peerAddress)?.length) {
     return null
   }
 
-  const latestMessage = getLatestMessage(messages)
+  const latestMessage = getLatestMessage(
+    convoMessages.get(conversation.peerAddress) ?? []
+  )
   const path = `/dm/${conversation.peerAddress}`
 
   if (!latestMessage) {
@@ -66,7 +65,7 @@ const ConversationTile = ({
             'border-b-2',
             'border-gray-100',
             'hover:bg-bt-100',
-            isLoadingConversation ? 'opacity-80' : 'opacity-100',
+            loadingConversations ? 'opacity-80' : 'opacity-100',
             isSelected ? 'bg-bt-200' : null
           )}
         >
@@ -81,7 +80,7 @@ const ConversationTile = ({
                 className={classNames(
                   'text-lg md:text-sm font-normal place-self-end',
                   isSelected ? 'text-n-500' : 'text-n-300',
-                  isLoadingConversation ? 'animate-pulse' : ''
+                  loadingConversations ? 'animate-pulse' : ''
                 )}
               >
                 {formatDate(latestMessage?.sent)}
@@ -91,7 +90,7 @@ const ConversationTile = ({
               className={classNames(
                 'text-[13px] md:text-sm font-normal text-ellipsis mt-0',
                 isSelected ? 'text-n-500' : 'text-n-300',
-                isLoadingConversation ? 'animate-pulse' : ''
+                loadingConversations ? 'animate-pulse' : ''
               )}
             >
               {latestMessage && truncate(latestMessage.content, 75)}

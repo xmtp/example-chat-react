@@ -14,6 +14,7 @@ export type XmtpContextType = {
   loadingConversations: boolean
   initClient: (wallet: Signer) => void
   convoMessages: Map<string, Message[]>
+  setConvoMessages: (value: Map<string, Message[]>) => void
 }
 
 export const XmtpContext = createContext<XmtpContextType>({
@@ -22,6 +23,7 @@ export const XmtpContext = createContext<XmtpContextType>({
   loadingConversations: false,
   initClient: () => undefined,
   convoMessages: new Map(),
+  setConvoMessages: () => undefined,
 })
 
 export default XmtpContext

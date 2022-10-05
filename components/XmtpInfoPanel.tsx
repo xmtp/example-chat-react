@@ -104,7 +104,7 @@ const XmtpInfoPanel = ({ onConnect }: XmtpInfoPanelProps): JSX.Element => {
       </div>
       <div className="flex justify-between items-center mt-4">
         <div className="text-n-600 text-sm">
-          Version {packageJson.dependencies['@xmtp/xmtp-js'].substring(1)}
+          xmtp-js v{packageJson.dependencies['@xmtp/xmtp-js'].substring(1)}
         </div>
         <a
           href="https://blog.xmtp.com/contact/"
