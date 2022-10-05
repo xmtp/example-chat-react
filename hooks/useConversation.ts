@@ -62,7 +62,6 @@ const useConversation = (
               msg.content,
               75
             )}`,
-            icon: '/xmtp-icon.png',
           })
 
           latestMsgId = msg.id
