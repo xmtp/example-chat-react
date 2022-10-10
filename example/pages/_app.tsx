@@ -4,9 +4,6 @@ import { chain, configureChains, createClient, WagmiConfig } from 'wagmi'
 import { publicProvider } from 'wagmi/providers/public'
 
 import '@rainbow-me/rainbowkit/styles.css'
-import '@nft/chat/style.css'
-
-const cache = new Map<string, Promise<{ name?: string; avatar?: string }>>()
 
 const { chains, provider } = configureChains(
   [chain.mainnet],

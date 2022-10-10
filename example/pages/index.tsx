@@ -39,7 +39,15 @@ const Home: NextPage = () => {
 
   if (!signer.data)
     return (
-      <div className="w-screen h-screen flex justify-center items-center">
+      <div
+        style={{
+          width: '100vw',
+          height: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <ConnectButton />
       </div>
     )
