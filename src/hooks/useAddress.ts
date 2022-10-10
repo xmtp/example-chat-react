@@ -1,4 +1,4 @@
-import { Signer } from 'ethers'
+import { Signer } from '@ethersproject/abstract-signer'
 import { useEffect, useState } from 'react'
 
 const useAddress = (signer?: Signer) => {

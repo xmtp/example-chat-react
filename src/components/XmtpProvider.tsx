@@ -1,12 +1,16 @@
+import { Dict } from '@chakra-ui/utils'
+import { ChakraProvider } from '@chakra-ui/react'
 import React from 'react'
 import storage from 'localforage'
 import { Reducer, useEffect, useReducer, useState } from 'react'
 import { Client } from '@xmtp/xmtp-js'
 import type { Conversation } from '@xmtp/xmtp-js'
 import { XmtpContext, XmtpContextType } from '../contexts/xmtp'
-import { Signer } from 'ethers'
+import { Signer } from '@ethersproject/abstract-signer'
 
-type XmtpProviderProps = Pick<XmtpContextType, 'signer' | 'lookupAddress'>
+type XmtpProviderProps = Pick<XmtpContextType, 'signer' | 'lookupAddress'> & {
+  theme?: Dict
+}
 
 storage.config({
   name: '@nft/chat',
@@ -31,11 +35,12 @@ export const XmtpProvider: React.FC<XmtpProviderProps> = ({
   children,
   signer,
   lookupAddress,
+  theme,
 }) => {
   const [client, setClient] = useState<Client | null>()
   const [recipient, setRecipient] = useState<string>()
   const [loadingConversations, setLoadingConversations] =
-    useState<boolean>(false)
+    useState<boolean>(true)
 
   const [conversations, dispatchConversation] = useReducer<
     Reducer<Map<string, Conversation>, Conversation | undefined>
@@ -50,7 +55,10 @@ export const XmtpProvider: React.FC<XmtpProviderProps> = ({
     if (signer) {
       createClient(signer)
         .then(setClient)
-        .catch(() => setClient(null))
+        .catch((e) => {
+          console.error(e)
+          setClient(null)
+        })
     } else {
       setClient(undefined)
       dispatchConversation(undefined)
@@ -70,19 +78,21 @@ export const XmtpProvider: React.FC<XmtpProviderProps> = ({
   }, [client])
 
   return (
-    <XmtpContext.Provider
-      value={{
-        signer,
-        client,
-        recipient,
-        setRecipient,
-        lookupAddress,
-        conversations,
-        loadingConversations,
-      }}
-    >
-      {children}
-    </XmtpContext.Provider>
+    <ChakraProvider theme={theme}>
+      <XmtpContext.Provider
+        value={{
+          signer,
+          client,
+          recipient,
+          setRecipient,
+          lookupAddress,
+          conversations,
+          loadingConversations,
+        }}
+      >
+        {children}
+      </XmtpContext.Provider>
+    </ChakraProvider>
   )
 }
 

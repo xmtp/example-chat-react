@@ -17,6 +17,6 @@
     "outDir": "./dist",
     "rootDir": "./src"
   },
-  "include": ["src", "types.d.ts", "tailwind.config.js"],
+  "include": ["src", "types.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

@@ -6,7 +6,7 @@ import MessagesList from './MessagesList'
 import MessageComposer from './MessageComposer'
 
 const Conversation = (): JSX.Element => {
-  const { signer, recipient } = useContext(XmtpContext)
+  const { recipient } = useContext(XmtpContext)
   const messagesEndRef = useRef(null)
 
   const scrollToMessagesEndRef = useCallback(() => {
@@ -19,14 +19,11 @@ const Conversation = (): JSX.Element => {
     scrollToMessagesEndRef
   )
 
-  const hasMessages = messages.length > 0
-
   useEffect(() => {
-    if (!hasMessages) return
+    if (messages.length === 0) return
     scrollToMessagesEndRef()
-  }, [scrollToMessagesEndRef, recipient, hasMessages])
+  }, [scrollToMessagesEndRef, recipient, messages])
 
-  if (!signer) return <div />
   if (!recipient) return <div />
 
   if (loading && !messages?.length) {
@@ -34,21 +31,16 @@ const Conversation = (): JSX.Element => {
       <Loader
         headingText="Loading messages..."
         subHeadingText="Please wait a moment"
-        isLoading
       />
     )
   }
 
   return (
-    <main className="flex flex-col flex-1 bg-white h-screen">
-      <MessagesList
-        signer={signer}
-        messagesEndRef={messagesEndRef}
-        messages={messages}
-      />
+    <>
+      <MessagesList messagesEndRef={messagesEndRef} messages={messages} />
       <MessageComposer onSend={sendMessage} />
-    </main>
+    </>
   )
 }
 
-export default React.memo(Conversation)
+export default Conversation

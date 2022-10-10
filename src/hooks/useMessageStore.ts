@@ -10,20 +10,10 @@ type MessageStore = { [address: string]: Message[] }
 
 const useMessageStore = () => {
   const [messageStore, dispatchMessages] = useReducer(
-    (state: MessageStore, { peerAddress, messages }: MessageStoreEvent) => {
-      const existing = state[peerAddress] || []
-
-      if (!messages.length) {
-        return state
-      }
-
-      console.log('Dispatching new messages for peer address', peerAddress)
-
-      return {
-        ...state,
-        [peerAddress]: existing.concat(messages),
-      }
-    },
+    (state: MessageStore, { peerAddress, messages }: MessageStoreEvent) => ({
+      ...state,
+      [peerAddress]: [...(state[peerAddress] || []), ...(messages || [])],
+    }),
     {}
   )
 

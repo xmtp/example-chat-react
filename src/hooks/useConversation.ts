@@ -23,7 +23,7 @@ const useConversation = (
       setConversation(await client.conversations.newConversation(peerAddress))
     }
     getConvo()
-  }, [peerAddress])
+  }, [client, peerAddress])
 
   useEffect(() => {
     const closeStream = async () => {
@@ -43,10 +43,6 @@ const useConversation = (
         messageStore &&
         msgs.length !== messageStore[conversation.peerAddress]?.length
       ) {
-        console.log(
-          'Listing messages for peer address',
-          conversation.peerAddress
-        )
         if (dispatchMessages) {
           await dispatchMessages({
             peerAddress: conversation.peerAddress,

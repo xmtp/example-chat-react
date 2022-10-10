@@ -1,0 +1,24 @@
+import React from 'react'
+import { useContext } from 'react'
+import XmtpContext from '../../contexts/xmtp'
+import ConversationsList from '../ConversationsList'
+import Loader from '../Loader'
+import NoWalletConnectedMessage from './NoWalletConnectedMessage'
+
+const NavigationPanel = (): JSX.Element => {
+  const { client, signer } = useContext(XmtpContext)
+
+  if (client === undefined)
+    return (
+      <Loader
+        headingText="Initialization..."
+        subHeadingText="Use your wallet to sign"
+      />
+    )
+
+  if (!signer) return <NoWalletConnectedMessage />
+
+  return <ConversationsList />
+}
+
+export default NavigationPanel
