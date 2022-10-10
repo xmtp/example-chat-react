@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "npm link"
+    "lint": "next lint"
   },
   "dependencies": {
     "@ethersproject/abstract-provider": "^5.7.0",
