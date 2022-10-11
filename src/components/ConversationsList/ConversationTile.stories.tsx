@@ -1,16 +1,16 @@
 import { ComponentMeta } from '@storybook/react'
 import { Conversation } from '@xmtp/xmtp-js'
-import React, { useContext } from 'react'
+import React from 'react'
 import ConversationTile from './ConversationTile'
-import { XmtpContext } from '../../contexts/xmtp'
 import { bob } from '../../tests/wallets'
+import useChat from '../../hooks/useChat'
 
 export default {
   component: ConversationTile,
 } as ComponentMeta<typeof ConversationTile>
 
 export const Default = () => {
-  const { client } = useContext(XmtpContext)
+  const { client } = useChat()
   if (!client) return null
   return (
     <ConversationTile
@@ -22,7 +22,7 @@ export const Default = () => {
 }
 
 export const SelectedConversation = () => {
-  const { client } = useContext(XmtpContext)
+  const { client } = useChat()
   if (!client) return null
   return (
     <ConversationTile

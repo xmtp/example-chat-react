@@ -1,6 +1,5 @@
 import React from 'react'
-import { useState, useContext, useCallback, useEffect } from 'react'
-import XmtpContext from '../../contexts/xmtp'
+import { useState, useCallback, useEffect } from 'react'
 import useLookup from '../../hooks/useLookup'
 import {
   Flex,
@@ -10,6 +9,7 @@ import {
   Input,
   Text,
 } from '@chakra-ui/react'
+import useChat from '../../hooks/useChat'
 
 type RecipientInputProps = {
   value: string | undefined
@@ -20,7 +20,7 @@ const RecipientControl = ({
   value,
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
-  const { client } = useContext(XmtpContext)
+  const { client } = useChat()
   const {
     data: { name },
   } = useLookup(value)

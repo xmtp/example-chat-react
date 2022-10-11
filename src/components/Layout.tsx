@@ -1,8 +1,7 @@
 import React, { createRef } from 'react'
 import { Conversation, RecipientControl } from './Conversation'
 import NavigationPanel from './NavigationPanel'
-import { useCallback, useContext, useEffect, useState } from 'react'
-import XmtpContext from '../contexts/xmtp'
+import { useCallback, useEffect, useState } from 'react'
 import {
   Button,
   Divider,
@@ -13,6 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { ChevronLeftIcon } from '@heroicons/react/outline'
 import useThemeBackground from '../hooks/useThemeBackground'
+import useChat from '../hooks/useChat'
 
 type Props = {
   recipient?: string
@@ -51,7 +51,7 @@ const Navbar = ({ createMode, onCreate, ...addressInputProps }: NavbarProps) =>
   )
 
 const Layout: React.FC<Props> = ({ recipient: originalRecipient }) => {
-  const { client, signer, recipient, setRecipient } = useContext(XmtpContext)
+  const { client, signer, recipient, setRecipient } = useChat()
   const [createMode, setCreateMode] = useState<boolean>(false)
   const backgroundColor = useThemeBackground()
   const ref = createRef<HTMLDivElement>()

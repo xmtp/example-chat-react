@@ -1,12 +1,11 @@
 import React from 'react'
-import { useContext } from 'react'
-import XmtpContext from '../../contexts/xmtp'
+import useChat from '../../hooks/useChat'
 import ConversationsList from '../ConversationsList'
 import Loader from '../Loader'
 import NoWalletConnectedMessage from './NoWalletConnectedMessage'
 
 const NavigationPanel = (): JSX.Element => {
-  const { client, signer } = useContext(XmtpContext)
+  const { client, signer } = useChat()
 
   if (client === undefined)
     return (
