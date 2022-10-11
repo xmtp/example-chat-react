@@ -1,6 +1,7 @@
+import { getAddress } from '@ethersproject/address'
 import { Dict } from '@chakra-ui/utils'
 import { ChakraProvider } from '@chakra-ui/react'
-import React from 'react'
+import React, { useCallback } from 'react'
 import storage from 'localforage'
 import { Reducer, useEffect, useReducer, useState } from 'react'
 import { Client } from '@xmtp/xmtp-js'
@@ -38,7 +39,7 @@ export const XmtpProvider: React.FC<XmtpProviderProps> = ({
   theme,
 }) => {
   const [client, setClient] = useState<Client | null>()
-  const [recipient, setRecipient] = useState<string>()
+  const [recipient, _setRecipient] = useState<string>()
   const [loadingConversations, setLoadingConversations] =
     useState<boolean>(true)
 
@@ -50,6 +51,14 @@ export const XmtpProvider: React.FC<XmtpProviderProps> = ({
     state.set(conversation.peerAddress, conversation)
     return state
   }, new Map())
+
+  const setRecipient = useCallback(
+    (address?: string) => {
+      const addr = address ? getAddress(address) : undefined
+      _setRecipient(addr)
+    },
+    [_setRecipient]
+  )
 
   useEffect(() => {
     if (signer) {
