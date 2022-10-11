@@ -1,8 +1,9 @@
-import { useContext, useEffect, useState } from 'react'
-import XmtpContext, { Account } from '../contexts/xmtp'
+import { useEffect, useState } from 'react'
+import { Account } from '../contexts/xmtp'
+import useChat from './useChat'
 
 const useLookup = (address?: string) => {
-  const { lookupAddress } = useContext(XmtpContext)
+  const { lookupAddress } = useChat()
   const [account, setAccount] = useState<Account>({})
   const [loading, setLoading] = useState<boolean>(false)
 

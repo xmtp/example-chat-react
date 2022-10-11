@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
-import XmtpContext from '../../contexts/xmtp'
+import React, { useEffect, useState } from 'react'
 import {
   FormControl,
   IconButton,
@@ -8,13 +7,14 @@ import {
   InputRightElement,
 } from '@chakra-ui/react'
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
+import useChat from '../../hooks/useChat'
 
 type MessageComposerProps = {
   onSend: (msg: string) => Promise<void>
 }
 
 const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
-  const { recipient } = useContext(XmtpContext)
+  const { recipient } = useChat()
   const [message, setMessage] = useState('')
 
   useEffect(() => setMessage(''), [recipient])

@@ -1,17 +1,17 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import type { Conversation, Message } from '@xmtp/xmtp-js'
 import useMessageStore from '../../hooks/useMessageStore'
-import XmtpContext from '../../contexts/xmtp'
 import NoConversationsMessage from './NoConversationsMessage'
 import ConversationTile from './ConversationTile'
 import Loader from '../Loader'
+import useChat from '../../hooks/useChat'
 
 const getLatestMessage = (messages: Message[]): Message | null =>
   messages?.length ? messages[messages.length - 1] : null
 
 const ConversationsList = (): JSX.Element => {
   const { conversations, recipient, setRecipient, loadingConversations } =
-    useContext(XmtpContext)
+    useChat()
   const { messageStore } = useMessageStore()
 
   const orderByLatestMessage = (

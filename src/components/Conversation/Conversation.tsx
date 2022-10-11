@@ -1,12 +1,12 @@
-import React, { useCallback, useContext, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import useConversation from '../../hooks/useConversation'
 import Loader from '../../components/Loader'
-import XmtpContext from '../../contexts/xmtp'
 import MessagesList from './MessagesList'
 import MessageComposer from './MessageComposer'
+import useChat from '../../hooks/useChat'
 
 const Conversation = (): JSX.Element => {
-  const { recipient } = useContext(XmtpContext)
+  const { recipient } = useChat()
   const messagesEndRef = useRef(null)
 
   const scrollToMessagesEndRef = useCallback(() => {

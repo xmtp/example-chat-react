@@ -1,6 +1,6 @@
 import type { Conversation, Message, Stream } from '@xmtp/xmtp-js'
-import { useState, useEffect, useContext } from 'react'
-import XmtpContext from '../contexts/xmtp'
+import { useState, useEffect } from 'react'
+import useChat from './useChat'
 import useMessageStore from './useMessageStore'
 
 type OnMessageCallback = () => void
@@ -9,7 +9,7 @@ const useConversation = (
   peerAddress?: string,
   onMessageCallback?: OnMessageCallback
 ) => {
-  const { client } = useContext(XmtpContext)
+  const { client } = useChat()
   const { messageStore, dispatchMessages } = useMessageStore()
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [stream, setStream] = useState<Stream<Message>>()
