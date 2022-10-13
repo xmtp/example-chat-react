@@ -73,7 +73,7 @@ const XmtpInfoPanel = ({ onConnect }: XmtpInfoPanelProps): JSX.Element => {
       headingText: 'Join our community',
       subHeadingText:
         'Talk about what you’re building or find out other projects that are building upon XMTP',
-      onClick: () => window.open('https://community.xmtp.org', '_blank'),
+      onClick: () => window.open('https://xmtp.org/community/community', '_blank'),
     },
   ]
 
