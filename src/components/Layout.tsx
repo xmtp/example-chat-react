@@ -1,4 +1,4 @@
-import React, { createRef } from 'react'
+import React, { createRef, PropsWithChildren } from 'react'
 import { Conversation, RecipientControl } from './Conversation'
 import NavigationPanel from './NavigationPanel'
 import { useCallback, useEffect, useState } from 'react'
@@ -8,49 +8,68 @@ import {
   Flex,
   Heading,
   Link,
+  Spacer,
   useDimensions,
 } from '@chakra-ui/react'
 import { ChevronLeftIcon } from '@heroicons/react/outline'
 import useThemeBackground from '../hooks/useThemeBackground'
 import useChat from '../hooks/useChat'
 
-type Props = {
+type Props = PropsWithChildren<{
   recipient?: string
-}
+}>
 
-type AddressInputProps = {
+type AddressInputProps = PropsWithChildren<{
   recipient?: string
   onCancel: () => void
   onSubmit: (address: string) => void
-}
+}>
 
-type NavbarProps = AddressInputProps & {
-  createMode: boolean
-  onCreate: () => void
-}
+type NavbarProps = PropsWithChildren<
+  AddressInputProps & {
+    createMode: boolean
+    onCreate: () => void
+  }
+>
 
-const AddressInput = ({ onCancel, onSubmit, recipient }: AddressInputProps) => (
+const AddressInput = ({
+  onCancel,
+  onSubmit,
+  recipient,
+  children,
+}: AddressInputProps) => (
   <Flex alignItems="center" padding="4">
     <Link onClick={onCancel} marginRight="2">
       <ChevronLeftIcon width="20" />
     </Link>
     <RecipientControl value={recipient} onSubmit={onSubmit} />
+    {children}
   </Flex>
 )
 
-const Navbar = ({ createMode, onCreate, ...addressInputProps }: NavbarProps) =>
+const Navbar = ({
+  createMode,
+  onCreate,
+  children,
+  ...addressInputProps
+}: NavbarProps) =>
   createMode ? (
-    <AddressInput {...addressInputProps} />
+    <AddressInput {...addressInputProps}>{children}</AddressInput>
   ) : (
     <Flex justifyContent="space-between" padding="3" alignItems="center">
       <Heading size="md">Messages</Heading>
+      <Spacer />
       <Button size="sm" onClick={onCreate}>
         + New
       </Button>
+      {children}
     </Flex>
   )
 
-const Layout: React.FC<Props> = ({ recipient: originalRecipient }) => {
+const Layout: React.FC<Props> = ({
+  recipient: originalRecipient,
+  children,
+}) => {
   const { client, signer, recipient, setRecipient } = useChat()
   const [createMode, setCreateMode] = useState<boolean>(false)
   const backgroundColor = useThemeBackground()
@@ -109,7 +128,9 @@ const Layout: React.FC<Props> = ({ recipient: originalRecipient }) => {
             onCreate={edit}
             onSubmit={selectRecipient}
             recipient={recipient}
-          />
+          >
+            {children}
+          </Navbar>
           <Divider />
           <NavigationPanel />
         </Flex>
@@ -121,7 +142,9 @@ const Layout: React.FC<Props> = ({ recipient: originalRecipient }) => {
             onCancel={reset}
             onSubmit={selectRecipient}
             recipient={recipient}
-          />
+          >
+            {children}
+          </AddressInput>
           <Divider />
           <Conversation />
         </Flex>
