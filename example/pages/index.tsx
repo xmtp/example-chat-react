@@ -1,6 +1,6 @@
 import { ChatProvider } from '@nft/chat'
 import { fetchEns, fetchLiteflow } from '../fetcher'
-import type { NextPage } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { Chat } from '@nft/chat'
 import { useCallback } from 'react'
@@ -8,6 +8,13 @@ import { useSigner, useProvider } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 
 const cache = new Map<string, Promise<{ name?: string; avatar?: string }>>()
+
+// This function is only here to test the server side rendering and may not be required by your application
+export const getServerSideProps: GetServerSideProps = async () => ({
+  props: {
+    ssr: true, // pass a random prop to make sure the server side rending is activated
+  },
+})
 
 const Home: NextPage = () => {
   const signer = useSigner()
