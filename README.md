@@ -6,7 +6,7 @@ First, you will need to get an [NPM Auth Token](https://docs.npmjs.com/using-pri
 npm install @nft/chat
 ```
 
-## Learn More
+# Learn More
 
 If you want to learn more about Lifeflow's SDK make sure to visit our [documentation](https://liteflow.gitbook.io/docs/).
 
