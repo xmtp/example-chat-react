@@ -1,3 +1,4 @@
+import { getAddress } from '@ethersproject/address'
 import React from 'react'
 import { useState, useCallback, useEffect } from 'react'
 import useLookup from '../../hooks/useLookup'
@@ -33,12 +34,12 @@ const RecipientControl = ({
 
   const handleInputChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const address = e.target.value
-      if (!address.startsWith('0x'))
+      if (!e.target.value.startsWith('0x'))
         return setError(new Error('Please enter a valid wallet address'))
-      if (address.length !== 42)
+      if (e.target.value.length !== 42)
         return setError(new Error('Please enter a valid wallet address'))
 
+      const address = getAddress(e.target.value)
       const onNetwork = client ? await client.canMessage(address) : false
       if (!onNetwork)
         return setError(new Error('Recipient is not on the XMTP network'))
