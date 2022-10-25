@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
 import {
+  chakra,
   FormControl,
   IconButton,
   Input,
@@ -7,6 +7,7 @@ import {
   InputRightElement,
 } from '@chakra-ui/react'
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
+import React, { useEffect, useState } from 'react'
 import useChat from '../../hooks/useChat'
 
 type MessageComposerProps = {
@@ -32,7 +33,7 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
   }
 
   return (
-    <form onSubmit={onSubmit}>
+    <chakra.form onSubmit={onSubmit} px={3} py={4}>
       <FormControl>
         <InputGroup>
           <Input
@@ -47,13 +48,13 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
           <InputRightElement>
             <IconButton size="sm" type="submit" aria-label="Send">
               <PaperAirplaneIcon
-                style={{ transform: 'rotateZ(90deg) scale(0.8)' }}
+                style={{ transform: 'rotateZ(90deg) scale(0.6)' }}
               />
             </IconButton>
           </InputRightElement>
         </InputGroup>
       </FormControl>
-    </form>
+    </chakra.form>
   )
 }
 

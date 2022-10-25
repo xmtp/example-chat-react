@@ -1,10 +1,10 @@
+import { Divider, Flex, Text } from '@chakra-ui/react'
 import type { Message } from '@xmtp/xmtp-js'
 import React, { Fragment, MutableRefObject } from 'react'
 import Emoji from 'react-emoji-render'
-import Avatar from '../Avatar'
 import { formatDate, formatTime, isOnSameDay } from '../../helpers'
 import Address from '../Address'
-import { Flex, Divider, Text } from '@chakra-ui/react'
+import Avatar from '../Avatar'
 
 export type MessageListProps = {
   messages: Message[]
@@ -60,7 +60,8 @@ const MessagesList = ({
       width="full"
       direction="column"
       alignSelf="end"
-      padding="4"
+      px={3}
+      py={4}
       grow={1}
       overflowY="auto"
     >

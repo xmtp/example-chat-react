@@ -1,7 +1,3 @@
-import React, { createRef, PropsWithChildren } from 'react'
-import { Conversation, RecipientControl } from './Conversation'
-import NavigationPanel from './NavigationPanel'
-import { useCallback, useEffect, useState } from 'react'
 import {
   Button,
   Divider,
@@ -12,8 +8,17 @@ import {
   useDimensions,
 } from '@chakra-ui/react'
 import { ChevronLeftIcon } from '@heroicons/react/outline'
-import useThemeBackground from '../hooks/useThemeBackground'
+import React, {
+  createRef,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 import useChat from '../hooks/useChat'
+import useThemeBackground from '../hooks/useThemeBackground'
+import { Conversation, RecipientControl } from './Conversation'
+import NavigationPanel from './NavigationPanel'
 
 type Props = PropsWithChildren<{
   recipient?: string
@@ -38,7 +43,7 @@ const AddressInput = ({
   recipient,
   children,
 }: AddressInputProps) => (
-  <Flex alignItems="center" padding="4">
+  <Flex alignItems="center" paddingX="3" paddingY="4" overflow="hidden">
     <Link onClick={onCancel} marginRight="2">
       <ChevronLeftIcon width="20" />
     </Link>

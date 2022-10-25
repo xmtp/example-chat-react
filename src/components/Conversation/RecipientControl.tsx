@@ -1,7 +1,3 @@
-import { getAddress } from '@ethersproject/address'
-import React from 'react'
-import { useState, useCallback, useEffect } from 'react'
-import useLookup from '../../hooks/useLookup'
 import {
   Flex,
   FormControl,
@@ -10,7 +6,11 @@ import {
   Input,
   Text,
 } from '@chakra-ui/react'
+import { getAddress } from '@ethersproject/address'
+import React, { useCallback, useEffect, useState } from 'react'
+import { shortAddress } from '../../helpers'
 import useChat from '../../hooks/useChat'
+import useLookup from '../../hooks/useLookup'
 
 type RecipientInputProps = {
   value: string | undefined
@@ -51,7 +51,7 @@ const RecipientControl = ({
   )
 
   return (
-    <FormControl isInvalid={!!error}>
+    <FormControl isInvalid={!!error} overflow="hidden">
       <Flex alignItems="center">
         <FormLabel htmlFor="recipient" marginBottom={0}>
           To:
@@ -65,7 +65,9 @@ const RecipientControl = ({
             autoFocus
           />
         ) : (
-          <Text>{name || value}</Text>
+          <Text title={name || value} isTruncated>
+            {name || shortAddress(value)}
+          </Text>
         )}
       </Flex>
       {error && <FormErrorMessage>{error.message}</FormErrorMessage>}

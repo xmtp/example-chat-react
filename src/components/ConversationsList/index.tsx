@@ -1,10 +1,10 @@
-import React from 'react'
 import type { Conversation, Message } from '@xmtp/xmtp-js'
-import useMessageStore from '../../hooks/useMessageStore'
-import NoConversationsMessage from './NoConversationsMessage'
-import ConversationTile from './ConversationTile'
-import Loader from '../Loader'
+import React from 'react'
 import useChat from '../../hooks/useChat'
+import useMessageStore from '../../hooks/useMessageStore'
+import Loader from '../Loader'
+import ConversationTile from './ConversationTile'
+import NoConversationsMessage from './NoConversationsMessage'
 
 const getLatestMessage = (messages: Message[]): Message | null =>
   messages?.length ? messages[messages.length - 1] : null

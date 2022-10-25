@@ -1,11 +1,11 @@
-import React from 'react'
-import Address from '../Address'
-import type { Conversation } from '@xmtp/xmtp-js'
-import { truncate, formatDate } from '../../helpers'
-import useConversation from '../../hooks/useConversation'
-import Avatar from '../Avatar'
-import Emoji from 'react-emoji-render'
 import { Divider, Flex, LinkBox, LinkOverlay, Text } from '@chakra-ui/react'
+import type { Conversation } from '@xmtp/xmtp-js'
+import React from 'react'
+import Emoji from 'react-emoji-render'
+import { formatDate, truncate } from '../../helpers'
+import useConversation from '../../hooks/useConversation'
+import Address from '../Address'
+import Avatar from '../Avatar'
 
 type ConversationTileProps = {
   conversation: Conversation
@@ -25,7 +25,7 @@ const ConversationTile = ({
 
   return (
     <LinkBox key={conversation.peerAddress}>
-      <Flex width="full" paddingX={2} paddingY={4}>
+      <Flex width="full" paddingX={3} paddingY={4}>
         <Avatar peerAddress={conversation.peerAddress} />
         <Flex direction="column" width="full" marginLeft="2">
           <Flex justifyContent="space-between" alignItems="center" width="full">

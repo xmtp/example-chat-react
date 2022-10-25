@@ -17,9 +17,12 @@ export const Loader = ({
     direction="column"
     textAlign="center"
     marginTop="10"
+    p={4}
   >
     <Spinner size="lg" />
-    <Heading marginY="4">{headingText}</Heading>
+    <Heading size="lg" marginY="4">
+      {headingText}
+    </Heading>
     {subHeadingText && <Heading size="sm">{subHeadingText}</Heading>}
   </Flex>
 )
