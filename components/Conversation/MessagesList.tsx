@@ -1,4 +1,4 @@
-import { Message } from '@xmtp/xmtp-js'
+import type { DecodedMessage } from '@xmtp/xmtp-js'
 import React, { MutableRefObject } from 'react'
 import Emoji from 'react-emoji-render'
 import Avatar from '../Avatar'
@@ -6,12 +6,12 @@ import { formatTime } from '../../helpers'
 import AddressPill from '../AddressPill'
 
 export type MessageListProps = {
-  messages: Message[]
+  messages: DecodedMessage[]
   messagesEndRef: MutableRefObject<null>
 }
 
 type MessageTileProps = {
-  message: Message
+  message: DecodedMessage
 }
 
 const isOnSameDay = (d1?: Date, d2?: Date): boolean => {
@@ -82,7 +82,7 @@ const MessagesList = ({
             {messages && messages.length ? (
               <ConversationBeginningNotice />
             ) : null}
-            {messages?.map((msg: Message) => {
+            {messages?.map((msg) => {
               const dateHasChanged = !isOnSameDay(lastMessageDate, msg.sent)
               lastMessageDate = msg.sent
               return (
