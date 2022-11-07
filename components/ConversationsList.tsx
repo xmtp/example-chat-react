@@ -4,7 +4,7 @@ import { ChatIcon } from '@heroicons/react/outline'
 import Address from './Address'
 import { useRouter } from 'next/router'
 import { Conversation } from '@xmtp/xmtp-js'
-import { Message } from '@xmtp/xmtp-js'
+import { DecodedMessage } from '@xmtp/xmtp-js'
 import {
   classNames,
   truncate,
@@ -22,7 +22,7 @@ type ConversationTileProps = {
   onClick?: () => void
 }
 
-const getLatestMessage = (messages: Message[]): Message | null =>
+const getLatestMessage = (messages: DecodedMessage[]): DecodedMessage | null =>
   messages?.length ? messages[messages.length - 1] : null
 
 const ConversationTile = ({
