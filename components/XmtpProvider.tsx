@@ -1,16 +1,16 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { Client, Conversation, Message } from '@xmtp/xmtp-js'
+import { Client, Conversation, DecodedMessage } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
-import { getEnv } from '../helpers'
+import { getEnv, getAppVersion } from '../helpers'
 import { XmtpContext, XmtpContextType } from '../contexts/xmtp'
 import { WalletContext } from '../contexts/wallet'
 
 export const XmtpProvider: React.FC = ({ children }) => {
   const [client, setClient] = useState<Client | null>()
   const { signer, address: walletAddress } = useContext(WalletContext)
-  const [convoMessages, setConvoMessages] = useState<Map<string, Message[]>>(
-    new Map()
-  )
+  const [convoMessages, setConvoMessages] = useState<
+    Map<string, DecodedMessage[]>
+  >(new Map())
   const [loadingConversations, setLoadingConversations] =
     useState<boolean>(true)
   const [conversations, setConversations] = useState<Map<string, Conversation>>(
@@ -21,7 +21,12 @@ export const XmtpProvider: React.FC = ({ children }) => {
     async (wallet: Signer) => {
       if (wallet && !client) {
         try {
-          setClient(await Client.create(wallet, { env: getEnv() }))
+          setClient(
+            await Client.create(wallet, {
+              env: getEnv(),
+              appVersion: getAppVersion(),
+            })
+          )
         } catch (e) {
           console.error(e)
           setClient(null)
@@ -47,7 +52,9 @@ export const XmtpProvider: React.FC = ({ children }) => {
     const listConversations = async () => {
       console.log('Listing conversations')
       setLoadingConversations(true)
-      const convos = await client.conversations.list()
+      const convos = (await client.conversations.list()).filter(
+        (conversation) => !conversation.context?.conversationId
+      )
       Promise.all(
         convos.map(async (convo) => {
           if (convo.peerAddress !== walletAddress) {
@@ -68,7 +75,10 @@ export const XmtpProvider: React.FC = ({ children }) => {
     const streamConversations = async () => {
       const stream = await client.conversations.stream()
       for await (const convo of stream) {
-        if (convo.peerAddress !== walletAddress) {
+        if (
+          !convo.context?.conversationId &&
+          convo.peerAddress !== walletAddress
+        ) {
           const messages = await convo.messages()
           convoMessages.set(convo.peerAddress, messages)
           setConvoMessages(new Map(convoMessages))
