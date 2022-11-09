@@ -1,22 +1,24 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Client, Conversation, Message } from '@xmtp/xmtp-js'
+import { Client } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
 import { getEnv } from '../helpers'
 import { XmtpContext, XmtpContextType } from '../contexts/xmtp'
 import { useAppStore } from '../store/app'
 
 export const XmtpProvider: React.FC = ({ children }) => {
-  const walletAddress = useAppStore((state = state.address))
-  const signer = useAppStore((state = state.signer))
-  const client = useAppStore((state = state.client))
-  const setClient = useAppStore((state = state.setClient))
-  const convoMessages = useAppStore((state = state.convoMessages))
-  const setConvoMessages = useAppStore((state = state.setConvoMessages))
-  const conversations = useAppStore((state = state.conversations))
-  const setConversations = useAppStore((state = state.setConversations))
-  const loadingConversations = useAppStore((state = state.loadingConversations))
+  const walletAddress = useAppStore((state) => state.address)
+  const signer = useAppStore((state) => state.signer)
+  const client = useAppStore((state) => state.client)
+  const setClient = useAppStore((state) => state.setClient)
+  const convoMessages = useAppStore((state) => state.convoMessages)
+  const setConvoMessages = useAppStore((state) => state.setConvoMessages)
+  const conversations = useAppStore((state) => state.conversations)
+  const setConversations = useAppStore((state) => state.setConversations)
+  const loadingConversations = useAppStore(
+    (state) => state.loadingConversations
+  )
   const setLoadingConversations = useAppStore(
-    (state = state.setLoadingConversations)
+    (state) => state.setLoadingConversations
   )
 
   const initClient = useCallback(

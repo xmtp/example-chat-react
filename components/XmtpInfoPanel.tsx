@@ -53,7 +53,7 @@ const InfoRow = ({
 )
 
 const XmtpInfoPanel = ({ onConnect }: XmtpInfoPanelProps): JSX.Element => {
-  const walletAddress = useAppStore((state = state.address))
+  const walletAddress = useAppStore((state) => state.address)
   const InfoRows = [
     {
       icon: <LinkIcon />,

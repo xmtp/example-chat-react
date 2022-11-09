@@ -13,8 +13,8 @@ type ConnectButtonProps = {
 }
 
 const NavigationPanel = ({ onConnect }: NavigationPanelProps): JSX.Element => {
-  const walletAddress = useAppStore((state = state.address))
-  const client = useAppStore((state = state.client))
+  const walletAddress = useAppStore((state) => state.address)
+  const client = useAppStore((state) => state.client)
 
   return (
     <div className="flex-grow flex flex-col h-[82vh] overflow-y-auto">
@@ -64,8 +64,10 @@ const ConnectButton = ({ onConnect }: ConnectButtonProps): JSX.Element => {
 }
 
 const ConversationsPanel = (): JSX.Element => {
-  const client = useAppStore((state = state.client))
-  const loadingConversations = useAppStore((state = state.loadingConversations))
+  const client = useAppStore((state) => state.client)
+  const loadingConversations = useAppStore(
+    (state) => state.loadingConversations
+  )
 
   if (client === undefined) {
     return (

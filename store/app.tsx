@@ -12,7 +12,7 @@ interface AppState {
   conversations: Map<string, Conversation> | null
   setConversations: (conversations: Map<string, Conversation>) => void
   loadingConversations: boolean
-  setLoadingConversation: (loading: boolean) => void
+  setLoadingConversations: (loadingConversations: boolean) => void
   convoMessages: Map<string, Message[]>
   setConvoMessages: (value: Map<string, Message[]>) => void
 }
@@ -29,7 +29,8 @@ export const useAppStore = create<AppState>((set) => ({
   setClient: (client: Client | undefined | null) => set(() => ({ client })),
   setConversations: (conversations: Map<string, Conversation>) =>
     set(() => ({ conversations })),
-  setLoadingConversation: (loading: boolean) => set(() => ({ loading })),
+  setLoadingConversations: (loadingConversations: boolean) =>
+    set(() => ({ loadingConversations })),
   setConvoMessages: (convoMessages: Map<string, Message[]>) =>
     set(() => ({ convoMessages })),
 }))

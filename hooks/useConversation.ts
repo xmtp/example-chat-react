@@ -14,10 +14,10 @@ const useConversation = (
   onMessageCallback?: OnMessageCallback
 ) => {
   const { lookupAddress } = useContext(WalletContext)
-  const walletAddress = useAppStore((state = state.address))
-  const client = useAppStore((state = state.client))
-  const convoMessages = useAppStore((state = state.convoMessages))
-  const setConvoMessages = useAppStore((state = state.setConvoMessages))
+  const walletAddress = useAppStore((state) => state.address)
+  const client = useAppStore((state) => state.client)
+  const convoMessages = useAppStore((state) => state.convoMessages)
+  const setConvoMessages = useAppStore((state) => state.setConvoMessages)
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [loading] = useState<boolean>(false)
   const [browserVisible, setBrowserVisible] = useState<boolean>(true)

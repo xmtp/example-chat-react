@@ -31,8 +31,10 @@ const ConversationTile = ({
   isSelected,
   onClick,
 }: ConversationTileProps): JSX.Element | null => {
-  const convoMessages = useAppStore((state = state.convoMessages))
-  const loadingConversations = useAppStore((state = state.loadingConversations))
+  const convoMessages = useAppStore((state) => state.convoMessages)
+  const loadingConversations = useAppStore(
+    (state) => state.loadingConversations
+  )
 
   if (!convoMessages.get(conversation.peerAddress)?.length) {
     return null
@@ -106,8 +108,8 @@ const ConversationTile = ({
 
 const ConversationsList = (): JSX.Element => {
   const router = useRouter()
-  const conversations = useAppStore((state = state.conversations))
-  const convoMessages = useAppStore((state = state.convoMessages))
+  const conversations = useAppStore((state) => state.conversations)
+  const convoMessages = useAppStore((state) => state.convoMessages)
 
   const { resolveName } = useContext(WalletContext)
 

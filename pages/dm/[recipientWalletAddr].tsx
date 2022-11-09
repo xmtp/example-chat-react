@@ -5,10 +5,11 @@ import { useEffect, useState } from 'react'
 import { Conversation } from '../../components/Conversation'
 import { checkPath } from '../../helpers'
 import { WalletContext } from '../../contexts/wallet'
+import { useAppStore } from '../../store/app'
 
 const ConversationPage: NextPage = () => {
   const router = useRouter()
-  const client = useAppStore((state = state.client))
+  const client = useAppStore((state) => state.client)
   const { resolveName } = useContext(WalletContext)
   const recipientWalletAddr = router.query.recipientWalletAddr as string
   const [canMessageAddr, setCanMessageAddr] = useState<boolean | undefined>(

@@ -2,8 +2,8 @@ import { useState, useEffect, useContext, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import AddressInput from '../AddressInput'
 import { WalletContext } from '../../contexts/wallet'
-import XmtpContext from '../../contexts/xmtp'
 import { checkIfPathIsEns } from '../../helpers'
+import { useAppStore } from '../../store/app'
 
 type RecipientInputProps = {
   recipientWalletAddress: string | undefined
@@ -23,7 +23,7 @@ const RecipientControl = ({
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
   const { resolveName, lookupAddress } = useContext(WalletContext)
-  const client = useAppStore((state = state.client))
+  const client = useAppStore((state) => state.client)
   const router = useRouter()
   const [recipientInputMode, setRecipientInputMode] = useState(
     RecipientInputMode.InvalidEntry

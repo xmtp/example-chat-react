@@ -65,10 +65,10 @@ const ConversationLayout: React.FC = ({ children }) => {
 }
 
 const Layout: React.FC = ({ children }) => {
-  const client = useAppStore((state = state.client))
+  const client = useAppStore((state) => state.client)
   const { initClient } = useContext(XmtpContext)
-  const walletAddress = useAppStore((state = state.address))
-  const signer = useAppStore((state = state.signer))
+  const walletAddress = useAppStore((state) => state.address)
+  const signer = useAppStore((state) => state.signer)
 
   const { connect: connectWallet, disconnect: disconnectWallet } =
     useContext(WalletContext)

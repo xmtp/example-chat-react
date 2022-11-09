@@ -8,7 +8,7 @@ type addressPillProps = {
 }
 
 const AddressPill = ({ address }: addressPillProps): JSX.Element => {
-  const walletAddress = useAppStore((state = state.address))
+  const walletAddress = useAppStore((state) => state.address)
   const userIsSender = address === walletAddress
   return (
     <Address

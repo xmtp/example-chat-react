@@ -23,8 +23,10 @@ const Conversation = ({
     scrollToMessagesEndRef
   )
 
-  const convoMessages = useAppStore((state = state.convoMessages))
-  const loadingConversations = useAppStore((state = state.loadingConversations))
+  const convoMessages = useAppStore((state) => state.convoMessages)
+  const loadingConversations = useAppStore(
+    (state) => state.loadingConversations
+  )
 
   const messages = useMemo(
     () => convoMessages.get(recipientWalletAddr) ?? [],
