@@ -1,6 +1,6 @@
-import React, { useContext } from 'react'
-import { WalletContext } from '../contexts/wallet'
+import React from 'react'
 import { classNames } from '../helpers'
+import { useAppStore } from '../store/app'
 import Address from './Address'
 
 type addressPillProps = {
@@ -8,7 +8,7 @@ type addressPillProps = {
 }
 
 const AddressPill = ({ address }: addressPillProps): JSX.Element => {
-  const { address: walletAddress } = useContext(WalletContext)
+  const walletAddress = useAppStore((state = state.address))
   const userIsSender = address === walletAddress
   return (
     <Address

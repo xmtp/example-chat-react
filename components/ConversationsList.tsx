@@ -15,6 +15,7 @@ import {
 import Avatar from './Avatar'
 import XmtpContext from '../contexts/xmtp'
 import { WalletContext } from '../contexts/wallet'
+import { useAppStore } from '../store/app'
 
 type ConversationTileProps = {
   conversation: Conversation
@@ -30,7 +31,8 @@ const ConversationTile = ({
   isSelected,
   onClick,
 }: ConversationTileProps): JSX.Element | null => {
-  const { convoMessages, loadingConversations } = useContext(XmtpContext)
+  const convoMessages = useAppStore((state = state.convoMessages))
+  const loadingConversations = useAppStore((state = state.loadingConversations))
 
   if (!convoMessages.get(conversation.peerAddress)?.length) {
     return null
@@ -104,7 +106,9 @@ const ConversationTile = ({
 
 const ConversationsList = (): JSX.Element => {
   const router = useRouter()
-  const { conversations, convoMessages } = useContext(XmtpContext)
+  const conversations = useAppStore((state = state.conversations))
+  const convoMessages = useAppStore((state = state.convoMessages))
+
   const { resolveName } = useContext(WalletContext)
 
   const orderByLatestMessage = (
