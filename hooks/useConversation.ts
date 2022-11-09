@@ -1,4 +1,4 @@
-import { Conversation, Message, Stream } from '@xmtp/xmtp-js'
+import { Conversation, DecodedMessage, Stream } from '@xmtp/xmtp-js'
 import { useState, useEffect, useContext } from 'react'
 import { WalletContext } from '../contexts/wallet'
 import { checkIfPathIsEns, shortAddress, truncate } from '../helpers'
@@ -6,7 +6,7 @@ import { useAppStore } from '../store/app'
 
 type OnMessageCallback = () => void
 
-let stream: Stream<Message>
+let stream: Stream<DecodedMessage>
 let latestMsgId: string
 
 const useConversation = (
