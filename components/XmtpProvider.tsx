@@ -58,7 +58,7 @@ export const XmtpProvider: React.FC = ({ children }) => {
             const messages = await convo.messages()
             convoMessages.set(convo.peerAddress, messages)
             setConvoMessages(new Map(convoMessages))
-            conversations.set(convo.peerAddress, convo)
+            conversations?.set(convo.peerAddress, convo)
             setConversations(new Map(conversations))
           }
         })
