@@ -9,8 +9,8 @@ interface AppState {
   setAddress: (address: string | undefined) => void
   client: Client | undefined | null
   setClient: (client: Client | undefined | null) => void
-  conversations: Map<string, Conversation> | null
-  setConversations: (conversations: Map<string, Conversation> | null) => void
+  conversations: Map<string, Conversation>
+  setConversations: (conversations: Map<string, Conversation>) => void
   loadingConversations: boolean
   setLoadingConversations: (loadingConversations: boolean) => void
   convoMessages: Map<string, DecodedMessage[]>
@@ -23,11 +23,11 @@ export const useAppStore = create<AppState>((set) => ({
   setSigner: (signer: Signer | undefined) => set(() => ({ signer })),
   setAddress: (address: string | undefined) => set(() => ({ address })),
   client: undefined,
-  conversations: null,
+  conversations: new Map(),
   loadingConversations: false,
   convoMessages: new Map(),
   setClient: (client: Client | undefined | null) => set(() => ({ client })),
-  setConversations: (conversations: Map<string, Conversation> | null) =>
+  setConversations: (conversations: Map<string, Conversation>) =>
     set(() => ({ conversations })),
   setLoadingConversations: (loadingConversations: boolean) =>
     set(() => ({ loadingConversations })),

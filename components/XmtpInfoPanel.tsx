@@ -7,8 +7,6 @@ import {
   ChevronRightIcon,
   ArrowSmRightIcon,
 } from '@heroicons/react/solid'
-import { WalletContext } from '../contexts/wallet'
-import { useContext } from 'react'
 import { useAppStore } from '../store/app'
 
 type XmtpInfoRowProps = {

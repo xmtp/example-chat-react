@@ -13,7 +13,6 @@ import {
   checkIfPathIsEns,
 } from '../helpers'
 import Avatar from './Avatar'
-import XmtpContext from '../contexts/xmtp'
 import { WalletContext } from '../contexts/wallet'
 import { useAppStore } from '../store/app'
 
