@@ -7,6 +7,7 @@ import React, {
 } from 'react'
 import { WalletContext } from '../contexts/wallet'
 import { checkIfPathIsEns, classNames } from '../helpers'
+import { useAppStore } from '../store/app'
 
 type AddressInputProps = {
   recipientWalletAddress?: string
@@ -25,7 +26,8 @@ const AddressInput = ({
   placeholder,
   onInputChange,
 }: AddressInputProps): JSX.Element => {
-  const { address: walletAddress, lookupAddress } = useContext(WalletContext)
+  const { lookupAddress } = useContext(WalletContext)
+  const walletAddress = useAppStore((state) => state.address)
   const inputElement = useRef(null)
   const [value, setValue] = useState<string>(recipientWalletAddress || '')
 
