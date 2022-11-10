@@ -1,4 +1,3 @@
-import XmtpProvider from './XmtpProvider'
 import Layout from '../components/Layout'
 import { WalletProvider } from './WalletProvider'
 
@@ -9,9 +8,7 @@ type AppProps = {
 function App({ children }: AppProps) {
   return (
     <WalletProvider>
-      <XmtpProvider>
-        <Layout>{children}</Layout>
-      </XmtpProvider>
+      <Layout>{children}</Layout>
     </WalletProvider>
   )
 }
