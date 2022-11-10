@@ -10,8 +10,8 @@ import UserMenu from './UserMenu'
 import BackArrow from './BackArrow'
 import { useCallback, useContext } from 'react'
 import { WalletContext } from '../contexts/wallet'
-import XmtpContext from '../contexts/xmtp'
 import { useAppStore } from '../store/app'
+import useInitXmtpClient from '../hooks/useInitXmtpClient'
 
 const NavigationColumnLayout: React.FC = ({ children }) => (
   <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
@@ -66,7 +66,7 @@ const ConversationLayout: React.FC = ({ children }) => {
 
 const Layout: React.FC = ({ children }) => {
   const client = useAppStore((state) => state.client)
-  const { initClient } = useContext(XmtpContext)
+  const { initClient } = useInitXmtpClient()
   const walletAddress = useAppStore((state) => state.address)
   const signer = useAppStore((state) => state.signer)
 

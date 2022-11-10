@@ -1,9 +1,7 @@
-import { useCallback, useEffect, useState } from 'react'
-import { Client } from '@xmtp/xmtp-js'
-import { Signer } from 'ethers'
-import { getEnv } from '../helpers'
-import { XmtpContext, XmtpContextType } from '../contexts/xmtp'
+import { useEffect } from 'react'
+import { XmtpContext } from '../contexts/xmtp'
 import { useAppStore } from '../store/app'
+import useInitXmtpClient from '../hooks/useInitXmtpClient'
 
 export const XmtpProvider: React.FC = ({ children }) => {
   const walletAddress = useAppStore((state) => state.address)
@@ -14,26 +12,10 @@ export const XmtpProvider: React.FC = ({ children }) => {
   const setConvoMessages = useAppStore((state) => state.setConvoMessages)
   const conversations = useAppStore((state) => state.conversations)
   const setConversations = useAppStore((state) => state.setConversations)
-  const loadingConversations = useAppStore(
-    (state) => state.loadingConversations
-  )
   const setLoadingConversations = useAppStore(
     (state) => state.setLoadingConversations
   )
-
-  const initClient = useCallback(
-    async (wallet: Signer) => {
-      if (wallet && !client) {
-        try {
-          setClient(await Client.create(wallet, { env: getEnv() }))
-        } catch (e) {
-          console.error(e)
-          setClient(null)
-        }
-      }
-    },
-    [client]
-  )
+  const { initClient } = useInitXmtpClient()
 
   const disconnect = () => {
     setClient(undefined)
@@ -85,21 +67,7 @@ export const XmtpProvider: React.FC = ({ children }) => {
     streamConversations()
   }, [client])
 
-  const [providerState, setProviderState] = useState<XmtpContextType>({
-    initClient,
-  })
-
-  useEffect(() => {
-    setProviderState({
-      initClient,
-    })
-  }, [client, initClient, loadingConversations, conversations, convoMessages])
-
-  return (
-    <XmtpContext.Provider value={providerState}>
-      {children}
-    </XmtpContext.Provider>
-  )
+  return <XmtpContext.Provider value={{}}>{children}</XmtpContext.Provider>
 }
 
 export default XmtpProvider
