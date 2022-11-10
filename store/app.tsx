@@ -4,8 +4,8 @@ import create from 'zustand'
 
 interface AppState {
   signer: Signer | undefined
-  address: string | undefined
   setSigner: (signer: Signer | undefined) => void
+  address: string | undefined
   setAddress: (address: string | undefined) => void
   client: Client | undefined | null
   setClient: (client: Client | undefined | null) => void
@@ -19,18 +19,18 @@ interface AppState {
 
 export const useAppStore = create<AppState>((set) => ({
   signer: undefined,
-  address: undefined,
   setSigner: (signer: Signer | undefined) => set(() => ({ signer })),
+  address: undefined,
   setAddress: (address: string | undefined) => set(() => ({ address })),
   client: undefined,
-  conversations: new Map(),
-  loadingConversations: false,
-  convoMessages: new Map(),
   setClient: (client: Client | undefined | null) => set(() => ({ client })),
+  conversations: new Map(),
   setConversations: (conversations: Map<string, Conversation>) =>
     set(() => ({ conversations })),
+  loadingConversations: false,
   setLoadingConversations: (loadingConversations: boolean) =>
     set(() => ({ loadingConversations })),
+  convoMessages: new Map(),
   setConvoMessages: (convoMessages: Map<string, DecodedMessage[]>) =>
     set(() => ({ convoMessages })),
 }))
