@@ -29,7 +29,7 @@ const useWalletProvider = () => {
       return cachedResolveName.get(name)
     }
 
-    const { chainId } = await provider?.getNetwork()
+    const { chainId } = (await provider?.getNetwork()) ?? 0
 
     if (chainId !== ETH_CHAIN_ID) {
       return undefined
@@ -43,7 +43,7 @@ const useWalletProvider = () => {
     if (cachedLookupAddress.has(address)) {
       return cachedLookupAddress.get(address)
     }
-    const { chainId } = await provider?.getNetwork()
+    const { chainId } = (await provider?.getNetwork()) ?? 0
 
     if (chainId !== ETH_CHAIN_ID) {
       return undefined
