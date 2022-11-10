@@ -18,10 +18,15 @@ export const useListConversations = () => {
     const listConversations = async () => {
       console.log('Listing conversations')
       setLoadingConversations(true)
-      const convos = await client.conversations.list()
+      const convos = (await client.conversations.list()).filter(
+        (conversation) => !conversation.context?.conversationId
+      )
       Promise.all(
         convos.map(async (convo) => {
-          if (convo.peerAddress !== walletAddress) {
+          if (
+            !convo.context?.conversationId &&
+            convo.peerAddress !== walletAddress
+          ) {
             const messages = await convo.messages()
             convoMessages.set(convo.peerAddress, messages)
             setConvoMessages(new Map(convoMessages))

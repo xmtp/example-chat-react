@@ -1,9 +1,9 @@
-import { useState, useEffect, useContext, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import AddressInput from '../AddressInput'
-import { WalletContext } from '../../contexts/wallet'
 import { checkIfPathIsEns } from '../../helpers'
 import { useAppStore } from '../../store/app'
+import useWalletProvider from '../../hooks/useWalletProvider'
 
 type RecipientInputProps = {
   recipientWalletAddress: string | undefined
@@ -22,7 +22,7 @@ const RecipientControl = ({
   recipientWalletAddress,
   onSubmit,
 }: RecipientInputProps): JSX.Element => {
-  const { resolveName, lookupAddress } = useContext(WalletContext)
+  const { resolveName, lookupAddress } = useWalletProvider()
   const client = useAppStore((state) => state.client)
   const router = useRouter()
   const [recipientInputMode, setRecipientInputMode] = useState(

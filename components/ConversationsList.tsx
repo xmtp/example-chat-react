@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { ChatIcon } from '@heroicons/react/outline'
 import Address from './Address'
@@ -13,8 +13,8 @@ import {
   checkIfPathIsEns,
 } from '../helpers'
 import Avatar from './Avatar'
-import { WalletContext } from '../contexts/wallet'
 import { useAppStore } from '../store/app'
+import useWalletProvider from '../hooks/useWalletProvider'
 
 type ConversationTileProps = {
   conversation: Conversation
@@ -110,7 +110,7 @@ const ConversationsList = (): JSX.Element => {
   const conversations = useAppStore((state) => state.conversations)
   const convoMessages = useAppStore((state) => state.convoMessages)
 
-  const { resolveName } = useContext(WalletContext)
+  const { resolveName } = useWalletProvider()
 
   const orderByLatestMessage = (
     convoA: Conversation,

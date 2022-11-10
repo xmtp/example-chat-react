@@ -1,16 +1,11 @@
 import Layout from '../components/Layout'
-import { WalletProvider } from './WalletProvider'
 
 type AppProps = {
   children?: React.ReactNode
 }
 
 function App({ children }: AppProps) {
-  return (
-    <WalletProvider>
-      <Layout>{children}</Layout>
-    </WalletProvider>
-  )
+  return <Layout>{children}</Layout>
 }
 
 export default App

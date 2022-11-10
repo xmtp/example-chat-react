@@ -8,11 +8,11 @@ import NavigationPanel from './NavigationPanel'
 import XmtpInfoPanel from './XmtpInfoPanel'
 import UserMenu from './UserMenu'
 import BackArrow from './BackArrow'
-import { useCallback, useContext } from 'react'
-import { WalletContext } from '../contexts/wallet'
+import { useCallback } from 'react'
 import { useAppStore } from '../store/app'
 import useInitXmtpClient from '../hooks/useInitXmtpClient'
 import useListConversations from '../hooks/useListConversations'
+import useWalletProvider from '../hooks/useWalletProvider'
 
 const NavigationColumnLayout: React.FC = ({ children }) => (
   <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
@@ -73,7 +73,7 @@ const Layout: React.FC = ({ children }) => {
   const signer = useAppStore((state) => state.signer)
 
   const { connect: connectWallet, disconnect: disconnectWallet } =
-    useContext(WalletContext)
+    useWalletProvider()
 
   const handleDisconnect = useCallback(async () => {
     await disconnectWallet()
