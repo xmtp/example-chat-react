@@ -29,9 +29,9 @@ const useWalletProvider = () => {
       return cachedResolveName.get(name)
     }
 
-    const { chainId } = (await provider?.getNetwork()) ?? 0
+    const { chainId } = (await provider?.getNetwork()) || {}
 
-    if (chainId !== ETH_CHAIN_ID) {
+    if (Number(chainId) !== ETH_CHAIN_ID) {
       return undefined
     }
     const address = (await provider?.resolveName(name)) || undefined
@@ -43,9 +43,9 @@ const useWalletProvider = () => {
     if (cachedLookupAddress.has(address)) {
       return cachedLookupAddress.get(address)
     }
-    const { chainId } = (await provider?.getNetwork()) ?? 0
+    const { chainId } = (await provider?.getNetwork()) || {}
 
-    if (chainId !== ETH_CHAIN_ID) {
+    if (Number(chainId) !== ETH_CHAIN_ID) {
       return undefined
     }
 

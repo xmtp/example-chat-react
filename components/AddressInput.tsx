@@ -42,12 +42,10 @@ const AddressInput = ({
       if (!lookupAddress) return
       if (recipientWalletAddress && !checkIfPathIsEns(recipientWalletAddress)) {
         const name = await lookupAddress(recipientWalletAddress)
-        setValue(name || recipientWalletAddress)
+        name && setValue(name)
       } else if (value.startsWith('0x') && value.length === 42) {
         const name = await lookupAddress(value)
-        if (name) {
-          setValue(name)
-        }
+        name && setValue(name)
       }
     }
     setLookupValue()
