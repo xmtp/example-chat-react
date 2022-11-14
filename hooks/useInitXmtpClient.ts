@@ -1,6 +1,6 @@
 import { Client } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { getEnv } from '../helpers'
 import { useAppStore } from '../store/app'
 
@@ -10,6 +10,7 @@ const useInitXmtpClient = () => {
   const setClient = useAppStore((state) => state.setClient)
   const setConvoMessages = useAppStore((state) => state.setConvoMessages)
   const setConversations = useAppStore((state) => state.setConversations)
+  const [isRequestPending, setIsRequestPending] = useState(false)
 
   const disconnect = () => {
     setClient(undefined)
@@ -21,10 +22,14 @@ const useInitXmtpClient = () => {
     async (wallet: Signer) => {
       if (wallet && !client) {
         try {
-          setClient(await Client.create(wallet, { env: getEnv() }))
+          setIsRequestPending(true)
+          const response = await Client.create(wallet, { env: getEnv() })
+          setClient(response)
+          setIsRequestPending(false)
         } catch (e) {
           console.error(e)
           setClient(null)
+          setIsRequestPending(false)
         }
       }
     },
@@ -32,8 +37,10 @@ const useInitXmtpClient = () => {
   )
 
   useEffect(() => {
-    signer ? initClient(signer) : disconnect()
-  }, [signer])
+    if (!isRequestPending) {
+      signer ? initClient(signer) : disconnect()
+    }
+  }, [signer, initClient])
 
   return {
     initClient,
