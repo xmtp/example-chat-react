@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { MessagesList, MessageComposer } from './'
 import Loader from '../../components/Loader'
 import useConversation from '../../hooks/useConversation'
 import { useAppStore } from '../../store/app'
+import useGetMessages from '../../hooks/useGetMessages'
 
 type ConversationProps = {
   recipientWalletAddr: string
@@ -23,17 +24,29 @@ const Conversation = ({
     scrollToMessagesEndRef
   )
 
-  const convoMessages = useAppStore((state) => state.convoMessages)
+  const [endTime, setEndTime] = useState<Map<string, Date>>(new Map())
+
+  const { convoMessages: messages, hasMore } = useGetMessages(
+    recipientWalletAddr,
+    endTime.get(recipientWalletAddr)
+  )
+
   const loadingConversations = useAppStore(
     (state) => state.loadingConversations
   )
 
-  const messages = useMemo(
-    () => convoMessages.get(recipientWalletAddr) ?? [],
-    [convoMessages, recipientWalletAddr]
-  )
+  const fetchNextMessages = useCallback(() => {
+    if (hasMore && Array.isArray(messages) && messages.length > 0) {
+      const lastMsgDate = messages[messages.length - 1].sent
+      const currentEndTime = endTime.get(recipientWalletAddr)
+      if (!currentEndTime || lastMsgDate <= currentEndTime) {
+        endTime.set(recipientWalletAddr, lastMsgDate)
+        setEndTime(new Map(endTime))
+      }
+    }
+  }, [recipientWalletAddr, hasMore, messages, endTime])
 
-  const hasMessages = messages.length > 0
+  const hasMessages = Number(messages?.length) > 0
 
   useEffect(() => {
     if (!messages || !messagesEndRef.current) return
@@ -57,8 +70,13 @@ const Conversation = ({
   }
 
   return (
-    <main className="flex flex-col flex-1 bg-white h-screen">
-      <MessagesList messagesEndRef={messagesEndRef} messages={messages} />
+    <main className="flex flex-col flex-1 bg-white">
+      <MessagesList
+        messagesEndRef={messagesEndRef}
+        fetchNextMessages={fetchNextMessages}
+        messages={messages ?? []}
+        hasMore={hasMore}
+      />
       <MessageComposer onSend={sendMessage} />
     </main>
   )

@@ -4,7 +4,6 @@ import { ChatIcon } from '@heroicons/react/outline'
 import Address from './Address'
 import { useRouter } from 'next/router'
 import { Conversation } from '@xmtp/xmtp-js'
-import { DecodedMessage } from '@xmtp/xmtp-js'
 import {
   classNames,
   truncate,
@@ -22,26 +21,22 @@ type ConversationTileProps = {
   onClick?: () => void
 }
 
-const getLatestMessage = (messages: DecodedMessage[]): DecodedMessage | null =>
-  messages?.length ? messages[messages.length - 1] : null
-
 const ConversationTile = ({
   conversation,
   isSelected,
   onClick,
 }: ConversationTileProps): JSX.Element | null => {
-  const convoMessages = useAppStore((state) => state.convoMessages)
+  const previewMessages = useAppStore((state) => state.previewMessages)
   const loadingConversations = useAppStore(
     (state) => state.loadingConversations
   )
 
-  if (!convoMessages.get(conversation.peerAddress)?.length) {
+  if (!previewMessages.get(conversation.peerAddress)) {
     return null
   }
 
-  const latestMessage = getLatestMessage(
-    convoMessages.get(conversation.peerAddress) ?? []
-  )
+  const latestMessage = previewMessages.get(conversation.peerAddress)
+
   const path = `/dm/${conversation.peerAddress}`
 
   if (!latestMessage) {
@@ -108,7 +103,7 @@ const ConversationTile = ({
 const ConversationsList = (): JSX.Element => {
   const router = useRouter()
   const conversations = useAppStore((state) => state.conversations)
-  const convoMessages = useAppStore((state) => state.convoMessages)
+  const previewMessages = useAppStore((state) => state.previewMessages)
 
   const { resolveName } = useWalletProvider()
 
@@ -116,12 +111,10 @@ const ConversationsList = (): JSX.Element => {
     convoA: Conversation,
     convoB: Conversation
   ): number => {
-    const convoAMessages = convoMessages.get(convoA.peerAddress) ?? []
-    const convoBMessages = convoMessages.get(convoB.peerAddress) ?? []
     const convoALastMessageDate =
-      getLatestMessage(convoAMessages)?.sent || new Date()
+      previewMessages.get(convoA.peerAddress)?.sent || new Date()
     const convoBLastMessageDate =
-      getLatestMessage(convoBMessages)?.sent || new Date()
+      previewMessages.get(convoB.peerAddress)?.sent || new Date()
     return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
   }
 

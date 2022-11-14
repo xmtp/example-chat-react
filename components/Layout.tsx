@@ -32,7 +32,7 @@ const NavigationHeaderLayout: React.FC = ({ children }) => (
 )
 
 const TopBarLayout: React.FC = ({ children }) => (
-  <div className="sticky top-0 z-10 flex-shrink-0 flex bg-zinc-50 border-b border-gray-200 md:bg-white md:border-0">
+  <div className="flex bg-zinc-50 border-b border-gray-200 md:bg-white md:border-0">
     {children}
   </div>
 )

@@ -17,7 +17,7 @@ const useConversation = (
   const walletAddress = useAppStore((state) => state.address)
   const client = useAppStore((state) => state.client)
   const convoMessages = useAppStore((state) => state.convoMessages)
-  const setConvoMessages = useAppStore((state) => state.setConvoMessages)
+  const addMessages = useAppStore((state) => state.addMessages)
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [loading] = useState<boolean>(false)
   const [browserVisible, setBrowserVisible] = useState<boolean>(true)
@@ -42,7 +42,8 @@ const useConversation = (
     const streamMessages = async () => {
       stream = await conversation.streamMessages()
       for await (const msg of stream) {
-        if (setConvoMessages) {
+        const numAdded = addMessages(conversation.peerAddress, [msg])
+        if (numAdded > 0) {
           const newMessages = convoMessages.get(conversation.peerAddress) ?? []
           newMessages.push(msg)
           const uniqueMessages = [
@@ -51,23 +52,21 @@ const useConversation = (
             ),
           ]
           convoMessages.set(conversation.peerAddress, uniqueMessages)
-          setConvoMessages(new Map(convoMessages))
-        }
-        if (
-          latestMsgId !== msg.id &&
-          Notification.permission === 'granted' &&
-          msg.senderAddress !== walletAddress &&
-          !browserVisible
-        ) {
-          const name = await lookupAddress(msg.senderAddress ?? '')
-          new Notification('XMTP', {
-            body: `${name || shortAddress(msg.senderAddress ?? '')}\n${truncate(
-              msg.content,
-              75
-            )}`,
-          })
+          if (
+            latestMsgId !== msg.id &&
+            Notification.permission === 'granted' &&
+            msg.senderAddress !== walletAddress &&
+            !browserVisible
+          ) {
+            const name = await lookupAddress(msg.senderAddress ?? '')
+            new Notification('XMTP', {
+              body: `${
+                name || shortAddress(msg.senderAddress ?? '')
+              }\n${truncate(msg.content, 75)}`,
+            })
 
-          latestMsgId = msg.id
+            latestMsgId = msg.id
+          }
         }
         if (onMessageCallback) {
           onMessageCallback()
@@ -82,13 +81,13 @@ const useConversation = (
       }
       closeStream()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     browserVisible,
     conversation,
     convoMessages,
     lookupAddress,
     onMessageCallback,
-    setConvoMessages,
     walletAddress,
   ])
 

@@ -30,8 +30,6 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
   return (
     <div
       className={classNames(
-        'sticky',
-        'bottom-0',
         'pl-4',
         'pt-2',
         'flex-shrink-0',

@@ -8,14 +8,12 @@ const useInitXmtpClient = () => {
   const signer = useAppStore((state) => state.signer)
   const client = useAppStore((state) => state.client)
   const setClient = useAppStore((state) => state.setClient)
-  const setConvoMessages = useAppStore((state) => state.setConvoMessages)
-  const setConversations = useAppStore((state) => state.setConversations)
+  const reset = useAppStore((state) => state.reset)
   const [isRequestPending, setIsRequestPending] = useState(false)
 
   const disconnect = () => {
     setClient(undefined)
-    setConversations(new Map())
-    setConvoMessages(new Map())
+    reset()
   }
 
   const initClient = useCallback(
