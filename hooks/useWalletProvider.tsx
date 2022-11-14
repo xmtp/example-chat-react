@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ethers, Signer } from 'ethers'
+import { ethers } from 'ethers'
 import Web3Modal, { IProviderOptions, providers } from 'web3modal'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import WalletLink from 'walletlink'
-import { WalletContext } from '../contexts/wallet'
 import { useRouter } from 'next/router'
+import { useAppStore } from '../store/app'
 
 // Ethereum mainnet
 const ETH_CHAIN_ID = 1
@@ -13,29 +13,25 @@ const cachedLookupAddress = new Map<string, string | undefined>()
 const cachedResolveName = new Map<string, string | undefined>()
 const cachedGetAvatarUrl = new Map<string, string | undefined>()
 
-type WalletProviderProps = {
-  children?: React.ReactNode
-}
-
 // This variables are not added in state on purpose.
 // It saves few re-renders which then trigger the children to re-render
 // Consider the above while moving it to state variables
 let provider: ethers.providers.Web3Provider
-let chainId: number
-let signer: Signer | undefined
 
-export const WalletProvider = ({
-  children,
-}: WalletProviderProps): JSX.Element => {
+const useWalletProvider = () => {
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
-  const [address, setAddress] = useState<string>()
+  const setAddress = useAppStore((state) => state.setAddress)
+  const setSigner = useAppStore((state) => state.setSigner)
   const router = useRouter()
 
   const resolveName = useCallback(async (name: string) => {
     if (cachedResolveName.has(name)) {
       return cachedResolveName.get(name)
     }
-    if (chainId !== ETH_CHAIN_ID) {
+
+    const { chainId } = (await provider?.getNetwork()) || {}
+
+    if (Number(chainId) !== ETH_CHAIN_ID) {
       return undefined
     }
     const address = (await provider?.resolveName(name)) || undefined
@@ -47,7 +43,9 @@ export const WalletProvider = ({
     if (cachedLookupAddress.has(address)) {
       return cachedLookupAddress.get(address)
     }
-    if (chainId !== ETH_CHAIN_ID) {
+    const { chainId } = (await provider?.getNetwork()) || {}
+
+    if (Number(chainId) !== ETH_CHAIN_ID) {
       return undefined
     }
 
@@ -75,7 +73,7 @@ export const WalletProvider = ({
         localStorage.removeItem(key)
       }
     })
-    signer = undefined
+    setSigner(undefined)
     setAddress(undefined)
     router.push('/')
   }, [router, web3Modal])
@@ -84,11 +82,6 @@ export const WalletProvider = ({
     disconnect()
   }, [disconnect])
 
-  const handleChainChanged = ({ chainId: newChainId }: { chainId: number }) => {
-    console.log('Chain changed to', newChainId)
-    chainId = newChainId
-  }
-
   const connect = useCallback(async () => {
     if (!web3Modal) throw new Error('web3Modal not initialized')
     try {
@@ -96,13 +89,10 @@ export const WalletProvider = ({
       if (!instance) return
       instance.on('accountsChanged', handleAccountsChanged)
       provider = new ethers.providers.Web3Provider(instance, 'any')
-      provider.on('network', handleChainChanged)
       const newSigner = provider.getSigner()
-      const { chainId: newChainId } = await provider.getNetwork()
-      chainId = newChainId
-      signer = newSigner
-      setAddress(await signer.getAddress())
-      return signer
+      setSigner(newSigner)
+      setAddress(await newSigner.getAddress())
+      return newSigner
     } catch (e) {
       // TODO: better error handling/surfacing here.
       // Note that web3Modal.connect throws an error when the user closes the
@@ -164,29 +154,20 @@ export const WalletProvider = ({
       if (!instance) return
       instance.on('accountsChanged', handleAccountsChanged)
       provider = new ethers.providers.Web3Provider(instance, 'any')
-      provider.on('network', handleChainChanged)
       const newSigner = provider.getSigner()
-      const { chainId: newChainId } = await provider.getNetwork()
-      chainId = newChainId
-      signer = newSigner
-      setAddress(await signer.getAddress())
+      setSigner(newSigner)
+      setAddress(await newSigner.getAddress())
     }
     initCached()
   }, [web3Modal])
 
-  return (
-    <WalletContext.Provider
-      value={{
-        signer,
-        address,
-        resolveName,
-        lookupAddress,
-        getAvatarUrl,
-        connect,
-        disconnect,
-      }}
-    >
-      {children}
-    </WalletContext.Provider>
-  )
+  return {
+    resolveName,
+    lookupAddress,
+    getAvatarUrl,
+    connect,
+    disconnect,
+  }
 }
+
+export default useWalletProvider

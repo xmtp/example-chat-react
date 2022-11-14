@@ -8,9 +8,11 @@ import NavigationPanel from './NavigationPanel'
 import XmtpInfoPanel from './XmtpInfoPanel'
 import UserMenu from './UserMenu'
 import BackArrow from './BackArrow'
-import { useCallback, useContext } from 'react'
-import { WalletContext } from '../contexts/wallet'
-import XmtpContext from '../contexts/xmtp'
+import { useCallback } from 'react'
+import { useAppStore } from '../store/app'
+import useInitXmtpClient from '../hooks/useInitXmtpClient'
+import useListConversations from '../hooks/useListConversations'
+import useWalletProvider from '../hooks/useWalletProvider'
 
 const NavigationColumnLayout: React.FC = ({ children }) => (
   <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
@@ -64,14 +66,14 @@ const ConversationLayout: React.FC = ({ children }) => {
 }
 
 const Layout: React.FC = ({ children }) => {
-  const { client, initClient } = useContext(XmtpContext)
+  const client = useAppStore((state) => state.client)
+  const { initClient } = useInitXmtpClient()
+  useListConversations()
+  const walletAddress = useAppStore((state) => state.address)
+  const signer = useAppStore((state) => state.signer)
 
-  const {
-    address: walletAddress,
-    connect: connectWallet,
-    disconnect: disconnectWallet,
-    signer,
-  } = useContext(WalletContext)
+  const { connect: connectWallet, disconnect: disconnectWallet } =
+    useWalletProvider()
 
   const handleDisconnect = useCallback(async () => {
     await disconnectWallet()

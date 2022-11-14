@@ -1,8 +1,8 @@
 import { Conversation, DecodedMessage, Stream } from '@xmtp/xmtp-js'
-import { useState, useEffect, useContext } from 'react'
-import { WalletContext } from '../contexts/wallet'
-import XmtpContext from '../contexts/xmtp'
+import { useState, useEffect } from 'react'
 import { checkIfPathIsEns, shortAddress, truncate } from '../helpers'
+import { useAppStore } from '../store/app'
+import useWalletProvider from './useWalletProvider'
 
 type OnMessageCallback = () => void
 
@@ -13,8 +13,11 @@ const useConversation = (
   peerAddress: string,
   onMessageCallback?: OnMessageCallback
 ) => {
-  const { address: walletAddress, lookupAddress } = useContext(WalletContext)
-  const { client, convoMessages, setConvoMessages } = useContext(XmtpContext)
+  const { lookupAddress } = useWalletProvider()
+  const walletAddress = useAppStore((state) => state.address)
+  const client = useAppStore((state) => state.client)
+  const convoMessages = useAppStore((state) => state.convoMessages)
+  const setConvoMessages = useAppStore((state) => state.setConvoMessages)
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [loading] = useState<boolean>(false)
   const [browserVisible, setBrowserVisible] = useState<boolean>(true)

@@ -1,16 +1,16 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Conversation } from '../../components/Conversation'
 import { checkPath } from '../../helpers'
-import XmtpContext from '../../contexts/xmtp'
-import { WalletContext } from '../../contexts/wallet'
+import { useAppStore } from '../../store/app'
+import useWalletProvider from '../../hooks/useWalletProvider'
 
 const ConversationPage: NextPage = () => {
   const router = useRouter()
-  const { client } = useContext(XmtpContext)
-  const { resolveName } = useContext(WalletContext)
+  const client = useAppStore((state) => state.client)
+  const { resolveName } = useWalletProvider()
   const recipientWalletAddr = router.query.recipientWalletAddr as string
   const [canMessageAddr, setCanMessageAddr] = useState<boolean | undefined>(
     false

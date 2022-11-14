@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { ChatIcon } from '@heroicons/react/outline'
 import Address from './Address'
@@ -13,8 +13,8 @@ import {
   checkIfPathIsEns,
 } from '../helpers'
 import Avatar from './Avatar'
-import XmtpContext from '../contexts/xmtp'
-import { WalletContext } from '../contexts/wallet'
+import { useAppStore } from '../store/app'
+import useWalletProvider from '../hooks/useWalletProvider'
 
 type ConversationTileProps = {
   conversation: Conversation
@@ -30,7 +30,10 @@ const ConversationTile = ({
   isSelected,
   onClick,
 }: ConversationTileProps): JSX.Element | null => {
-  const { convoMessages, loadingConversations } = useContext(XmtpContext)
+  const convoMessages = useAppStore((state) => state.convoMessages)
+  const loadingConversations = useAppStore(
+    (state) => state.loadingConversations
+  )
 
   if (!convoMessages.get(conversation.peerAddress)?.length) {
     return null
@@ -104,8 +107,10 @@ const ConversationTile = ({
 
 const ConversationsList = (): JSX.Element => {
   const router = useRouter()
-  const { conversations, convoMessages } = useContext(XmtpContext)
-  const { resolveName } = useContext(WalletContext)
+  const conversations = useAppStore((state) => state.conversations)
+  const convoMessages = useAppStore((state) => state.convoMessages)
+
+  const { resolveName } = useWalletProvider()
 
   const orderByLatestMessage = (
     convoA: Conversation,

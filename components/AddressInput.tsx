@@ -1,12 +1,7 @@
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useContext,
-  useCallback,
-} from 'react'
-import { WalletContext } from '../contexts/wallet'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { checkIfPathIsEns, classNames } from '../helpers'
+import useWalletProvider from '../hooks/useWalletProvider'
+import { useAppStore } from '../store/app'
 
 type AddressInputProps = {
   recipientWalletAddress?: string
@@ -25,7 +20,8 @@ const AddressInput = ({
   placeholder,
   onInputChange,
 }: AddressInputProps): JSX.Element => {
-  const { address: walletAddress, lookupAddress } = useContext(WalletContext)
+  const { lookupAddress } = useWalletProvider()
+  const walletAddress = useAppStore((state) => state.address)
   const inputElement = useRef(null)
   const [value, setValue] = useState<string>(recipientWalletAddress || '')
 
@@ -46,12 +42,10 @@ const AddressInput = ({
       if (!lookupAddress) return
       if (recipientWalletAddress && !checkIfPathIsEns(recipientWalletAddress)) {
         const name = await lookupAddress(recipientWalletAddress)
-        setValue(name || recipientWalletAddress)
+        name && setValue(name)
       } else if (value.startsWith('0x') && value.length === 42) {
         const name = await lookupAddress(value)
-        if (name) {
-          setValue(name)
-        }
+        name && setValue(name)
       }
     }
     setLookupValue()

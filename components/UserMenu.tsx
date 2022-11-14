@@ -1,13 +1,13 @@
 import { Menu, Transition } from '@headlessui/react'
 import { CogIcon } from '@heroicons/react/solid'
-import { Fragment, useContext } from 'react'
+import { Fragment } from 'react'
 import { classNames, tagStr } from '../helpers'
 import Blockies from 'react-blockies'
 import Address from './Address'
 import useEns from '../hooks/useEns'
 import { Tooltip } from './Tooltip/Tooltip'
-import { WalletContext } from '../contexts/wallet'
 import packageJson from '../package.json'
+import { useAppStore } from '../store/app'
 
 type UserMenuProps = {
   onConnect?: () => Promise<void>
@@ -72,7 +72,7 @@ const NotConnected = ({ onConnect }: UserMenuProps): JSX.Element => {
 }
 
 const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
-  const { address: walletAddress } = useContext(WalletContext)
+  const walletAddress = useAppStore((state) => state.address)
 
   const onClickCopy = () => {
     if (walletAddress) {
