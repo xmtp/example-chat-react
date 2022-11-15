@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import { NavigationView, ConversationView } from './Views'
@@ -7,7 +6,6 @@ import NewMessageButton from './NewMessageButton'
 import NavigationPanel from './NavigationPanel'
 import XmtpInfoPanel from './XmtpInfoPanel'
 import UserMenu from './UserMenu'
-import BackArrow from './BackArrow'
 import { useCallback } from 'react'
 import { useAppStore } from '../store/app'
 import useInitXmtpClient from '../hooks/useInitXmtpClient'
@@ -30,40 +28,6 @@ const NavigationHeaderLayout: React.FC = ({ children }) => (
     {children}
   </div>
 )
-
-const TopBarLayout: React.FC = ({ children }) => (
-  <div className="flex bg-zinc-50 border-b border-gray-200 md:bg-white md:border-0">
-    {children}
-  </div>
-)
-
-const ConversationLayout: React.FC = ({ children }) => {
-  const router = useRouter()
-  const recipientWalletAddress = router.query.recipientWalletAddr as string
-
-  const handleSubmit = async (address: string) => {
-    router.push(address ? `/dm/${address}` : '/dm/')
-  }
-
-  const handleBackArrowClick = useCallback(() => {
-    router.push('/')
-  }, [router])
-
-  return (
-    <>
-      <TopBarLayout>
-        <div className="md:hidden flex items-center ml-3">
-          <BackArrow onClick={handleBackArrowClick} />
-        </div>
-        <RecipientControl
-          recipientWalletAddress={recipientWalletAddress}
-          onSubmit={handleSubmit}
-        />
-      </TopBarLayout>
-      {children}
-    </>
-  )
-}
 
 const Layout: React.FC = ({ children }) => {
   const client = useAppStore((state) => state.client)
@@ -108,7 +72,12 @@ const Layout: React.FC = ({ children }) => {
         </NavigationView>
         <ConversationView>
           {walletAddress && client ? (
-            <ConversationLayout>{children}</ConversationLayout>
+            <>
+              <div className="flex bg-zinc-50 border-b border-gray-200 md:bg-white md:border-0">
+                <RecipientControl />
+              </div>
+              {children}
+            </>
           ) : (
             <XmtpInfoPanel onConnect={handleConnect} />
           )}
