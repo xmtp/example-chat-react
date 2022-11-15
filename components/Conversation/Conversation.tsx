@@ -70,15 +70,19 @@ const Conversation = ({
   }
 
   return (
-    <main className="flex flex-col flex-1 bg-white">
-      <MessagesList
-        messagesEndRef={messagesEndRef}
-        fetchNextMessages={fetchNextMessages}
-        messages={messages ?? []}
-        hasMore={hasMore}
-      />
+    <>
+      <div className="bg-white h-[82vh]">
+        <div className="h-full flex justify-between flex-col">
+          <MessagesList
+            messagesEndRef={messagesEndRef}
+            fetchNextMessages={fetchNextMessages}
+            messages={messages ?? []}
+            hasMore={hasMore}
+          />
+        </div>
+      </div>
       <MessageComposer onSend={sendMessage} />
-    </main>
+    </>
   )
 }
 

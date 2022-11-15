@@ -65,7 +65,7 @@ const DateDivider = ({ date }: { date?: Date }): JSX.Element => (
 )
 
 const ConversationBeginningNotice = (): JSX.Element => (
-  <div className="flex align-items-center justify-center pb-4">
+  <div className="flex align-items-center justify-center pb-4 mt-4">
     <span className="text-gray-300 text-sm font-semibold">
       This is the beginning of the conversation
     </span>
@@ -79,35 +79,8 @@ const MessagesList = ({
 }: MessageListProps): JSX.Element => {
   let lastMessageDate: Date | undefined
 
-  // return (
-  //   <div className="flex-grow flex">
-  //     <div className="pb-6 md:pb-0 w-full flex flex-col self-end">
-  //       <div className="max-h-[80vh] relative w-full bg-white px-4 pt-6 overflow-y-auto flex">
-  //         <div className="w-full">
-  //           {messages && messages.length ? (
-  //             <ConversationBeginningNotice />
-  //           ) : null}
-  //           {messages?.map((msg: DecodedMessage) => {
-  //             const dateHasChanged = !isOnSameDay(lastMessageDate, msg.sent)
-  //             lastMessageDate = msg.sent
-  //             return (
-  //               <>
-  //                 {dateHasChanged ? (
-  //                   <DateDivider key={msg.id + 'divider'} date={msg.sent} />
-  //                 ) : null}
-  //                 <MessageTile message={msg} key={msg.id} />
-  //               </>
-  //             )
-  //           })}
-  //           <div ref={messagesEndRef} />
-  //         </div>
-  //       </div>
-  //     </div>
-  //   </div>
-  // )
-
   return (
-    <div className="flex h-[80vh]">
+    <div className="flex-grow flex h-full">
       <div className="relative w-full h-full pl-4 flex">
         <div
           id="scrollableDiv"
@@ -120,13 +93,7 @@ const MessagesList = ({
             inverse
             endMessage={<ConversationBeginningNotice />}
             hasMore={hasMore}
-            loader={
-              <Loader
-                headingText="Loading messages..."
-                subHeadingText="Please wait a moment"
-                isLoading
-              />
-            }
+            loader={<Loader subHeadingText="Loading messages..." isLoading />}
             scrollableTarget="scrollableDiv"
           >
             {messages?.map((msg: DecodedMessage, index: number) => {
