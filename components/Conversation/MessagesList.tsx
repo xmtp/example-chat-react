@@ -89,7 +89,7 @@ const MessagesList = ({
           <InfiniteScroll
             dataLength={messages.length}
             next={fetchNextMessages}
-            className="flex flex-col-reverse overflow-y-auto overflow-x-hidden"
+            className="flex flex-col-reverse overflow-hidden"
             inverse
             endMessage={<ConversationBeginningNotice />}
             hasMore={hasMore}
