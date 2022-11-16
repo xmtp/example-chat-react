@@ -15,9 +15,12 @@ describe('AddressInput', () => {
   it('renders initial value', () => {
     act(() => {
       const { container } = render(
-        <AddressInput recipientWalletAddress={'0xfoo'} />
+        <AddressInput recipientWalletAddress={'0xfoo.eth'} />
       )
-      expect(container.querySelector('input')).toHaveAttribute('value', '0xfoo')
+      expect(container.querySelector('input')).toHaveAttribute(
+        'value',
+        '0xfoo.eth'
+      )
     })
   })
 
