@@ -34,7 +34,9 @@ export const useListConversations = () => {
   }
 
   useEffect(() => {
-    if (!client) return
+    if (!client) {
+      return
+    }
 
     let messageStream: AsyncGenerator<DecodedMessage>
     let conversationStream: Stream<Conversation>
