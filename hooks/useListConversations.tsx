@@ -5,6 +5,7 @@ import {
   Stream,
 } from '@xmtp/xmtp-js'
 import { useEffect } from 'react'
+import { getConversationKey } from '../helpers'
 import { useAppStore } from '../store/app'
 
 export const useListConversations = () => {
@@ -22,7 +23,7 @@ export const useListConversations = () => {
   const fetchMostRecentMessage = async (
     convo: Conversation
   ): Promise<{ key: string; message?: DecodedMessage }> => {
-    const key = convo.peerAddress
+    const key = getConversationKey(convo)
     const newMessages = await convo.messages({
       limit: 1,
       direction: SortDirection.SORT_DIRECTION_DESCENDING,
@@ -45,7 +46,7 @@ export const useListConversations = () => {
       messageStream = await client.conversations.streamAllMessages()
 
       for await (const message of messageStream) {
-        const key = message.conversation.peerAddress
+        const key = getConversationKey(message.conversation)
         setPreviewMessage(key, message)
       }
     }
@@ -54,9 +55,8 @@ export const useListConversations = () => {
       console.log('Listing conversations')
       setLoadingConversations(true)
       const newPreviewMessages = new Map(previewMessages)
-      const convos = (await client.conversations.list()).filter(
-        (conversation) => !conversation.context?.conversationId
-      )
+      const convos = await client.conversations.list()
+
       const previews = await Promise.all(convos.map(fetchMostRecentMessage))
 
       for (const preview of previews) {
@@ -68,11 +68,9 @@ export const useListConversations = () => {
 
       Promise.all(
         convos.map(async (convo) => {
-          if (
-            !convo.context?.conversationId &&
-            convo.peerAddress !== walletAddress
-          ) {
-            conversations.set(convo.peerAddress, convo)
+          if (convo.peerAddress !== walletAddress) {
+            conversations.set(getConversationKey(convo), convo)
+            console.log(Array.from(conversations.keys()))
             setConversations(new Map(conversations))
           }
         })
@@ -87,7 +85,7 @@ export const useListConversations = () => {
       conversationStream = await client.conversations.stream()
       for await (const convo of conversationStream) {
         if (convo.peerAddress !== walletAddress) {
-          conversations.set(convo.peerAddress, convo)
+          conversations.set(getConversationKey(convo), convo)
           setConversations(new Map(conversations))
         }
       }

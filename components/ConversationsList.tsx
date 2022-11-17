@@ -10,6 +10,7 @@ import {
   formatDate,
   checkPath,
   checkIfPathIsEns,
+  getConversationKey,
 } from '../helpers'
 import Avatar from './Avatar'
 import { useAppStore } from '../store/app'
@@ -31,20 +32,20 @@ const ConversationTile = ({
     (state) => state.loadingConversations
   )
 
-  if (!previewMessages.get(conversation.peerAddress)) {
+  if (!previewMessages.get(getConversationKey(conversation))) {
     return null
   }
 
-  const latestMessage = previewMessages.get(conversation.peerAddress)
+  const latestMessage = previewMessages.get(getConversationKey(conversation))
 
-  const path = `/dm/${conversation.peerAddress}`
+  const path = `/dm/${getConversationKey(conversation)}`
 
   if (!latestMessage) {
     return null
   }
 
   return (
-    <Link href={path} key={conversation.peerAddress}>
+    <Link href={path} key={getConversationKey(conversation)}>
       <a onClick={onClick}>
         <div
           className={classNames(
@@ -86,7 +87,7 @@ const ConversationTile = ({
             </div>
             <p
               className={classNames(
-                'text-[13px] md:text-sm font-normal text-ellipsis mt-0',
+                'text-[13px] md:text-sm font-normal break-all text-ellipsis mt-0',
                 isSelected ? 'text-n-500' : 'text-n-300',
                 loadingConversations ? 'animate-pulse' : ''
               )}
@@ -112,9 +113,9 @@ const ConversationsList = (): JSX.Element => {
     convoB: Conversation
   ): number => {
     const convoALastMessageDate =
-      previewMessages.get(convoA.peerAddress)?.sent || new Date()
+      previewMessages.get(getConversationKey(convoA))?.sent || new Date()
     const convoBLastMessageDate =
-      previewMessages.get(convoB.peerAddress)?.sent || new Date()
+      previewMessages.get(getConversationKey(convoB))?.sent || new Date()
     return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
   }
 
@@ -151,7 +152,7 @@ const ConversationsList = (): JSX.Element => {
               router.query.recipientWalletAddr == convo.peerAddress
             return (
               <ConversationTile
-                key={convo.peerAddress}
+                key={getConversationKey(convo)}
                 conversation={convo}
                 isSelected={isSelected}
               />

@@ -1,6 +1,11 @@
 import { Conversation, DecodedMessage, Stream } from '@xmtp/xmtp-js'
 import { useState, useEffect } from 'react'
-import { checkIfPathIsEns, shortAddress, truncate } from '../helpers'
+import {
+  checkIfPathIsEns,
+  getConversationKey,
+  shortAddress,
+  truncate,
+} from '../helpers'
 import { useAppStore } from '../store/app'
 import useWalletProvider from './useWalletProvider'
 
@@ -38,20 +43,23 @@ const useConversation = (
   }, [client, peerAddress])
 
   useEffect(() => {
-    if (!conversation) return
+    if (!conversation) {
+      return
+    }
     const streamMessages = async () => {
       stream = await conversation.streamMessages()
       for await (const msg of stream) {
-        const numAdded = addMessages(conversation.peerAddress, [msg])
+        const numAdded = addMessages(getConversationKey(conversation), [msg])
         if (numAdded > 0) {
-          const newMessages = convoMessages.get(conversation.peerAddress) ?? []
+          const newMessages =
+            convoMessages.get(getConversationKey(conversation)) ?? []
           newMessages.push(msg)
           const uniqueMessages = [
             ...Array.from(
               new Map(newMessages.map((item) => [item['id'], item])).values()
             ),
           ]
-          convoMessages.set(conversation.peerAddress, uniqueMessages)
+          convoMessages.set(getConversationKey(conversation), uniqueMessages)
           if (
             latestMsgId !== msg.id &&
             Notification.permission === 'granted' &&
@@ -76,7 +84,9 @@ const useConversation = (
     streamMessages()
     return () => {
       const closeStream = async () => {
-        if (!stream) return
+        if (!stream) {
+          return
+        }
         await stream.return()
       }
       closeStream()
@@ -92,7 +102,9 @@ const useConversation = (
   ])
 
   const handleSend = async (message: string) => {
-    if (!conversation) return
+    if (!conversation) {
+      return
+    }
     await conversation.send(message)
   }
 
