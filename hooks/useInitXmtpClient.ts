@@ -18,7 +18,7 @@ const useInitXmtpClient = (cacheOnly = false) => {
   const reset = useAppStore((state) => state.reset)
   const [isRequestPending, setIsRequestPending] = useState(false)
 
-  const disconnect = async () => {
+  const disconnect = () => {
     setClient(undefined)
     reset()
     if (signer) {
@@ -30,6 +30,7 @@ const useInitXmtpClient = (cacheOnly = false) => {
     async (wallet: Signer) => {
       if (wallet && !client) {
         try {
+          setIsRequestPending(true)
           let keys = loadKeys(address)
           if (!keys) {
             if (cacheOnly) {
@@ -40,7 +41,7 @@ const useInitXmtpClient = (cacheOnly = false) => {
               appVersion: getAppVersion(),
             })
             storeKeys(address, keys)
-          } else setIsRequestPending(true)
+          }
           const xmtp = await Client.create(null, {
             env: getEnv(),
             appVersion: getAppVersion(),
