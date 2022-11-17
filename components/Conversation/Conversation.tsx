@@ -49,7 +49,9 @@ const Conversation = ({
   const hasMessages = Number(messages?.length) > 0
 
   useEffect(() => {
-    if (!messages || !messagesEndRef.current) return
+    if (!messages || !messagesEndRef.current) {
+      return
+    }
     setTimeout(() => {
       scrollToMessagesEndRef()
     }, 1000)

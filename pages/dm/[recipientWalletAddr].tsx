@@ -42,8 +42,9 @@ const ConversationPage: NextPage = () => {
     redirectToHome()
   }, [window.location.pathname])
 
-  if (!canMessageAddr || !client) return <div />
-  else {
+  if (!canMessageAddr || !client) {
+    return <div />
+  } else {
     return <Conversation recipientWalletAddr={recipientWalletAddr} />
   }
 }

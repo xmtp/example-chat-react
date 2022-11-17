@@ -39,7 +39,9 @@ const AddressInput = ({
 
   useEffect(() => {
     const setLookupValue = async () => {
-      if (!lookupAddress) return
+      if (!lookupAddress) {
+        return
+      }
       if (recipientWalletAddress && !checkIfPathIsEns(recipientWalletAddress)) {
         const name = await lookupAddress(recipientWalletAddress)
         if (name) {
