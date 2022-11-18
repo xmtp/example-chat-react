@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import AddressInput from '../AddressInput'
-import { checkIfPathIsEns } from '../../helpers'
+import { checkIfPathIsEns, getAddressFromPath } from '../../helpers'
 import { useAppStore } from '../../store/app'
 import useWalletProvider from '../../hooks/useWalletProvider'
 import BackArrow from '../BackArrow'
@@ -18,7 +18,7 @@ const RecipientControl = (): JSX.Element => {
   const { resolveName, lookupAddress } = useWalletProvider()
   const client = useAppStore((state) => state.client)
   const router = useRouter()
-  const recipientWalletAddress = router.query.recipientWalletAddr as string
+  const recipientWalletAddress = getAddressFromPath(router)
   const [recipientInputMode, setRecipientInputMode] = useState(
     RecipientInputMode.InvalidEntry
   )

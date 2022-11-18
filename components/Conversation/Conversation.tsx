@@ -12,6 +12,8 @@ type ConversationProps = {
 const Conversation = ({
   recipientWalletAddr,
 }: ConversationProps): JSX.Element => {
+  const conversations = useAppStore((state) => state.conversations)
+  const selectedConversation = conversations.get(recipientWalletAddr)
   const messagesEndRef = useRef(null)
 
   const scrollToMessagesEndRef = useCallback(() => {
@@ -19,10 +21,7 @@ const Conversation = ({
     ;(messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
-  const { sendMessage } = useConversation(
-    recipientWalletAddr,
-    scrollToMessagesEndRef
-  )
+  const { sendMessage } = useConversation(selectedConversation)
 
   const [endTime, setEndTime] = useState<Map<string, Date>>(new Map())
 

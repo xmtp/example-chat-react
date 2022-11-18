@@ -70,7 +70,6 @@ export const useListConversations = () => {
         convos.map(async (convo) => {
           if (convo.peerAddress !== walletAddress) {
             conversations.set(getConversationKey(convo), convo)
-            console.log(Array.from(conversations.keys()))
             setConversations(new Map(conversations))
           }
         })
