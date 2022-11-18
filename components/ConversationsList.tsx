@@ -4,31 +4,28 @@ import { ChatIcon } from '@heroicons/react/outline'
 import Address from './Address'
 import { useRouter } from 'next/router'
 import { Conversation } from '@xmtp/xmtp-js'
-import {
-  classNames,
-  formatDate,
-  getConversationKey,
-  getAddressFromPath,
-} from '../helpers'
+import { classNames, formatDate, getConversationKey } from '../helpers'
 import Avatar from './Avatar'
 import { useAppStore } from '../store/app'
 
 type ConversationTileProps = {
   conversation: Conversation
-  isSelected: boolean
   onClick?: () => void
 }
 
 const ConversationTile = ({
   conversation,
-  isSelected,
   onClick,
 }: ConversationTileProps): JSX.Element | null => {
+  const router = useRouter()
   const address = useAppStore((state) => state.address)
   const previewMessages = useAppStore((state) => state.previewMessages)
   const loadingConversations = useAppStore(
     (state) => state.loadingConversations
   )
+  const recipentAddress = Array.isArray(router.query.recipientWalletAddr)
+    ? router.query.recipientWalletAddr.join('/')
+    : router.query.recipientWalletAddr
 
   if (!previewMessages.get(getConversationKey(conversation))) {
     return null
@@ -40,6 +37,8 @@ const ConversationTile = ({
 
   const conversationDomain =
     conversation.context?.conversationId.split('/')[0] ?? ''
+
+  const isSelected = recipentAddress === getConversationKey(conversation)
 
   if (!latestMessage) {
     return null
@@ -103,7 +102,6 @@ const ConversationTile = ({
 }
 
 const ConversationsList = (): JSX.Element => {
-  const router = useRouter()
   const conversations = useAppStore((state) => state.conversations)
   const previewMessages = useAppStore((state) => state.previewMessages)
 
@@ -122,8 +120,6 @@ const ConversationsList = (): JSX.Element => {
     return <NoConversationsMessage />
   }
 
-  const recipentAddress = getAddressFromPath(router)
-
   return (
     <>
       {conversations &&
@@ -131,13 +127,10 @@ const ConversationsList = (): JSX.Element => {
         Array.from(conversations.values())
           .sort(orderByLatestMessage)
           .map((convo) => {
-            // Need to correct this
-            const isSelected = recipentAddress == convo.peerAddress
             return (
               <ConversationTile
                 key={getConversationKey(convo)}
                 conversation={convo}
-                isSelected={isSelected}
               />
             )
           })}

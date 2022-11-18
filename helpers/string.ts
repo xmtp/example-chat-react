@@ -39,7 +39,7 @@ export const shortAddress = (addr: string): string =>
     ? `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`
     : addr
 
-export const getConversationKey = (conversation: Conversation): string => {
+export const getConversationKey = (conversation?: Conversation): string => {
   return conversation?.context?.conversationId
     ? `${conversation?.peerAddress}/${conversation?.context?.conversationId}`
     : conversation?.peerAddress ?? ''

@@ -1,7 +1,10 @@
+import { Conversation } from '@xmtp/xmtp-js'
 import { useAppStore } from '../store/app'
 
-const useSendMessage = (peerAddress: string, conversationId: string) => {
+const useSendMessage = (selectedConversation?: Conversation) => {
   const client = useAppStore((state) => state.client)
+  const peerAddress = selectedConversation?.peerAddress
+  const conversationId = selectedConversation?.context?.conversationId
 
   const sendMessage = async (message: string) => {
     if (!client || !peerAddress) {

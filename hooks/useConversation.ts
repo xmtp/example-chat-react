@@ -80,16 +80,8 @@ const useConversation = (selectedConversation?: Conversation) => {
     walletAddress,
   ])
 
-  const handleSend = async (message: string) => {
-    if (!selectedConversation) {
-      return
-    }
-    await selectedConversation.send(message)
-  }
-
   return {
     loading,
-    sendMessage: handleSend,
   }
 }
 

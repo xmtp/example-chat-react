@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { MessagesList, MessageComposer } from './'
 import Loader from '../../components/Loader'
-import useConversation from '../../hooks/useConversation'
 import { useAppStore } from '../../store/app'
 import useGetMessages from '../../hooks/useGetMessages'
+import useSendMessage from '../../hooks/useSendMessage'
+import { getConversationKey } from '../../helpers'
 
 type ConversationProps = {
   recipientWalletAddr: string
@@ -14,6 +15,7 @@ const Conversation = ({
 }: ConversationProps): JSX.Element => {
   const conversations = useAppStore((state) => state.conversations)
   const selectedConversation = conversations.get(recipientWalletAddr)
+  const conversationKey = getConversationKey(selectedConversation)
   const messagesEndRef = useRef(null)
 
   const scrollToMessagesEndRef = useCallback(() => {
@@ -21,13 +23,13 @@ const Conversation = ({
     ;(messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
-  const { sendMessage } = useConversation(selectedConversation)
+  const { sendMessage } = useSendMessage(selectedConversation)
 
   const [endTime, setEndTime] = useState<Map<string, Date>>(new Map())
 
   const { convoMessages: messages, hasMore } = useGetMessages(
-    recipientWalletAddr,
-    endTime.get(recipientWalletAddr)
+    conversationKey,
+    endTime.get(conversationKey)
   )
 
   const loadingConversations = useAppStore(
@@ -37,13 +39,13 @@ const Conversation = ({
   const fetchNextMessages = useCallback(() => {
     if (hasMore && Array.isArray(messages) && messages.length > 0) {
       const lastMsgDate = messages[messages.length - 1].sent
-      const currentEndTime = endTime.get(recipientWalletAddr)
+      const currentEndTime = endTime.get(conversationKey)
       if (!currentEndTime || lastMsgDate <= currentEndTime) {
-        endTime.set(recipientWalletAddr, lastMsgDate)
+        endTime.set(conversationKey, lastMsgDate)
         setEndTime(new Map(endTime))
       }
     }
-  }, [recipientWalletAddr, hasMore, messages, endTime])
+  }, [conversationKey, hasMore, messages, endTime])
 
   const hasMessages = Number(messages?.length) > 0
 
@@ -54,9 +56,9 @@ const Conversation = ({
     setTimeout(() => {
       scrollToMessagesEndRef()
     }, 1000)
-  }, [recipientWalletAddr, scrollToMessagesEndRef, messages])
+  }, [conversationKey, scrollToMessagesEndRef, messages])
 
-  if (!recipientWalletAddr) {
+  if (!conversationKey) {
     return <div />
   }
 
