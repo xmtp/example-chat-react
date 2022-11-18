@@ -1,5 +1,5 @@
 import { DecodedMessage } from '@xmtp/xmtp-js'
-import React, { FC, MutableRefObject } from 'react'
+import React, { FC } from 'react'
 import Emoji from 'react-emoji-render'
 import Avatar from '../Avatar'
 import { formatTime } from '../../helpers'
@@ -8,7 +8,6 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 
 export type MessageListProps = {
   messages: DecodedMessage[]
-  messagesEndRef: MutableRefObject<null>
   fetchNextMessages: () => void
   hasMore: boolean
 }

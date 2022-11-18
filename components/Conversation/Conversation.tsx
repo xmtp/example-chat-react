@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { MessagesList, MessageComposer } from './'
 import Loader from '../../components/Loader'
 import { useAppStore } from '../../store/app'
@@ -17,13 +17,7 @@ const Conversation = ({
   const conversations = useAppStore((state) => state.conversations)
   const selectedConversation = conversations.get(recipientWalletAddr)
   const conversationKey = getConversationKey(selectedConversation)
-  const messagesEndRef = useRef(null)
   useConversation(selectedConversation)
-
-  const scrollToMessagesEndRef = useCallback(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
-  }, [])
 
   const { sendMessage } = useSendMessage(selectedConversation)
 
@@ -51,15 +45,6 @@ const Conversation = ({
 
   const hasMessages = Number(messages?.length) > 0
 
-  useEffect(() => {
-    if (!messages || !messagesEndRef.current) {
-      return
-    }
-    setTimeout(() => {
-      scrollToMessagesEndRef()
-    }, 1000)
-  }, [conversationKey, scrollToMessagesEndRef, messages])
-
   if (!conversationKey) {
     return <div />
   }
@@ -79,7 +64,6 @@ const Conversation = ({
       <div className="bg-white h-[82vh]">
         <div className="h-full flex justify-between flex-col">
           <MessagesList
-            messagesEndRef={messagesEndRef}
             fetchNextMessages={fetchNextMessages}
             messages={messages ?? []}
             hasMore={hasMore}
