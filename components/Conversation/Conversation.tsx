@@ -5,6 +5,7 @@ import { useAppStore } from '../../store/app'
 import useGetMessages from '../../hooks/useGetMessages'
 import useSendMessage from '../../hooks/useSendMessage'
 import { getConversationKey } from '../../helpers'
+import useConversation from '../../hooks/useConversation'
 
 type ConversationProps = {
   recipientWalletAddr: string
@@ -17,6 +18,7 @@ const Conversation = ({
   const selectedConversation = conversations.get(recipientWalletAddr)
   const conversationKey = getConversationKey(selectedConversation)
   const messagesEndRef = useRef(null)
+  useConversation(selectedConversation)
 
   const scrollToMessagesEndRef = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
