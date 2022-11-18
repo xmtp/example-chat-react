@@ -36,7 +36,7 @@ const ConversationTile = ({
   const path = `/dm/${getConversationKey(conversation)}`
 
   const conversationDomain =
-    conversation.context?.conversationId.split('/')[0] ?? ''
+    conversation.context?.conversationId.split('/')[0].split('.')[0] ?? ''
 
   const isSelected = recipentAddress === getConversationKey(conversation)
 
@@ -70,6 +70,11 @@ const ConversationTile = ({
         >
           <Avatar peerAddress={conversation.peerAddress} />
           <div className="py-4 sm:text-left text w-full">
+            {conversationDomain && (
+              <div className="text-sm rounded-2xl text-white bg-black w-max px-2 font-bold">
+                {conversationDomain.toLocaleUpperCase()}
+              </div>
+            )}
             <div className="grid-cols-2 grid">
               <Address
                 address={conversation.peerAddress}
@@ -85,11 +90,6 @@ const ConversationTile = ({
                 {formatDate(latestMessage?.sent)}
               </span>
             </div>
-            {conversationDomain && (
-              <div className="text-xs rounded-2xl text-b-600 bg-zinc-100 w-max px-2 mb-1 font-bold">
-                {conversationDomain}
-              </div>
-            )}
             <span className="text-sm text-gray-500 line-clamp-1 break-all">
               {address === latestMessage?.senderAddress && 'You: '}{' '}
               {latestMessage?.content}
