@@ -36,7 +36,7 @@ const ConversationTile = ({
   const path = `/dm/${getConversationKey(conversation)}`
 
   const conversationDomain =
-    conversation.context?.conversationId.split('/')[0].split('.')[0] ?? ''
+    conversation.context?.conversationId.split('.')[0] ?? ''
 
   const isSelected = recipentAddress === getConversationKey(conversation)
 
