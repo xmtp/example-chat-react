@@ -65,11 +65,6 @@ const useWalletProvider = () => {
 
   // Note, this triggers a re-render on acccount change and on diconnect.
   const disconnect = useCallback(() => {
-    if (!web3Modal) {
-      return
-    }
-    web3Modal.clearCachedProvider()
-    localStorage.removeItem('walletconnect')
     Object.keys(localStorage).forEach((key) => {
       if (key.startsWith('xmtp')) {
         localStorage.removeItem(key)
