@@ -71,7 +71,7 @@ const useWalletProvider = () => {
     web3Modal.clearCachedProvider()
     localStorage.removeItem('walletconnect')
     Object.keys(localStorage).forEach((key) => {
-      if (key.startsWith('-walletlink')) {
+      if (key.startsWith('xmtp')) {
         localStorage.removeItem(key)
       }
     })
