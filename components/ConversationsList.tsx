@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC, useCallback, useRef, useState } from 'react'
 import Link from 'next/link'
 import { ChatIcon } from '@heroicons/react/outline'
 import Address from './Address'
@@ -7,6 +7,7 @@ import { Conversation } from '@xmtp/xmtp-js'
 import { classNames, formatDate, getConversationKey } from '../helpers'
 import Avatar from './Avatar'
 import { useAppStore } from '../store/app'
+import useGetPreviewList from '../hooks/useGetPreviewList'
 
 type ConversationTileProps = {
   conversation: Conversation
@@ -18,6 +19,7 @@ const ConversationTile = ({
   onClick,
 }: ConversationTileProps): JSX.Element | null => {
   const router = useRouter()
+
   const address = useAppStore((state) => state.address)
   const previewMessages = useAppStore((state) => state.previewMessages)
   const loadingConversations = useAppStore(
@@ -27,25 +29,23 @@ const ConversationTile = ({
     ? router.query.recipientWalletAddr.join('/')
     : router.query.recipientWalletAddr
 
-  if (!previewMessages.get(getConversationKey(conversation))) {
+  const convoKey = getConversationKey(conversation)
+
+  if (!previewMessages.get(convoKey)) {
     return null
   }
 
-  const latestMessage = previewMessages.get(getConversationKey(conversation))
+  const latestMessage = previewMessages.get(convoKey)
 
-  const path = `/dm/${getConversationKey(conversation)}`
+  const path = `/dm/${convoKey}`
 
   const conversationDomain =
     conversation.context?.conversationId.split('.')[0] ?? ''
 
-  const isSelected = recipentAddress === getConversationKey(conversation)
-
-  if (!latestMessage) {
-    return null
-  }
+  const isSelected = recipentAddress === convoKey
 
   return (
-    <Link href={path} key={getConversationKey(conversation)}>
+    <Link href={path} key={convoKey}>
       <a onClick={onClick}>
         <div
           className={classNames(
@@ -101,9 +101,39 @@ const ConversationTile = ({
   )
 }
 
+const LoadingMore: FC = () => (
+  <div className="p-1 mt-6 text-center text-gray-300 font-bold text-sm">
+    Loading Conversations...
+  </div>
+)
+
 const ConversationsList = (): JSX.Element => {
+  const observer = useRef<IntersectionObserver | null>(null)
   const conversations = useAppStore((state) => state.conversations)
   const previewMessages = useAppStore((state) => state.previewMessages)
+  const [currentIndex, setCurrentIndex] = useState<number>(0)
+  const { loading, hasMore } = useGetPreviewList(currentIndex)
+
+  const lastElementRef = useCallback(
+    // (*)
+    (node) => {
+      if (loading) {
+        return
+      }
+      if (observer.current) {
+        observer.current.disconnect()
+      }
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setCurrentIndex(currentIndex + 20)
+        }
+      })
+      if (node) {
+        observer.current.observe(node)
+      }
+    },
+    [loading, hasMore]
+  )
 
   const orderByLatestMessage = (
     convoA: Conversation,
@@ -126,14 +156,19 @@ const ConversationsList = (): JSX.Element => {
         conversations.size > 0 &&
         Array.from(conversations.values())
           .sort(orderByLatestMessage)
-          .map((convo) => {
+          .map((convo, i) => {
+            const isLastElement = conversations.size === i + 1
             return (
-              <ConversationTile
-                key={getConversationKey(convo)}
-                conversation={convo}
-              />
+              <>
+                <ConversationTile
+                  key={getConversationKey(convo)}
+                  conversation={convo}
+                />
+                {isLastElement && <div ref={lastElementRef}></div>}
+              </>
             )
           })}
+      {loading && <LoadingMore />}
     </>
   )
 }

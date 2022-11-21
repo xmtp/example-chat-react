@@ -1,9 +1,4 @@
-import {
-  Conversation,
-  DecodedMessage,
-  SortDirection,
-  Stream,
-} from '@xmtp/xmtp-js'
+import { Conversation, DecodedMessage, Stream } from '@xmtp/xmtp-js'
 import { useEffect, useState } from 'react'
 import { getConversationKey, shortAddress, truncate } from '../helpers'
 import { useAppStore } from '../store/app'
@@ -19,8 +14,6 @@ export const useListConversations = () => {
   const conversations = useAppStore((state) => state.conversations)
   const setConversations = useAppStore((state) => state.setConversations)
   const addMessages = useAppStore((state) => state.addMessages)
-  const previewMessages = useAppStore((state) => state.previewMessages)
-  const setPreviewMessages = useAppStore((state) => state.setPreviewMessages)
   const setPreviewMessage = useAppStore((state) => state.setPreviewMessage)
   const setLoadingConversations = useAppStore(
     (state) => state.setLoadingConversations
@@ -32,20 +25,6 @@ export const useListConversations = () => {
     window.addEventListener('blur', () => setBrowserVisible(false))
   }, [])
 
-  const fetchMostRecentMessage = async (
-    convo: Conversation
-  ): Promise<{ key: string; message?: DecodedMessage }> => {
-    const key = getConversationKey(convo)
-    const newMessages = await convo.messages({
-      limit: 1,
-      direction: SortDirection.SORT_DIRECTION_DESCENDING,
-    })
-    if (newMessages.length <= 0) {
-      return { key }
-    }
-    return { key, message: newMessages[0] }
-  }
-
   useEffect(() => {
     if (!client) {
       return
@@ -55,7 +34,6 @@ export const useListConversations = () => {
     let conversationStream: Stream<Conversation>
 
     const streamAllMessages = async () => {
-      console.log('Heyyyyyyyy')
       messageStream = await client.conversations.streamAllMessages()
 
       for await (const message of messageStream) {
@@ -94,17 +72,7 @@ export const useListConversations = () => {
     const listConversations = async () => {
       console.log('Listing conversations')
       setLoadingConversations(true)
-      const newPreviewMessages = new Map(previewMessages)
       const convos = await client.conversations.list()
-
-      const previews = await Promise.all(convos.map(fetchMostRecentMessage))
-
-      for (const preview of previews) {
-        if (preview.message) {
-          newPreviewMessages.set(preview.key, preview.message)
-        }
-      }
-      setPreviewMessages(newPreviewMessages)
 
       Promise.all(
         convos.map(async (convo) => {
