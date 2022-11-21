@@ -5,7 +5,6 @@ import { useAppStore } from '../../store/app'
 import useGetMessages from '../../hooks/useGetMessages'
 import useSendMessage from '../../hooks/useSendMessage'
 import { getConversationKey } from '../../helpers'
-import useConversation from '../../hooks/useConversation'
 
 type ConversationProps = {
   recipientWalletAddr: string
@@ -17,7 +16,6 @@ const Conversation = ({
   const conversations = useAppStore((state) => state.conversations)
   const selectedConversation = conversations.get(recipientWalletAddr)
   const conversationKey = getConversationKey(selectedConversation)
-  useConversation(selectedConversation)
 
   const { sendMessage } = useSendMessage(selectedConversation)
 
