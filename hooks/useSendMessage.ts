@@ -10,19 +10,17 @@ const useSendMessage = (selectedConversation?: Conversation) => {
     if (!client || !peerAddress) {
       return
     }
-    let conversation
     if (conversationId) {
-      conversation = await client.conversations.newConversation(peerAddress, {
-        conversationId: conversationId,
-        metadata: {},
-      })
+      await selectedConversation?.send(message)
     } else {
-      conversation = await client.conversations.newConversation(peerAddress)
+      const conversation = await client.conversations.newConversation(
+        peerAddress
+      )
+      if (!conversation) {
+        return
+      }
+      await conversation.send(message)
     }
-    if (!conversation) {
-      return
-    }
-    await conversation.send(message)
   }
 
   return {
