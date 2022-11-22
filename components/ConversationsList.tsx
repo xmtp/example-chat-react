@@ -1,50 +1,51 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import { ChatIcon } from '@heroicons/react/outline'
 import Address from './Address'
 import { useRouter } from 'next/router'
 import { Conversation } from '@xmtp/xmtp-js'
-import {
-  classNames,
-  truncate,
-  formatDate,
-  checkPath,
-  checkIfPathIsEns,
-} from '../helpers'
+import { classNames, formatDate, getConversationKey } from '../helpers'
 import Avatar from './Avatar'
 import { useAppStore } from '../store/app'
-import useWalletProvider from '../hooks/useWalletProvider'
 
 type ConversationTileProps = {
   conversation: Conversation
-  isSelected: boolean
   onClick?: () => void
 }
 
 const ConversationTile = ({
   conversation,
-  isSelected,
   onClick,
 }: ConversationTileProps): JSX.Element | null => {
+  const router = useRouter()
+  const address = useAppStore((state) => state.address)
   const previewMessages = useAppStore((state) => state.previewMessages)
   const loadingConversations = useAppStore(
     (state) => state.loadingConversations
   )
+  const recipentAddress = Array.isArray(router.query.recipientWalletAddr)
+    ? router.query.recipientWalletAddr.join('/')
+    : router.query.recipientWalletAddr
 
-  if (!previewMessages.get(conversation.peerAddress)) {
+  if (!previewMessages.get(getConversationKey(conversation))) {
     return null
   }
 
-  const latestMessage = previewMessages.get(conversation.peerAddress)
+  const latestMessage = previewMessages.get(getConversationKey(conversation))
 
-  const path = `/dm/${conversation.peerAddress}`
+  const path = `/dm/${getConversationKey(conversation)}`
+
+  const conversationDomain =
+    conversation.context?.conversationId.split('.')[0] ?? ''
+
+  const isSelected = recipentAddress === getConversationKey(conversation)
 
   if (!latestMessage) {
     return null
   }
 
   return (
-    <Link href={path} key={conversation.peerAddress}>
+    <Link href={path} key={getConversationKey(conversation)}>
       <a onClick={onClick}>
         <div
           className={classNames(
@@ -69,6 +70,11 @@ const ConversationTile = ({
         >
           <Avatar peerAddress={conversation.peerAddress} />
           <div className="py-4 sm:text-left text w-full">
+            {conversationDomain && (
+              <div className="text-sm rounded-2xl text-white bg-black w-max px-2 font-bold">
+                {conversationDomain.toLocaleUpperCase()}
+              </div>
+            )}
             <div className="grid-cols-2 grid">
               <Address
                 address={conversation.peerAddress}
@@ -84,15 +90,10 @@ const ConversationTile = ({
                 {formatDate(latestMessage?.sent)}
               </span>
             </div>
-            <p
-              className={classNames(
-                'text-[13px] md:text-sm font-normal text-ellipsis mt-0',
-                isSelected ? 'text-n-500' : 'text-n-300',
-                loadingConversations ? 'animate-pulse' : ''
-              )}
-            >
-              {latestMessage && truncate(latestMessage.content, 75)}
-            </p>
+            <span className="text-sm text-gray-500 line-clamp-1 break-all">
+              {address === latestMessage?.senderAddress && 'You: '}{' '}
+              {latestMessage?.content}
+            </span>
           </div>
         </div>
       </a>
@@ -101,40 +102,19 @@ const ConversationTile = ({
 }
 
 const ConversationsList = (): JSX.Element => {
-  const router = useRouter()
   const conversations = useAppStore((state) => state.conversations)
   const previewMessages = useAppStore((state) => state.previewMessages)
-
-  const { resolveName } = useWalletProvider()
 
   const orderByLatestMessage = (
     convoA: Conversation,
     convoB: Conversation
   ): number => {
     const convoALastMessageDate =
-      previewMessages.get(convoA.peerAddress)?.sent || new Date()
+      previewMessages.get(getConversationKey(convoA))?.sent || new Date()
     const convoBLastMessageDate =
-      previewMessages.get(convoB.peerAddress)?.sent || new Date()
+      previewMessages.get(getConversationKey(convoB))?.sent || new Date()
     return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
   }
-
-  const reloadIfQueryParamPresent = async () => {
-    if (checkPath()) {
-      let queryAddress = window.location.pathname.replace('/dm/', '')
-      if (checkIfPathIsEns(queryAddress)) {
-        queryAddress = (await resolveName(queryAddress)) ?? ''
-      }
-      if (queryAddress) {
-        if (conversations && conversations.has(queryAddress)) {
-          router.push(window.location.pathname)
-        }
-      }
-    }
-  }
-
-  useEffect(() => {
-    reloadIfQueryParamPresent()
-  }, [window.location.pathname])
 
   if (!conversations || conversations.size == 0) {
     return <NoConversationsMessage />
@@ -147,13 +127,10 @@ const ConversationsList = (): JSX.Element => {
         Array.from(conversations.values())
           .sort(orderByLatestMessage)
           .map((convo) => {
-            const isSelected =
-              router.query.recipientWalletAddr == convo.peerAddress
             return (
               <ConversationTile
-                key={convo.peerAddress}
+                key={getConversationKey(convo)}
                 conversation={convo}
-                isSelected={isSelected}
               />
             )
           })}
