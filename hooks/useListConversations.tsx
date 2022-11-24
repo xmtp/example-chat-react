@@ -55,7 +55,6 @@ export const useListConversations = () => {
     let conversationStream: Stream<Conversation>
 
     const streamAllMessages = async () => {
-      console.log('Heyyyyyyyy')
       messageStream = await client.conversations.streamAllMessages()
 
       for await (const message of messageStream) {
