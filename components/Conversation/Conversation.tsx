@@ -31,7 +31,12 @@ const Conversation = ({
   )
 
   const fetchNextMessages = useCallback(() => {
-    if (hasMore && Array.isArray(messages) && messages.length > 0) {
+    if (
+      hasMore &&
+      Array.isArray(messages) &&
+      messages.length > 0 &&
+      conversationKey
+    ) {
       const lastMsgDate = messages[messages.length - 1].sent
       const currentEndTime = endTime.get(conversationKey)
       if (!currentEndTime || lastMsgDate <= currentEndTime) {
@@ -42,10 +47,6 @@ const Conversation = ({
   }, [conversationKey, hasMore, messages, endTime])
 
   const hasMessages = Number(messages?.length) > 0
-
-  if (!conversationKey) {
-    return <div />
-  }
 
   if (loadingConversations && !hasMessages) {
     return (

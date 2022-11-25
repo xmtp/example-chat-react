@@ -84,41 +84,30 @@ const MessagesList = ({
   let lastMessageDate: Date | undefined
 
   return (
-    <div className="flex h-[98%]">
-      <div className="relative w-full h-full pl-4 flex">
-        <div
-          id="scrollableDiv"
-          className="flex flex-col-reverse h-full overflow-y-auto w-full"
-        >
-          <InfiniteScroll
-            dataLength={messages.length}
-            next={fetchNextMessages}
-            className="flex flex-col-reverse overflow-hidden"
-            inverse
-            endMessage={<ConversationBeginningNotice />}
-            hasMore={hasMore}
-            loader={<LoadingMore />}
-            scrollableTarget="scrollableDiv"
-          >
-            {messages?.map((msg: DecodedMessage, index: number) => {
-              const dateHasChanged = lastMessageDate
-                ? !isOnSameDay(lastMessageDate, msg.sent)
-                : false
-              const messageDiv = (
-                <div key={`${msg.id}_${index}`}>
-                  <MessageTile message={msg} />
-                  {dateHasChanged ? (
-                    <DateDivider date={lastMessageDate} />
-                  ) : null}
-                </div>
-              )
-              lastMessageDate = msg.sent
-              return messageDiv
-            })}
-          </InfiniteScroll>
-        </div>
-      </div>
-    </div>
+    <InfiniteScroll
+      dataLength={messages.length}
+      next={fetchNextMessages}
+      className="flex flex-col-reverse overflow-y-auto pl-4"
+      height={'82vh'}
+      inverse
+      endMessage={<ConversationBeginningNotice />}
+      hasMore={hasMore}
+      loader={<LoadingMore />}
+    >
+      {messages?.map((msg: DecodedMessage, index: number) => {
+        const dateHasChanged = lastMessageDate
+          ? !isOnSameDay(lastMessageDate, msg.sent)
+          : false
+        const messageDiv = (
+          <div key={`${msg.id}_${index}`}>
+            <MessageTile message={msg} />
+            {dateHasChanged ? <DateDivider date={lastMessageDate} /> : null}
+          </div>
+        )
+        lastMessageDate = msg.sent
+        return messageDiv
+      })}
+    </InfiniteScroll>
   )
 }
 
