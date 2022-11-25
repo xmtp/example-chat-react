@@ -48,10 +48,6 @@ const Conversation = ({
 
   const hasMessages = Number(messages?.length) > 0
 
-  if (!conversationKey) {
-    return <div />
-  }
-
   if (loadingConversations && !hasMessages) {
     return (
       <Loader
