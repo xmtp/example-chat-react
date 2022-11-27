@@ -43,8 +43,7 @@ const ConversationTile = ({
   }
 
   return (
-    // eslint-disable-next-line @next/next/link-passhref
-    <Link href={path} key={getConversationKey(conversation)}>
+    <Link href={path} key={getConversationKey(conversation)} passHref>
       <div
         className={classNames(
           'h-20',
