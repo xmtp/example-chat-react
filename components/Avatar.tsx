@@ -1,19 +1,23 @@
+import { useEffect, useState } from 'react'
 import Blockies from 'react-blockies'
-import useEns from '../hooks/useEns'
+import useWalletProvider from '../hooks/useWalletProvider'
 
 type AvatarProps = {
   peerAddress: string
 }
 
 const Avatar = ({ peerAddress }: AvatarProps) => {
-  const { avatarUrl, loading } = useEns(peerAddress)
-  if (loading) {
-    return (
-      <div className="animate-pulse flex">
-        <div className="rounded-full bg-gray-200 h-10 w-10" />
-      </div>
-    )
-  }
+  const { getAvatarUrl } = useWalletProvider()
+  const [avatarUrl, setAvatarUrl] = useState<string>()
+
+  useEffect(() => {
+    const updateAvatarUrl = async () => {
+      const avatarUrlResponse = await getAvatarUrl(peerAddress)
+      setAvatarUrl(avatarUrlResponse)
+    }
+    updateAvatarUrl()
+  }, [peerAddress])
+
   if (avatarUrl) {
     return (
       <div>

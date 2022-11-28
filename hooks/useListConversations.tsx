@@ -1,4 +1,9 @@
-import { Conversation, DecodedMessage, Stream } from '@xmtp/xmtp-js'
+import {
+  Conversation,
+  DecodedMessage,
+  SortDirection,
+  Stream,
+} from '@xmtp/xmtp-js'
 import { useEffect, useState } from 'react'
 import { getConversationKey, shortAddress, truncate } from '../helpers'
 import { useAppStore } from '../store/app'
@@ -14,6 +19,8 @@ export const useListConversations = () => {
   const conversations = useAppStore((state) => state.conversations)
   const setConversations = useAppStore((state) => state.setConversations)
   const addMessages = useAppStore((state) => state.addMessages)
+  const previewMessages = useAppStore((state) => state.previewMessages)
+  const setPreviewMessages = useAppStore((state) => state.setPreviewMessages)
   const setPreviewMessage = useAppStore((state) => state.setPreviewMessage)
   const setLoadingConversations = useAppStore(
     (state) => state.setLoadingConversations
@@ -94,6 +101,13 @@ export const useListConversations = () => {
         if (convo.peerAddress !== walletAddress) {
           conversations.set(getConversationKey(convo), convo)
           setConversations(new Map(conversations))
+          const newPreviewMessages = new Map(previewMessages)
+          const newMessages = await convo.messages({
+            limit: 1,
+            direction: SortDirection.SORT_DIRECTION_DESCENDING,
+          })
+          newPreviewMessages.set(getConversationKey(convo), newMessages[0])
+          setPreviewMessages(newPreviewMessages)
           closeMessageStream()
           streamAllMessages()
         }
