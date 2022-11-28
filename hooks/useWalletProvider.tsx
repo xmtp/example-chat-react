@@ -148,22 +148,26 @@ const useWalletProvider = () => {
       return
     }
     const initCached = async () => {
-      const cachedProviderJson = localStorage.getItem(
-        'WEB3_CONNECT_CACHED_PROVIDER'
-      )
-      if (!cachedProviderJson) {
-        return
+      try {
+        const cachedProviderJson = localStorage.getItem(
+          'WEB3_CONNECT_CACHED_PROVIDER'
+        )
+        if (!cachedProviderJson) {
+          return
+        }
+        const cachedProviderName = JSON.parse(cachedProviderJson)
+        const instance = await web3Modal.connectTo(cachedProviderName)
+        if (!instance) {
+          return
+        }
+        instance.on('accountsChanged', handleAccountsChanged)
+        provider = new ethers.providers.Web3Provider(instance, 'any')
+        const newSigner = provider.getSigner()
+        setSigner(newSigner)
+        setAddress(await newSigner.getAddress())
+      } catch (e) {
+        console.error(e)
       }
-      const cachedProviderName = JSON.parse(cachedProviderJson)
-      const instance = await web3Modal.connectTo(cachedProviderName)
-      if (!instance) {
-        return
-      }
-      instance.on('accountsChanged', handleAccountsChanged)
-      provider = new ethers.providers.Web3Provider(instance, 'any')
-      const newSigner = provider.getSigner()
-      setSigner(newSigner)
-      setAddress(await newSigner.getAddress())
     }
     initCached()
   }, [web3Modal])
