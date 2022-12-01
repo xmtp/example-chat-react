@@ -18,15 +18,19 @@ const ConversationPage: NextPage = () => {
       if (recipentAddress?.includes('.eth')) {
         const address = await resolveName(recipentAddress)
         router.push(`/dm/${address}`)
-      }
-      if (!recipientWalletAddr && window.location.pathname) {
-        console.log('Hi')
+      } else if (recipentAddress) {
+        router.push(`/dm/${recipentAddress}`)
+      } else if (
+        !recipentAddress &&
+        window.location.pathname &&
+        window.location.pathname.includes('/dm')
+      ) {
         router.push(window.location.pathname)
         setRecipientWalletAddr(window.location.pathname.replace('/dm/', ''))
       }
     }
     checkIfEns()
-  }, [window.location.pathname])
+  }, [recipientWalletAddr, window.location.pathname])
 
   return <Conversation recipientWalletAddr={recipientWalletAddr ?? ''} />
 }
