@@ -1,12 +1,7 @@
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useContext,
-  useCallback,
-} from 'react'
-import { WalletContext } from '../contexts/wallet'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { checkIfPathIsEns, classNames } from '../helpers'
+import useWalletProvider from '../hooks/useWalletProvider'
+import { useAppStore } from '../store/app'
 
 type AddressInputProps = {
   recipientWalletAddress?: string
@@ -25,9 +20,13 @@ const AddressInput = ({
   placeholder,
   onInputChange,
 }: AddressInputProps): JSX.Element => {
-  const { address: walletAddress, lookupAddress } = useContext(WalletContext)
+  const { lookupAddress } = useWalletProvider()
+  const walletAddress = useAppStore((state) => state.address)
   const inputElement = useRef(null)
   const [value, setValue] = useState<string>(recipientWalletAddress || '')
+  const conversations = useAppStore((state) => state.conversations)
+  const setConversations = useAppStore((state) => state.setConversations)
+  const client = useAppStore((state) => state.client)
 
   const focusInputElementRef = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,11 +42,22 @@ const AddressInput = ({
 
   useEffect(() => {
     const setLookupValue = async () => {
-      if (!lookupAddress) return
+      if (!lookupAddress) {
+        return
+      }
       if (recipientWalletAddress && !checkIfPathIsEns(recipientWalletAddress)) {
         const name = await lookupAddress(recipientWalletAddress)
-        setValue(name || recipientWalletAddress)
+        if (name) {
+          setValue(name)
+        } else if (recipientWalletAddress) {
+          setValue(recipientWalletAddress)
+        }
       } else if (value.startsWith('0x') && value.length === 42) {
+        const conversation = await client?.conversations.newConversation(value)
+        if (conversation) {
+          conversations.set(value, conversation)
+          setConversations(new Map(conversations))
+        }
         const name = await lookupAddress(value)
         if (name) {
           setValue(name)
@@ -109,6 +119,9 @@ const AddressInput = ({
         value={value}
         ref={inputElement}
         autoComplete="off"
+        autoCorrect="off"
+        autoCapitalize="off"
+        spellCheck="false"
       />
     </div>
   )

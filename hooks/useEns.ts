@@ -1,8 +1,8 @@
-import { useState, useEffect, useContext } from 'react'
-import { WalletContext } from '../contexts/wallet'
+import { useState, useEffect } from 'react'
+import useWalletProvider from './useWalletProvider'
 
 const useEns = (addressOrName: string | undefined) => {
-  const { resolveName, lookupAddress, getAvatarUrl } = useContext(WalletContext)
+  const { resolveName, lookupAddress, getAvatarUrl } = useWalletProvider()
   const [address, setAddress] = useState<string>('')
   const [name, setName] = useState<string>('')
   const [avatarUrl, setAvatarUrl] = useState<string>('')
@@ -16,14 +16,18 @@ const useEns = (addressOrName: string | undefined) => {
     : undefined
 
   useEffect(() => {
-    if (!resolveName || !lookupAddress || !getAvatarUrl) return
+    if (!resolveName || !lookupAddress || !getAvatarUrl) {
+      return
+    }
     const initAvatarUrl = async (name: string) => {
       setAvatarUrl((await getAvatarUrl(name)) as string)
     }
     const initName = async (probableAddress: string) => {
       setLoading(true)
       setName((await lookupAddress(probableAddress)) as string)
-      if (name) await initAvatarUrl(name)
+      if (name) {
+        await initAvatarUrl(name)
+      }
       setLoading(false)
     }
     const initAddress = async (probableName: string) => {

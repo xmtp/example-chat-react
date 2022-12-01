@@ -1,3 +1,6 @@
+import { Conversation } from '@xmtp/xmtp-js'
+import { NextRouter } from 'next/router'
+
 export const truncate = (
   str: string | undefined,
   length: number
@@ -35,3 +38,15 @@ export const shortAddress = (addr: string): string =>
   addr.length > 10 && addr.startsWith('0x')
     ? `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`
     : addr
+
+export const getConversationKey = (conversation?: Conversation): string => {
+  return conversation?.context?.conversationId
+    ? `${conversation?.peerAddress}/${conversation?.context?.conversationId}`
+    : conversation?.peerAddress ?? ''
+}
+
+export const getAddressFromPath = (router: NextRouter): string => {
+  return Array.isArray(router.query.recipientWalletAddr)
+    ? router.query.recipientWalletAddr[0]
+    : (router.query.recipientWalletAddr as string)
+}

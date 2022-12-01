@@ -5,7 +5,7 @@ type LoaderProps = {
 }
 
 type StyledLoaderProps = {
-  headingText: string
+  headingText?: string
   subHeadingText: string
   isLoading: boolean
 }
@@ -35,12 +35,14 @@ export const Loader = ({
   subHeadingText,
   isLoading,
 }: StyledLoaderProps): JSX.Element => (
-  <div className="grid place-items-center h-full">
+  <div className="grid place-items-center h-full mt-2">
     <div className="columns-1 text-center">
       <Spinner isLoading={isLoading} />
-      <div className="text-xl md:text-lg text-n-200 md:text-n-300 font-bold">
-        {headingText}
-      </div>
+      {headingText && (
+        <div className="text-xl md:text-lg text-n-200 md:text-n-300 font-bold">
+          {headingText}
+        </div>
+      )}
       <div className="text-lx md:text-md text-n-200 font-normal">
         {subHeadingText}
       </div>

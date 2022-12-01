@@ -31,7 +31,7 @@ const ConversationView = ({ children }: ConversationViewProps): JSX.Element => {
       </Transition.Root>
 
       {/* Always show in desktop layout */}
-      <div className="hidden md:bg-white md:pl-84 md:flex md:flex-col md:flex-1 md:h-screen md:overflow-y-auto">
+      <div className="hidden md:bg-white md:pl-84 md:flex md:flex-col md:flex-1 md:h-screen">
         {children}
       </div>
     </>
