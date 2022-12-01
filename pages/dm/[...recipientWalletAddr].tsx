@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { Conversation } from '../../components/Conversation'
@@ -7,11 +7,17 @@ import useWalletProvider from '../../hooks/useWalletProvider'
 const ConversationPage: NextPage = () => {
   const router = useRouter()
   const { resolveName } = useWalletProvider()
-  const recipientWalletAddr = Array.isArray(router.query.recipientWalletAddr)
-    ? router.query.recipientWalletAddr.join('/')
-    : router.query.recipientWalletAddr
+  const [recipientWalletAddr, setRecipientWalletAddr] = useState<string>(
+    (Array.isArray(router.query.recipientWalletAddr)
+      ? router.query.recipientWalletAddr.join('/')
+      : router.query.recipientWalletAddr) ?? ''
+  )
 
   useEffect(() => {
+    if (!recipientWalletAddr && window.location.pathname.includes('/dm')) {
+      router.push(window.location.pathname)
+      setRecipientWalletAddr(window.location.pathname.replace('/dm/', ''))
+    }
     const checkIfEns = async () => {
       if (recipientWalletAddr?.includes('.eth')) {
         const address = await resolveName(recipientWalletAddr)
@@ -19,7 +25,7 @@ const ConversationPage: NextPage = () => {
       }
     }
     checkIfEns()
-  }, [recipientWalletAddr])
+  }, [recipientWalletAddr, window.location.pathname])
 
   return <Conversation recipientWalletAddr={recipientWalletAddr ?? ''} />
 }
