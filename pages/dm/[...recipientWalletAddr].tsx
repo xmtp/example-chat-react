@@ -7,20 +7,20 @@ import useWalletProvider from '../../hooks/useWalletProvider'
 const ConversationPage: NextPage = () => {
   const router = useRouter()
   const { resolveName } = useWalletProvider()
-  const [recipientWalletAddr, setRecipientWalletAddr] = useState<string>('')
+  const [recipientWalletAddr, setRecipientWalletAddr] = useState<string>(
+    (Array.isArray(router.query.recipientWalletAddr)
+      ? router.query.recipientWalletAddr.join('/')
+      : router.query.recipientWalletAddr) ?? ''
+  )
 
   useEffect(() => {
-    if (window.location.pathname.includes('/dm')) {
+    if (!recipientWalletAddr && window.location.pathname.includes('/dm')) {
       router.push(window.location.pathname)
       setRecipientWalletAddr(window.location.pathname.replace('/dm/', ''))
     }
     const checkIfEns = async () => {
-      const recipentAddress = Array.isArray(router.query.recipientWalletAddr)
-        ? router.query.recipientWalletAddr.join('/')
-        : router.query.recipientWalletAddr
-      setRecipientWalletAddr(recipentAddress ?? '')
-      if (recipentAddress?.includes('.eth')) {
-        const address = await resolveName(recipentAddress)
+      if (recipientWalletAddr?.includes('.eth')) {
+        const address = await resolveName(recipientWalletAddr)
         router.push(`/dm/${address}`)
       }
     }

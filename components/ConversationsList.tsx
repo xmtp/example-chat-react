@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ChatIcon } from '@heroicons/react/outline'
 import Address from './Address'
@@ -21,9 +21,18 @@ const ConversationTile = ({
   const loadingConversations = useAppStore(
     (state) => state.loadingConversations
   )
-  const recipentAddress = Array.isArray(router.query.recipientWalletAddr)
-    ? router.query.recipientWalletAddr.join('/')
-    : router.query.recipientWalletAddr
+  const [recipentAddress, setRecipentAddress] = useState<string>(
+    (Array.isArray(router.query.recipientWalletAddr)
+      ? router.query.recipientWalletAddr.join('/')
+      : router.query.recipientWalletAddr) ?? ''
+  )
+
+  useEffect(() => {
+    if (!recipentAddress && window.location.pathname.includes('/dm')) {
+      router.push(window.location.pathname)
+      setRecipentAddress(window.location.pathname.replace('/dm/', ''))
+    }
+  }, [recipentAddress, window.location.pathname])
 
   if (!previewMessages.get(getConversationKey(conversation))) {
     return null

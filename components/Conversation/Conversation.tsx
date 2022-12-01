@@ -13,7 +13,6 @@ type ConversationProps = {
 const Conversation = ({
   recipientWalletAddr,
 }: ConversationProps): JSX.Element => {
-  console.log(recipientWalletAddr)
   const conversations = useAppStore((state) => state.conversations)
   const selectedConversation = conversations.get(recipientWalletAddr)
   const conversationKey = getConversationKey(selectedConversation)
