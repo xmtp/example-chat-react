@@ -7,7 +7,7 @@ import {
   ChevronRightIcon,
   ArrowSmRightIcon,
 } from '@heroicons/react/solid'
-import { useAppStore } from '../store/app'
+import { useAccount } from 'wagmi'
 
 type XmtpInfoRowProps = {
   icon: JSX.Element
@@ -51,7 +51,7 @@ const InfoRow = ({
 )
 
 const XmtpInfoPanel = ({ onConnect }: XmtpInfoPanelProps): JSX.Element => {
-  const walletAddress = useAppStore((state) => state.address)
+  const { address: walletAddress } = useAccount()
   const InfoRows = [
     {
       icon: <LinkIcon />,

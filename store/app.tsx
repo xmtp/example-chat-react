@@ -1,13 +1,8 @@
 import { Client, Conversation, DecodedMessage } from '@xmtp/xmtp-js'
-import { Signer } from 'ethers'
 import create from 'zustand'
 import getUniqueMessages from '../helpers/getUniqueMessages'
 
 interface AppState {
-  signer: Signer | undefined
-  setSigner: (signer: Signer | undefined) => void
-  address: string | undefined
-  setAddress: (address: string | undefined) => void
   client: Client | undefined | null
   setClient: (client: Client | undefined | null) => void
   conversations: Map<string, Conversation>
@@ -23,10 +18,6 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set) => ({
-  signer: undefined,
-  setSigner: (signer: Signer | undefined) => set(() => ({ signer })),
-  address: undefined,
-  setAddress: (address: string | undefined) => set(() => ({ address })),
   client: undefined,
   setClient: (client: Client | undefined | null) => set(() => ({ client })),
   conversations: new Map(),

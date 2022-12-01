@@ -1,14 +1,14 @@
 import React from 'react'
 import { classNames } from '../helpers'
-import { useAppStore } from '../store/app'
 import Address from './Address'
+import { useAccount } from 'wagmi'
 
 type addressPillProps = {
   address: string
 }
 
 const AddressPill = ({ address }: addressPillProps): JSX.Element => {
-  const walletAddress = useAppStore((state) => state.address)
+  const { address: walletAddress } = useAccount()
   const userIsSender = address === walletAddress
   return (
     <Address

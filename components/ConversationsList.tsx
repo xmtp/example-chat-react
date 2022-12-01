@@ -7,6 +7,7 @@ import { Conversation } from '@xmtp/xmtp-js'
 import { classNames, formatDate, getConversationKey } from '../helpers'
 import Avatar from './Avatar'
 import { useAppStore } from '../store/app'
+import { useAccount } from 'wagmi'
 
 type ConversationTileProps = {
   conversation: Conversation
@@ -16,7 +17,7 @@ const ConversationTile = ({
   conversation,
 }: ConversationTileProps): JSX.Element | null => {
   const router = useRouter()
-  const address = useAppStore((state) => state.address)
+  const { address } = useAccount()
   const previewMessages = useAppStore((state) => state.previewMessages)
   const loadingConversations = useAppStore(
     (state) => state.loadingConversations

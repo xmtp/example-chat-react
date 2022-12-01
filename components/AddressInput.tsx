@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { checkIfPathIsEns, classNames } from '../helpers'
 import useWalletProvider from '../hooks/useWalletProvider'
 import { useAppStore } from '../store/app'
+import { useAccount } from 'wagmi'
 
 type AddressInputProps = {
   recipientWalletAddress?: string
@@ -21,7 +22,7 @@ const AddressInput = ({
   onInputChange,
 }: AddressInputProps): JSX.Element => {
   const { lookupAddress } = useWalletProvider()
-  const walletAddress = useAppStore((state) => state.address)
+  const { address: walletAddress } = useAccount()
   const inputElement = useRef(null)
   const [value, setValue] = useState<string>(recipientWalletAddress || '')
   const conversations = useAppStore((state) => state.conversations)
