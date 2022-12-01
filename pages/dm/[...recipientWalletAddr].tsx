@@ -17,9 +17,12 @@ const ConversationPage: NextPage = () => {
         const address = await resolveName(recipientWalletAddr)
         router.push(`/dm/${address}`)
       }
+      if (window.location.pathname) {
+        router.push(window.location.pathname)
+      }
     }
     checkIfEns()
-  }, [recipientWalletAddr])
+  }, [recipientWalletAddr, window.location.pathname])
 
   return <Conversation recipientWalletAddr={recipientWalletAddr ?? ''} />
 }
