@@ -10,6 +10,10 @@ const ConversationPage: NextPage = () => {
   const [recipientWalletAddr, setRecipientWalletAddr] = useState<string>('')
 
   useEffect(() => {
+    if (window.location.pathname.includes('/dm')) {
+      router.push(window.location.pathname)
+      setRecipientWalletAddr(window.location.pathname.replace('/dm/', ''))
+    }
     const checkIfEns = async () => {
       const recipentAddress = Array.isArray(router.query.recipientWalletAddr)
         ? router.query.recipientWalletAddr.join('/')
@@ -18,15 +22,6 @@ const ConversationPage: NextPage = () => {
       if (recipentAddress?.includes('.eth')) {
         const address = await resolveName(recipentAddress)
         router.push(`/dm/${address}`)
-      } else if (recipentAddress) {
-        router.push(`/dm/${recipentAddress}`)
-      } else if (
-        !recipentAddress &&
-        window.location.pathname &&
-        window.location.pathname.includes('/dm')
-      ) {
-        router.push(window.location.pathname)
-        setRecipientWalletAddr(window.location.pathname.replace('/dm/', ''))
       }
     }
     checkIfEns()
