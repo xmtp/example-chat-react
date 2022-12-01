@@ -4,6 +4,7 @@ import messageComposerStyles from '../../styles/MessageComposer.module.css'
 import upArrowGreen from '../../public/up-arrow-green.svg'
 import upArrowGrey from '../../public/up-arrow-grey.svg'
 import { useRouter } from 'next/router'
+import Image from 'next/image'
 
 type MessageComposerProps = {
   onSend: (msg: string) => Promise<void>
@@ -28,18 +29,7 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
   }
 
   return (
-    <div
-      className={classNames(
-        'sticky',
-        'bottom-0',
-        'pl-4',
-        'pt-2',
-        'flex-shrink-0',
-        'flex',
-        'h-[68px]',
-        'bg-white'
-      )}
-    >
+    <div className={classNames('p-2', 'flex', 'bg-white', 'items-center')}>
       <form
         className={classNames(
           'flex',
@@ -69,12 +59,11 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
           required
         />
         <button type="submit" className={messageComposerStyles.arrow}>
-          <img
-            src={message ? upArrowGreen : upArrowGrey}
-            alt="send"
-            height={32}
-            width={32}
-          />
+          {!message ? (
+            <Image src={upArrowGrey} alt="send" height={32} width={32} />
+          ) : (
+            <Image src={upArrowGreen} alt="send" height={32} width={32} />
+          )}
         </button>
       </form>
     </div>

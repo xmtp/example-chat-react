@@ -1,13 +1,15 @@
 import { DecodedMessage } from '@xmtp/xmtp-js'
-import React, { MutableRefObject } from 'react'
+import React, { FC } from 'react'
 import Emoji from 'react-emoji-render'
 import Avatar from '../Avatar'
 import { formatTime } from '../../helpers'
 import AddressPill from '../AddressPill'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 export type MessageListProps = {
   messages: DecodedMessage[]
-  messagesEndRef: MutableRefObject<null>
+  fetchNextMessages: () => void
+  hasMore: boolean
 }
 
 type MessageTileProps = {
@@ -42,7 +44,9 @@ const MessageTile = ({ message }: MessageTileProps): JSX.Element => (
   </div>
 )
 
-const DateDividerBorder: React.FC = ({ children }) => (
+const DateDividerBorder: React.FC<{ children?: React.ReactNode }> = ({
+  children,
+}) => (
   <>
     <div className="grow h-0.5 bg-gray-300/25" />
     {children}
@@ -61,44 +65,51 @@ const DateDivider = ({ date }: { date?: Date }): JSX.Element => (
 )
 
 const ConversationBeginningNotice = (): JSX.Element => (
-  <div className="flex align-items-center justify-center pb-4">
+  <div className="flex align-items-center justify-center pb-4 mt-4">
     <span className="text-gray-300 text-sm font-semibold">
       This is the beginning of the conversation
     </span>
   </div>
 )
 
+const LoadingMore: FC = () => (
+  <div className="p-1 mt-6 text-center text-gray-300 font-bold text-sm">
+    Loading Messages...
+  </div>
+)
+
 const MessagesList = ({
   messages,
-  messagesEndRef,
+  fetchNextMessages,
+  hasMore,
 }: MessageListProps): JSX.Element => {
   let lastMessageDate: Date | undefined
 
   return (
-    <div className="flex-grow flex">
-      <div className="pb-6 md:pb-0 w-full flex flex-col self-end">
-        <div className="max-h-[80vh] relative w-full bg-white px-4 pt-6 overflow-y-auto flex">
-          <div className="w-full">
-            {messages && messages.length ? (
-              <ConversationBeginningNotice />
-            ) : null}
-            {messages?.map((msg: DecodedMessage) => {
-              const dateHasChanged = !isOnSameDay(lastMessageDate, msg.sent)
-              lastMessageDate = msg.sent
-              return (
-                <>
-                  {dateHasChanged ? (
-                    <DateDivider key={msg.id + 'divider'} date={msg.sent} />
-                  ) : null}
-                  <MessageTile message={msg} key={msg.id} />
-                </>
-              )
-            })}
-            <div ref={messagesEndRef} />
+    <InfiniteScroll
+      dataLength={messages.length}
+      next={fetchNextMessages}
+      className="flex flex-col-reverse overflow-y-auto pl-4"
+      height={'82vh'}
+      inverse
+      endMessage={<ConversationBeginningNotice />}
+      hasMore={hasMore}
+      loader={<LoadingMore />}
+    >
+      {messages?.map((msg: DecodedMessage, index: number) => {
+        const dateHasChanged = lastMessageDate
+          ? !isOnSameDay(lastMessageDate, msg.sent)
+          : false
+        const messageDiv = (
+          <div key={`${msg.id}_${index}`}>
+            <MessageTile message={msg} />
+            {dateHasChanged ? <DateDivider date={lastMessageDate} /> : null}
           </div>
-        </div>
-      </div>
-    </div>
+        )
+        lastMessageDate = msg.sent
+        return messageDiv
+      })}
+    </InfiniteScroll>
   )
 }
 

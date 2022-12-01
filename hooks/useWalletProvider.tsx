@@ -65,11 +65,8 @@ const useWalletProvider = () => {
 
   // Note, this triggers a re-render on acccount change and on diconnect.
   const disconnect = useCallback(() => {
-    if (!web3Modal) return
-    web3Modal.clearCachedProvider()
-    localStorage.removeItem('walletconnect')
     Object.keys(localStorage).forEach((key) => {
-      if (key.startsWith('-walletlink')) {
+      if (key.startsWith('xmtp')) {
         localStorage.removeItem(key)
       }
     })
@@ -83,10 +80,14 @@ const useWalletProvider = () => {
   }, [disconnect])
 
   const connect = useCallback(async () => {
-    if (!web3Modal) throw new Error('web3Modal not initialized')
+    if (!web3Modal) {
+      throw new Error('web3Modal not initialized')
+    }
     try {
       const instance = await web3Modal.connect()
-      if (!instance) return
+      if (!instance) {
+        return
+      }
       instance.on('accountsChanged', handleAccountsChanged)
       provider = new ethers.providers.Web3Provider(instance, 'any')
       const newSigner = provider.getSigner()
@@ -143,20 +144,30 @@ const useWalletProvider = () => {
   }, [])
 
   useEffect(() => {
-    if (!web3Modal) return
+    if (!web3Modal) {
+      return
+    }
     const initCached = async () => {
-      const cachedProviderJson = localStorage.getItem(
-        'WEB3_CONNECT_CACHED_PROVIDER'
-      )
-      if (!cachedProviderJson) return
-      const cachedProviderName = JSON.parse(cachedProviderJson)
-      const instance = await web3Modal.connectTo(cachedProviderName)
-      if (!instance) return
-      instance.on('accountsChanged', handleAccountsChanged)
-      provider = new ethers.providers.Web3Provider(instance, 'any')
-      const newSigner = provider.getSigner()
-      setSigner(newSigner)
-      setAddress(await newSigner.getAddress())
+      try {
+        const cachedProviderJson = localStorage.getItem(
+          'WEB3_CONNECT_CACHED_PROVIDER'
+        )
+        if (!cachedProviderJson) {
+          return
+        }
+        const cachedProviderName = JSON.parse(cachedProviderJson)
+        const instance = await web3Modal.connectTo(cachedProviderName)
+        if (!instance) {
+          return
+        }
+        instance.on('accountsChanged', handleAccountsChanged)
+        provider = new ethers.providers.Web3Provider(instance, 'any')
+        const newSigner = provider.getSigner()
+        setSigner(newSigner)
+        setAddress(await newSigner.getAddress())
+      } catch (e) {
+        console.error(e)
+      }
     }
     initCached()
   }, [web3Modal])
