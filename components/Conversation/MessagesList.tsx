@@ -44,7 +44,9 @@ const MessageTile = ({ message }: MessageTileProps): JSX.Element => (
   </div>
 )
 
-const DateDividerBorder: React.FC = ({ children }) => (
+const DateDividerBorder: React.FC<{ children?: React.ReactNode }> = ({
+  children,
+}) => (
   <>
     <div className="grow h-0.5 bg-gray-300/25" />
     {children}

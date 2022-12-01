@@ -2,6 +2,13 @@ import React from 'react'
 import { render, act } from '@testing-library/react'
 import { waitFor } from '@testing-library/dom'
 import Address from './Address'
+import * as nextRouter from 'next/router'
+
+// @ts-expect-error mocked next router
+nextRouter.useRouter = jest.fn()
+
+// @ts-expect-error mocked next router
+nextRouter.useRouter.mockImplementation(() => ({ route: '/' }))
 
 describe('Address', () => {
   it('renders value', () => {
