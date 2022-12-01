@@ -119,6 +119,9 @@ const AddressInput = ({
         value={value}
         ref={inputElement}
         autoComplete="off"
+        autoCorrect="off"
+        autoCapitalize="off"
+        spellCheck="false"
       />
     </div>
   )

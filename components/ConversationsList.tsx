@@ -132,7 +132,7 @@ const ConversationsList = (): JSX.Element => {
         observer.current.observe(node)
       }
     },
-    [loading, hasMore]
+    [loading, hasMore, currentIndex]
   )
 
   const orderByLatestMessage = (
