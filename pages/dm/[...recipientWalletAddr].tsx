@@ -20,8 +20,9 @@ const ConversationPage: NextPage = () => {
         router.push(`/dm/${address}`)
       }
       if (!recipientWalletAddr && window.location.pathname) {
+        console.log('Hi')
         router.push(window.location.pathname)
-        setRecipientWalletAddr(window.location.pathname.replace('/dm', ''))
+        setRecipientWalletAddr(window.location.pathname.replace('/dm/', ''))
       }
     }
     checkIfEns()
