@@ -6,30 +6,13 @@ import NewMessageButton from './NewMessageButton'
 import NavigationPanel from './NavigationPanel'
 import XmtpInfoPanel from './XmtpInfoPanel'
 import UserMenu from './UserMenu'
-import { useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { useAppStore } from '../store/app'
 import useInitXmtpClient from '../hooks/useInitXmtpClient'
 import useListConversations from '../hooks/useListConversations'
 import useWalletProvider from '../hooks/useWalletProvider'
 
-const NavigationColumnLayout: React.FC = ({ children }) => (
-  <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
-    <div className="flex flex-col flex-grow md:border-r md:border-gray-200 bg-white overflow-y-auto">
-      {children}
-    </div>
-  </aside>
-)
-
-const NavigationHeaderLayout: React.FC = ({ children }) => (
-  <div className="h-[10vh] max-h-20 bg-p-600 flex items-center justify-between flex-shrink-0 px-4">
-    <Link href="/" passHref={true}>
-      <img className="h-8 w-auto" src="/xmtp-icon.png" alt="XMTP" />
-    </Link>
-    {children}
-  </div>
-)
-
-const Layout: React.FC = ({ children }) => {
+const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const client = useAppStore((state) => state.client)
   const { initClient } = useInitXmtpClient()
   useListConversations()
@@ -59,16 +42,21 @@ const Layout: React.FC = ({ children }) => {
       </Head>
       <div>
         <NavigationView>
-          <NavigationColumnLayout>
-            <NavigationHeaderLayout>
-              {walletAddress && client && <NewMessageButton />}
-            </NavigationHeaderLayout>
-            <NavigationPanel onConnect={handleConnect} />
-            <UserMenu
-              onConnect={handleConnect}
-              onDisconnect={handleDisconnect}
-            />
-          </NavigationColumnLayout>
+          <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
+            <div className="flex flex-col flex-grow md:border-r md:border-gray-200 bg-white overflow-y-auto">
+              <div className="h-[10vh] max-h-20 bg-p-600 flex items-center justify-between flex-shrink-0 px-4">
+                <Link href="/" passHref={true}>
+                  <img className="h-8 w-auto" src="/xmtp-icon.png" alt="XMTP" />
+                </Link>
+                {walletAddress && client && <NewMessageButton />}
+              </div>
+              <NavigationPanel onConnect={handleConnect} />
+              <UserMenu
+                onConnect={handleConnect}
+                onDisconnect={handleDisconnect}
+              />
+            </div>
+          </aside>
         </NavigationView>
         <ConversationView>
           {walletAddress && client ? (
