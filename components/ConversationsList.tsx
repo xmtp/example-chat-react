@@ -120,7 +120,7 @@ const ConversationsList = (): JSX.Element => {
   const { loading, hasMore } = useGetPreviewList(currentIndex)
 
   const lastElementRef = useCallback(
-    // (*)
+    // @ts-expect-error custom infinite scroll
     (node) => {
       if (loading) {
         return

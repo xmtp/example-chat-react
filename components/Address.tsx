@@ -14,7 +14,7 @@ const Address = ({ address, className }: AddressProps): JSX.Element => {
   useEffect(() => {
     const updateName = async () => {
       const nameResponse = await lookupAddress(address)
-      setName(nameResponse)
+      nameResponse && setName(nameResponse)
     }
     updateName()
   }, [address])
