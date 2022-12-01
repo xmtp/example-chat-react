@@ -46,7 +46,7 @@ const Conversation = ({
     }
   }, [conversationKey, hasMore, messages, endTime])
 
-  const hasMessages = Number(messages?.length) > 0
+  const hasMessages = Number(messages?.length ?? 0) > 0
 
   if (loadingConversations && !hasMessages) {
     return (

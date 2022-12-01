@@ -1,5 +1,6 @@
 import { SortDirection } from '@xmtp/xmtp-js'
 import { useEffect, useState } from 'react'
+import { MESSAGE_LIMIT } from '../helpers'
 import { useAppStore } from '../store/app'
 
 const useGetMessages = (conversationKey: string, endTime?: Date) => {
@@ -20,12 +21,12 @@ const useGetMessages = (conversationKey: string, endTime?: Date) => {
     const loadMessages = async () => {
       const newMessages = await conversation.messages({
         direction: SortDirection.SORT_DIRECTION_DESCENDING,
-        limit: 20,
+        limit: MESSAGE_LIMIT,
         endTime: endTime,
       })
       if (newMessages.length > 0) {
         addMessages(conversationKey, newMessages)
-        if (newMessages.length < 20) {
+        if (newMessages.length < MESSAGE_LIMIT) {
           hasMore.set(conversationKey, false)
           setHasMore(new Map(hasMore))
         } else {
