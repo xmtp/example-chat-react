@@ -23,11 +23,15 @@ const ConversationTile = ({
   const loadingConversations = useAppStore(
     (state) => state.loadingConversations
   )
-  const [recipentAddress, setRecipentAddress] = useState<string>(
-    (Array.isArray(router.query.recipientWalletAddr)
-      ? router.query.recipientWalletAddr.join('/')
-      : router.query.recipientWalletAddr) ?? ''
-  )
+  const [recipentAddress, setRecipentAddress] = useState<string>()
+
+  useEffect(() => {
+    const routeAddress =
+      (Array.isArray(router.query.recipientWalletAddr)
+        ? router.query.recipientWalletAddr.join('/')
+        : router.query.recipientWalletAddr) ?? ''
+    setRecipentAddress(routeAddress)
+  }, [router.query.recipientWalletAddr])
 
   useEffect(() => {
     if (!recipentAddress && window.location.pathname.includes('/dm')) {
