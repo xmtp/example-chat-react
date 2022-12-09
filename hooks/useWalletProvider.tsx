@@ -22,6 +22,7 @@ const useWalletProvider = () => {
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
   const setAddress = useAppStore((state) => state.setAddress)
   const setSigner = useAppStore((state) => state.setSigner)
+  const reset = useAppStore((state) => state.reset)
   const router = useRouter()
 
   const resolveName = useCallback(async (name: string) => {
@@ -70,8 +71,7 @@ const useWalletProvider = () => {
         localStorage.removeItem(key)
       }
     })
-    setSigner(undefined)
-    setAddress(undefined)
+    reset()
     router.push('/')
   }, [router, web3Modal])
 

@@ -84,7 +84,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
     <div
       className={`flex ${
         tagStr() ? 'bg-p-600' : 'bg-n-500'
-      } items-center justify-between rounded-lg p-4 max-h-16 m-4 mt-0 drop-shadow-xl`}
+      } items-center justify-between rounded-lg px-4 m-2 mt-0 drop-shadow-xl h-[6vh]`}
     >
       {walletAddress ? (
         <Menu>

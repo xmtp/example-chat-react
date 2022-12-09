@@ -60,7 +60,7 @@ const Conversation = ({
 
   return (
     <>
-      <div className="bg-white h-[82vh]">
+      <div className="bg-white h-[86vh]">
         <div className="h-full flex justify-between flex-col">
           <MessagesList
             fetchNextMessages={fetchNextMessages}

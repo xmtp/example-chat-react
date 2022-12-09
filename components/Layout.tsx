@@ -44,7 +44,7 @@ const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
         <NavigationView>
           <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
             <div className="flex flex-col flex-grow md:border-r md:border-gray-200 bg-white overflow-y-auto">
-              <div className="h-[72px] max-h-20 bg-p-600 flex items-center justify-between flex-shrink-0 px-4">
+              <div className="h-[8vh] max-h-20 bg-p-600 flex items-center justify-between flex-shrink-0 px-4">
                 <Link href="/" passHref={true}>
                   <img className="h-8 w-auto" src="/xmtp-icon.png" alt="XMTP" />
                 </Link>
