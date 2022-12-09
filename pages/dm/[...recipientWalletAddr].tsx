@@ -7,11 +7,15 @@ import useWalletProvider from '../../hooks/useWalletProvider'
 const ConversationPage: NextPage = () => {
   const router = useRouter()
   const { resolveName } = useWalletProvider()
-  const [recipientWalletAddr, setRecipientWalletAddr] = useState<string>(
-    (Array.isArray(router.query.recipientWalletAddr)
-      ? router.query.recipientWalletAddr.join('/')
-      : router.query.recipientWalletAddr) ?? ''
-  )
+  const [recipientWalletAddr, setRecipientWalletAddr] = useState<string>()
+
+  useEffect(() => {
+    const routeAddress =
+      (Array.isArray(router.query.recipientWalletAddr)
+        ? router.query.recipientWalletAddr.join('/')
+        : router.query.recipientWalletAddr) ?? ''
+    setRecipientWalletAddr(routeAddress)
+  }, [router.query.recipientWalletAddr])
 
   useEffect(() => {
     if (!recipientWalletAddr && window.location.pathname.includes('/dm')) {

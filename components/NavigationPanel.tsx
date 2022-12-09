@@ -109,7 +109,7 @@ const ConversationsPanel = (): JSX.Element => {
   }
 
   return (
-    <nav className="flex-1 pb-4 space-y-1">
+    <nav className="flex-1 pb-4">
       <ConversationsList />
     </nav>
   )
