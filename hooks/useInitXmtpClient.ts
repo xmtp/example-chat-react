@@ -19,7 +19,6 @@ const useInitXmtpClient = (cacheOnly = false) => {
   const [isRequestPending, setIsRequestPending] = useState(false)
 
   const disconnect = () => {
-    setClient(undefined)
     reset()
     if (signer) {
       wipeKeys(address)

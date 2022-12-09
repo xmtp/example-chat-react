@@ -90,7 +90,7 @@ const MessagesList = ({
       dataLength={messages.length}
       next={fetchNextMessages}
       className="flex flex-col-reverse overflow-y-auto pl-4"
-      height={'82vh'}
+      height={'86vh'}
       inverse
       endMessage={<ConversationBeginningNotice />}
       hasMore={hasMore}
