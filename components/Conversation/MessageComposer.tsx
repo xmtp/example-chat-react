@@ -29,15 +29,17 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
   }
 
   return (
-    <div className={classNames('p-2', 'flex', 'bg-white', 'items-center')}>
+    <div className={classNames('bg-white', 'flex', 'items-center')}>
       <form
         className={classNames(
           'flex',
+          'm-2',
           'w-full',
           'border',
           'py-2',
           'pl-4',
           'mr-3',
+          'drop-shadow-xl',
           messageComposerStyles.bubble
         )}
         autoComplete="off"
@@ -51,6 +53,7 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
             'w-full',
             'text-md',
             'md:text-sm',
+
             messageComposerStyles.input
           )}
           name="message"
