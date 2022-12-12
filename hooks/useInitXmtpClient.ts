@@ -36,13 +36,15 @@ const useInitXmtpClient = (cacheOnly = false) => {
               return
             }
             keys = await Client.getKeys(wallet, {
-              env: getEnv(),
+              // env: getEnv(),
+              apiUrl: 'https://xmtp.snormore.dev:5555',
               appVersion: getAppVersion(),
             })
             storeKeys(address, keys)
           }
           const xmtp = await Client.create(null, {
-            env: getEnv(),
+            // env: getEnv(),
+            apiUrl: 'https://xmtp.snormore.dev:5555',
             appVersion: getAppVersion(),
             privateKeyOverride: keys,
           })
