@@ -40,6 +40,7 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
           'pl-4',
           'mr-3',
           'drop-shadow-xl',
+          'mt-0',
           messageComposerStyles.bubble
         )}
         autoComplete="off"
