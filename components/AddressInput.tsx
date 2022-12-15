@@ -48,6 +48,13 @@ const AddressInput = ({
       }
       if (recipientWalletAddress && !checkIfPathIsEns(recipientWalletAddress)) {
         const name = await lookupAddress(recipientWalletAddress)
+        const conversation = await client?.conversations.newConversation(
+          recipientWalletAddress
+        )
+        if (conversation) {
+          conversations.set(recipientWalletAddress, conversation)
+          setConversations(new Map(conversations))
+        }
         if (name) {
           setValue(name)
         } else if (recipientWalletAddress) {

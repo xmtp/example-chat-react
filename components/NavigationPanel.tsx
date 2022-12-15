@@ -20,7 +20,7 @@ const NavigationPanel = ({ onConnect }: NavigationPanelProps): JSX.Element => {
   const client = useAppStore((state) => state.client)
 
   return (
-    <div className="flex-grow flex flex-col h-[82vh] overflow-y-auto">
+    <div className="flex-grow flex flex-col h-[calc(100vh-8rem)] overflow-y-auto">
       {walletAddress && client ? (
         <ConversationsPanel />
       ) : (
