@@ -125,12 +125,10 @@ export const useListConversations = () => {
         if (convo.peerAddress !== walletAddress) {
           conversations.set(getConversationKey(convo), convo)
           setConversations(new Map(conversations))
-          const newPreviewMessages = new Map(previewMessages)
           const preview = await fetchMostRecentMessage(convo)
           if (preview.message) {
-            newPreviewMessages.set(preview.key, preview.message)
+            setPreviewMessage(preview.key, preview.message)
           }
-          setPreviewMessages(newPreviewMessages)
           closeMessageStream()
           streamAllMessages()
         }

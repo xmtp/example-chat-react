@@ -38,7 +38,7 @@ const AvatarBlock = ({ walletAddress }: AvatarBlockProps) => {
       />
     </div>
   ) : (
-    <Blockies seed={walletAddress} size={8} className="rounded-full mr-2" />
+    <Blockies seed={walletAddress.toLowerCase()} scale={4} size={8} className="rounded-full mr-2" />
   )
 }
 
@@ -84,7 +84,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
     <div
       className={`flex ${
         tagStr() ? 'bg-p-600' : 'bg-n-500'
-      } items-center justify-between rounded-lg p-4 max-h-16 m-4 drop-shadow-xl`}
+      } items-center justify-between rounded-lg max-h-16 min-h-[4rem] px-4 py-2 m-2 mt-0 drop-shadow-xl`}
     >
       {walletAddress ? (
         <Menu>

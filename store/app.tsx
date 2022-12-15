@@ -61,11 +61,14 @@ export const useAppStore = create<AppState>((set) => ({
     return numAdded
   },
   reset: () =>
-    set((state) => {
+    set(() => {
       return {
-        ...state,
+        client: undefined,
         conversations: new Map(),
         convoMessages: new Map(),
+        previewMessages: new Map(),
+        address: undefined,
+        signer: undefined,
       }
     }),
 }))
