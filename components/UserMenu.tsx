@@ -38,7 +38,7 @@ const AvatarBlock = ({ walletAddress }: AvatarBlockProps) => {
       />
     </div>
   ) : (
-    <Blockies seed={walletAddress} size={8} className="rounded-full mr-2" />
+    <Blockies seed={walletAddress.toLowerCase()} scale={4} size={8} className="rounded-full mr-2" />
   )
 }
 

@@ -26,7 +26,7 @@ const Avatar = ({ peerAddress }: AvatarProps) => {
       </div>
     )
   }
-  return <Blockies seed={peerAddress} size={10} className="rounded-full" />
+  return <Blockies seed={peerAddress.toLowerCase()} scale={5} size={8} className="rounded-full" />
 }
 
 export default Avatar
