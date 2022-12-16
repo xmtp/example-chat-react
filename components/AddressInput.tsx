@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { checkIfPathIsEns, classNames } from '../helpers'
-import useWalletProvider from '../hooks/useWalletProvider'
+import useEnsHooks from '../hooks/useEnsHooks'
 import { useAppStore } from '../store/app'
 
 type AddressInputProps = {
@@ -20,7 +20,7 @@ const AddressInput = ({
   placeholder,
   onInputChange,
 }: AddressInputProps): JSX.Element => {
-  const { lookupAddress } = useWalletProvider()
+  const { lookupAddress } = useEnsHooks()
   const walletAddress = useAppStore((state) => state.address)
   const inputElement = useRef(null)
   const [value, setValue] = useState<string>(recipientWalletAddress || '')

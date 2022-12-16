@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { Conversation } from '../../components/Conversation'
-import useWalletProvider from '../../hooks/useWalletProvider'
+import useEnsHooks from '../../hooks/useEnsHooks'
 
 const ConversationPage: NextPage = () => {
   const router = useRouter()
-  const { resolveName } = useWalletProvider()
+  const { resolveName } = useEnsHooks()
   const [recipientWalletAddr, setRecipientWalletAddr] = useState<string>()
 
   useEffect(() => {

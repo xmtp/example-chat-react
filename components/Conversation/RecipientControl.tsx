@@ -3,8 +3,8 @@ import { useRouter } from 'next/router'
 import AddressInput from '../AddressInput'
 import { checkIfPathIsEns, getAddressFromPath } from '../../helpers'
 import { useAppStore } from '../../store/app'
-import useWalletProvider from '../../hooks/useWalletProvider'
 import BackArrow from '../BackArrow'
+import useEnsHooks from '../../hooks/useEnsHooks'
 
 const RecipientInputMode = {
   InvalidEntry: 0,
@@ -15,7 +15,7 @@ const RecipientInputMode = {
 }
 
 const RecipientControl = (): JSX.Element => {
-  const { resolveName, lookupAddress } = useWalletProvider()
+  const { lookupAddress, resolveName } = useEnsHooks()
   const client = useAppStore((state) => state.client)
   const router = useRouter()
   const recipientWalletAddress = getAddressFromPath(router)

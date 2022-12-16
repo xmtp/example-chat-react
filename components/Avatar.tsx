@@ -1,12 +1,23 @@
+import { useEffect, useState } from 'react'
 import Blockies from 'react-blockies'
-import useEns from '../hooks/useEns'
+import useEnsHooks from '../hooks/useEnsHooks'
 
 type AvatarProps = {
   peerAddress: string
 }
 
 const Avatar = ({ peerAddress }: AvatarProps) => {
-  const { avatarUrl, loading } = useEns(peerAddress)
+  const [avatarUrl, setAvatarUrl] = useState<string>()
+  const { getAvatarUrl, loading } = useEnsHooks()
+
+  useEffect(() => {
+    const getUrl = async () => {
+      const newAvatarUrl = await getAvatarUrl(peerAddress)
+      setAvatarUrl(newAvatarUrl)
+    }
+    getUrl()
+  }, [getAvatarUrl, peerAddress])
+
   if (loading) {
     return (
       <div className="animate-pulse flex">
@@ -14,6 +25,7 @@ const Avatar = ({ peerAddress }: AvatarProps) => {
       </div>
     )
   }
+
   if (avatarUrl) {
     return (
       <div>
@@ -26,7 +38,15 @@ const Avatar = ({ peerAddress }: AvatarProps) => {
       </div>
     )
   }
-  return <Blockies seed={peerAddress.toLowerCase()} scale={5} size={8} className="rounded-full" />
+
+  return (
+    <Blockies
+      seed={peerAddress.toLowerCase()}
+      scale={5}
+      size={8}
+      className="rounded-full"
+    />
+  )
 }
 
 export default Avatar
