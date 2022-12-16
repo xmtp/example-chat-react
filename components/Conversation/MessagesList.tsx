@@ -5,6 +5,7 @@ import Avatar from '../Avatar'
 import { formatTime } from '../../helpers'
 import AddressPill from '../AddressPill'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import useWindowSize from '../../hooks/useWindowSize'
 
 export type MessageListProps = {
   messages: DecodedMessage[]
@@ -84,13 +85,14 @@ const MessagesList = ({
   hasMore,
 }: MessageListProps): JSX.Element => {
   let lastMessageDate: Date | undefined
+  const size = useWindowSize()
 
   return (
     <InfiniteScroll
       dataLength={messages.length}
       next={fetchNextMessages}
       className="flex flex-col-reverse overflow-y-auto pl-4"
-      height={'87vh'}
+      height={size[1] > 700 ? '87vh' : '83vh'}
       inverse
       endMessage={<ConversationBeginningNotice />}
       hasMore={hasMore}
