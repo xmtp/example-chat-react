@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react'
 import { classNames, shortAddress } from '../helpers'
-import useEns from '../hooks/useEns'
+import useEnsHooks from '../hooks/useEnsHooks'
 
 type AddressProps = {
   address: string
@@ -7,7 +8,16 @@ type AddressProps = {
 }
 
 const Address = ({ address, className }: AddressProps): JSX.Element => {
-  const { name, loading } = useEns(address)
+  const [name, setName] = useState<string>()
+  const { lookupAddress, loading } = useEnsHooks()
+
+  useEffect(() => {
+    const getName = async () => {
+      const newName = await lookupAddress(address)
+      setName(newName)
+    }
+    getName()
+  }, [address, lookupAddress])
 
   return (
     <span

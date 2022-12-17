@@ -2,44 +2,15 @@ import { Menu, Transition } from '@headlessui/react'
 import { CogIcon } from '@heroicons/react/solid'
 import { Fragment } from 'react'
 import { classNames, tagStr } from '../helpers'
-import Blockies from 'react-blockies'
 import Address from './Address'
-import useEns from '../hooks/useEns'
 import { Tooltip } from './Tooltip/Tooltip'
 import packageJson from '../package.json'
 import { useAppStore } from '../store/app'
+import Avatar from './Avatar'
 
 type UserMenuProps = {
   onConnect?: () => Promise<void>
   onDisconnect?: () => Promise<void>
-}
-
-type AvatarBlockProps = {
-  walletAddress: string
-  avatarUrl?: string
-}
-
-const AvatarBlock = ({ walletAddress }: AvatarBlockProps) => {
-  const { avatarUrl, loading } = useEns(walletAddress)
-  if (loading) {
-    return (
-      <div className="animate-pulse flex">
-        <div className="rounded-full bg-n-200 h-8 w-8 mr-2" />
-      </div>
-    )
-  }
-  return avatarUrl ? (
-    <div>
-      <div className="rounded-full w-8 h-8 mr-2 border border-n-80" />
-      <img
-        className={'rounded-full h-8 w-8 -mt-8'}
-        src={avatarUrl}
-        alt={walletAddress}
-      />
-    </div>
-  ) : (
-    <Blockies seed={walletAddress.toLowerCase()} scale={4} size={8} className="rounded-full mr-2" />
-  )
 }
 
 const NotConnected = ({ onConnect }: UserMenuProps): JSX.Element => {
@@ -98,8 +69,8 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
               >
                 {walletAddress ? (
                   <>
-                    <AvatarBlock walletAddress={walletAddress} />
-                    <div className="flex flex-col">
+                    <Avatar peerAddress={walletAddress} />
+                    <div className="flex flex-col ml-3">
                       <div className="flex items-center">
                         <div className="bg-g-100 rounded h-2 w-2 mr-1"></div>
                         <p className="text-sm font-bold text-g-100">
@@ -108,7 +79,7 @@ const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
                       </div>
                       <Address
                         address={walletAddress}
-                        className="text-md leading-4 font-semibold text-white ml-3"
+                        className="text-md leading-4 font-semibold text-white ml-[12px]"
                       />
                     </div>
                   </>

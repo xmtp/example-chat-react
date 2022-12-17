@@ -9,6 +9,11 @@ export const getEnv = (): 'dev' | 'production' | 'local' => {
   return 'dev'
 }
 
+export const isAppEnvDemo = (): boolean => {
+  console.log(process.env.NEXT_PUBLIC_APP_ENVIRONMENT)
+  return process.env.NEXT_PUBLIC_APP_ENVIRONMENT === 'demo'
+}
+
 export const tagStr = (): string | null => {
   return getEnv() === 'production' ? null : getEnv().toLocaleUpperCase()
 }

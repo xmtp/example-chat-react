@@ -7,13 +7,13 @@ import {
 import { useEffect, useState } from 'react'
 import { getConversationKey, shortAddress, truncate } from '../helpers'
 import { useAppStore } from '../store/app'
-import useWalletProvider from './useWalletProvider'
+import useEnsHooks from './useEnsHooks'
 
 let latestMsgId: string
 
 export const useListConversations = () => {
   const walletAddress = useAppStore((state) => state.address)
-  const { lookupAddress } = useWalletProvider()
+  const { lookupAddress } = useEnsHooks()
   const convoMessages = useAppStore((state) => state.convoMessages)
   const client = useAppStore((state) => state.client)
   const conversations = useAppStore((state) => state.conversations)

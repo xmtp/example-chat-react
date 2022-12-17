@@ -11,25 +11,37 @@ import { useAppStore } from '../store/app'
 import useInitXmtpClient from '../hooks/useInitXmtpClient'
 import useListConversations from '../hooks/useListConversations'
 import useWalletProvider from '../hooks/useWalletProvider'
+import useWalletProviderDemo from '../hooks/useWalletProviderDemo'
+import { isAppEnvDemo } from '../helpers'
+import useDisconnect from '../hooks/useDisconnect'
 
 const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const client = useAppStore((state) => state.client)
-  const { initClient } = useInitXmtpClient()
-  useListConversations()
   const walletAddress = useAppStore((state) => state.address)
   const signer = useAppStore((state) => state.signer)
+  const { initClient } = useInitXmtpClient()
+  useListConversations()
 
-  const { connect: connectWallet, disconnect: disconnectWallet } =
-    useWalletProvider()
+  const { connect: connectWallet } = useWalletProvider()
+
+  const { disconnect: disconnectWallet } = useDisconnect()
+
+  const { connect: connectDemo } = useWalletProviderDemo()
 
   const handleDisconnect = useCallback(async () => {
     await disconnectWallet()
   }, [disconnectWallet])
 
   const handleConnect = useCallback(async () => {
-    await connectWallet()
+    const isDemoEnv = isAppEnvDemo()
+    debugger
+    if (isDemoEnv) {
+      await connectDemo()
+    } else {
+      await connectWallet()
+    }
     signer && (await initClient(signer))
-  }, [connectWallet, initClient, signer])
+  }, [connectWallet, initClient, connectDemo, signer])
 
   return (
     <>

@@ -12,12 +12,15 @@ nextRouter.useRouter.mockImplementation(() => ({ route: '/' }))
 
 describe('Address', () => {
   it('renders value', () => {
-    const { container } = render(<Address address={'0xfoo'} />)
-    expect(container.textContent).toBe('0xfoo')
-    expect(container.querySelector('div > span')).toHaveAttribute(
-      'title',
-      '0xfoo'
-    )
+    let text: string | null
+    let span: Element | null
+    act(() => {
+      const { container } = render(<Address address={'0xfoo'} />)
+      text = container.textContent
+      span = container.querySelector('div > span')
+    })
+    waitFor(() => expect(text).toBe('0xfoo'))
+    waitFor(() => expect(span).toHaveAttribute('title', '0xfoo'))
   })
 
   it('renders lookup', async () => {
