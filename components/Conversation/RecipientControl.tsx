@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import AddressInput from '../AddressInput'
-import { checkIfPathIsEns, getAddressFromPath } from '../../helpers'
+import { isEns, getAddressFromPath, is0xAddress } from '../../helpers'
 import { useAppStore } from '../../store/app'
 import useWalletProvider from '../../hooks/useWalletProvider'
 import BackArrow from '../BackArrow'
@@ -54,7 +54,7 @@ const RecipientControl = (): JSX.Element => {
       const name = await lookupAddress(address)
       setHasName(!!name)
     }
-    if (recipientWalletAddress && !checkIfPathIsEns(recipientWalletAddress)) {
+    if (recipientWalletAddress && !isEns(recipientWalletAddress)) {
       setRecipientInputMode(RecipientInputMode.Submitted)
       handleAddressLookup(recipientWalletAddress)
     } else {
@@ -70,7 +70,7 @@ const RecipientControl = (): JSX.Element => {
       }
       const input = e.target as HTMLInputElement
       const recipientValue = value || data.recipient.value
-      if (recipientValue.endsWith('eth')) {
+      if (isEns(recipientValue)) {
         setRecipientInputMode(RecipientInputMode.FindingEntry)
         const address = await resolveName(recipientValue)
         if (address) {
@@ -78,10 +78,7 @@ const RecipientControl = (): JSX.Element => {
         } else {
           setRecipientInputMode(RecipientInputMode.InvalidEntry)
         }
-      } else if (
-        recipientValue.startsWith('0x') &&
-        recipientValue.length === 42
-      ) {
+      } else if (is0xAddress(recipientValue)) {
         await completeSubmit(recipientValue, input)
       }
     },
@@ -96,10 +93,7 @@ const RecipientControl = (): JSX.Element => {
       if (router.pathname !== '/dm') {
         router.push('/dm')
       }
-      if (
-        data.value.endsWith('.eth') ||
-        (data.value.startsWith('0x') && data.value.length === 42)
-      ) {
+      if (isEns(data.value) || is0xAddress(data.value)) {
         handleSubmit(e, data.value)
       } else {
         setRecipientInputMode(RecipientInputMode.InvalidEntry)

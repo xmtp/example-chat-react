@@ -3,6 +3,7 @@ import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { Conversation } from '../../components/Conversation'
 import useWalletProvider from '../../hooks/useWalletProvider'
+import { isEns } from '../../helpers/string'
 
 const ConversationPage: NextPage = () => {
   const router = useRouter()
@@ -23,7 +24,7 @@ const ConversationPage: NextPage = () => {
       setRecipientWalletAddr(window.location.pathname.replace('/dm/', ''))
     }
     const checkIfEns = async () => {
-      if (recipientWalletAddr?.includes('.eth')) {
+      if (recipientWalletAddr && isEns(recipientWalletAddr)) {
         const address = await resolveName(recipientWalletAddr)
         router.push(`/dm/${address}`)
       }
