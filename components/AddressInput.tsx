@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react'
-import { checkIfPathIsEns, classNames } from '../helpers'
+import { isEns, classNames, is0xAddress } from '../helpers'
 import useWalletProvider from '../hooks/useWalletProvider'
 import { useAppStore } from '../store/app'
 
@@ -45,7 +45,7 @@ const AddressInput = ({
       if (!lookupAddress) {
         return
       }
-      if (recipientWalletAddress && !checkIfPathIsEns(recipientWalletAddress)) {
+      if (recipientWalletAddress && !isEns(recipientWalletAddress)) {
         const name = await lookupAddress(recipientWalletAddress)
         const conversation = await client?.conversations.newConversation(
           recipientWalletAddress
@@ -59,7 +59,7 @@ const AddressInput = ({
         } else if (recipientWalletAddress) {
           setValue(recipientWalletAddress)
         }
-      } else if (value.startsWith('0x') && value.length === 42) {
+      } else if (is0xAddress(value)) {
         const conversation = await client?.conversations.newConversation(value)
         if (conversation) {
           conversations.set(value, conversation)

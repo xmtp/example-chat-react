@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { is0xAddress, isEns } from '../helpers/string'
 import useWalletProvider from './useWalletProvider'
 
 const useEns = (addressOrName: string | undefined) => {
@@ -8,12 +9,9 @@ const useEns = (addressOrName: string | undefined) => {
   const [avatarUrl, setAvatarUrl] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(true)
   const probableAddress =
-    addressOrName?.startsWith('0x') && addressOrName?.length === 42
-      ? addressOrName
-      : undefined
-  const probableName = addressOrName?.endsWith('.eth')
-    ? addressOrName
-    : undefined
+    addressOrName && is0xAddress(addressOrName) ? addressOrName : undefined
+  const probableName =
+    addressOrName && isEns(addressOrName) ? addressOrName : undefined
 
   useEffect(() => {
     if (!resolveName || !lookupAddress || !getAvatarUrl) {

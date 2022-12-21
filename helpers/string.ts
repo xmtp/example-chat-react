@@ -30,9 +30,12 @@ export const checkPath = () => {
   return window.location.pathname !== '/' && window.location.pathname !== '/dm'
 }
 
-export const checkIfPathIsEns = (address: string): boolean => {
-  return address.includes('eth')
+export const isEns = (address: string): boolean => {
+  return address.endsWith('eth') || address.endsWith('.cb.id')
 }
+
+export const is0xAddress = (address: string): boolean =>
+  address.startsWith('0x') && address.length === 42
 
 export const shortAddress = (addr: string): string =>
   addr.length > 10 && addr.startsWith('0x')
