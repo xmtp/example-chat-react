@@ -24,7 +24,7 @@
     "@headlessui/react": "^1.4.3",
     "@heroicons/react": "^1.0.5",
     "@tailwindcss/line-clamp": "^0.4.2",
-    "@xmtp/xmtp-js": "^7.2.1",
+    "@xmtp/xmtp-js": "^7.7.1",
     "ethers": "^5.5.3",
     "imagemin-svgo": "^9.0.0",
     "next": "13.0.5",
