@@ -3,9 +3,10 @@ import useEns from '../hooks/useEns'
 
 type AvatarProps = {
   peerAddress: string
+  minimal?: boolean
 }
 
-const Avatar = ({ peerAddress }: AvatarProps) => {
+const Avatar = ({ peerAddress, minimal }: AvatarProps) => {
   const { avatarUrl, loading } = useEns(peerAddress)
   if (loading) {
     return (
@@ -26,7 +27,14 @@ const Avatar = ({ peerAddress }: AvatarProps) => {
       </div>
     )
   }
-  return <Blockies seed={peerAddress.toLowerCase()} scale={5} size={8} className="rounded-full" />
+  return (
+    <Blockies
+      seed={peerAddress.toLowerCase()}
+      scale={minimal ? 3.5 : 5}
+      size={8}
+      className="rounded-full"
+    />
+  )
 }
 
 export default Avatar
