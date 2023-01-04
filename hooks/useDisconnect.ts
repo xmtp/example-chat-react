@@ -14,6 +14,7 @@ const useDisconnect = () => {
     })
     reset()
     router.push('/')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router])
 
   return {
