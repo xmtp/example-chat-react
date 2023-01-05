@@ -8,11 +8,12 @@ import { useEffect, useState } from 'react'
 import { getConversationKey, shortAddress, truncate } from '../helpers'
 import { useAppStore } from '../store/app'
 import useWalletProvider from './useWalletProvider'
+import { useAccount } from 'wagmi'
 
 let latestMsgId: string
 
 export const useListConversations = () => {
-  const walletAddress = useAppStore((state) => state.address)
+  const { address: walletAddress } = useAccount()
   const { lookupAddress } = useWalletProvider()
   const convoMessages = useAppStore((state) => state.convoMessages)
   const client = useAppStore((state) => state.client)

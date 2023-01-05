@@ -1,8 +1,11 @@
 import { LinkIcon } from '@heroicons/react/outline'
 import { ArrowSmRightIcon } from '@heroicons/react/solid'
+import { useState } from 'react'
 import { useAppStore } from '../store/app'
 import ConversationsList from './ConversationsList'
 import Loader from './Loader'
+import WalletConnector from './WalletConnector'
+import { useAccount } from 'wagmi'
 
 type NavigationPanelProps = {
   onConnect: () => Promise<void>
@@ -13,12 +16,12 @@ type ConnectButtonProps = {
 }
 
 const NavigationPanel = ({ onConnect }: NavigationPanelProps): JSX.Element => {
-  const walletAddress = useAppStore((state) => state.address)
+  const { address: walletAddress } = useAccount()
   const client = useAppStore((state) => state.client)
 
   return (
     <div className="flex-grow flex flex-col h-[calc(100vh-8rem)] overflow-y-auto">
-      {walletAddress && client !== null ? (
+      {walletAddress && client ? (
         <ConversationsPanel />
       ) : (
         <NoWalletConnectedMessage>
@@ -52,15 +55,29 @@ const NoWalletConnectedMessage: React.FC<{ children?: React.ReactNode }> = ({
 }
 
 const ConnectButton = ({ onConnect }: ConnectButtonProps): JSX.Element => {
+  const { address } = useAccount()
+  const [showLoginModal, setShowLoginModal] = useState(false)
+
+  const onClick = () => {
+    onConnect()
+    if (!address) {
+      setShowLoginModal(!showLoginModal)
+    }
+  }
+
   return (
     <button
-      onClick={onConnect}
+      onClick={onClick}
       className="rounded border border-l-300 mx-auto my-4 text-l-300 hover:text-white hover:bg-l-400 hover:border-l-400 hover:fill-white focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-n-100 focus-visible:outline-none active:bg-l-500 active:border-l-500 active:text-l-100 active:ring-0"
     >
       <div className="flex items-center justify-center text-xs font-semibold px-4 py-1">
         Connect your wallet
         <ArrowSmRightIcon className="h-4" />
       </div>
+      <WalletConnector
+        showLoginModal={showLoginModal}
+        setShowLoginModal={setShowLoginModal}
+      />
     </button>
   )
 }

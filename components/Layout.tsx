@@ -6,30 +6,41 @@ import NewMessageButton from './NewMessageButton'
 import NavigationPanel from './NavigationPanel'
 import XmtpInfoPanel from './XmtpInfoPanel'
 import UserMenu from './UserMenu'
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useAppStore } from '../store/app'
 import useInitXmtpClient from '../hooks/useInitXmtpClient'
 import useListConversations from '../hooks/useListConversations'
-import useWalletProvider from '../hooks/useWalletProvider'
+import { useSigner, useDisconnect, useAccount } from 'wagmi'
+import { useRouter } from 'next/router'
 
 const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const client = useAppStore((state) => state.client)
   const { initClient } = useInitXmtpClient()
   useListConversations()
-  const walletAddress = useAppStore((state) => state.address)
-  const signer = useAppStore((state) => state.signer)
-
-  const { connect: connectWallet, disconnect: disconnectWallet } =
-    useWalletProvider()
+  const { address: walletAddress } = useAccount()
+  const { disconnect } = useDisconnect()
+  const { data: signer } = useSigner()
+  const router = useRouter()
 
   const handleDisconnect = useCallback(async () => {
-    await disconnectWallet()
-  }, [disconnectWallet])
+    disconnect()
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith('xmtp')) {
+        localStorage.removeItem(key)
+      }
+    })
+    router.push('/')
+  }, [disconnect])
 
   const handleConnect = useCallback(async () => {
-    await connectWallet()
     signer && (await initClient(signer))
-  }, [connectWallet, initClient, signer])
+  }, [initClient, signer])
+
+  useEffect(() => {
+    if (!client && signer) {
+      handleConnect()
+    }
+  }, [signer, client])
 
   return (
     <>

@@ -7,7 +7,7 @@ import Address from './Address'
 import useEns from '../hooks/useEns'
 import { Tooltip } from './Tooltip/Tooltip'
 import packageJson from '../package.json'
-import { useAppStore } from '../store/app'
+import { useAccount } from 'wagmi'
 
 type UserMenuProps = {
   onConnect?: () => Promise<void>
@@ -72,7 +72,7 @@ const NotConnected = ({ onConnect }: UserMenuProps): JSX.Element => {
 }
 
 const UserMenu = ({ onConnect, onDisconnect }: UserMenuProps): JSX.Element => {
-  const walletAddress = useAppStore((state) => state.address)
+  const { address: walletAddress } = useAccount()
 
   const onClickCopy = () => {
     if (walletAddress) {

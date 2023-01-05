@@ -8,11 +8,12 @@ import {
   storeKeys,
   wipeKeys,
 } from '../helpers'
+import { useAccount, useSigner } from 'wagmi'
 import { useAppStore } from '../store/app'
 
 const useInitXmtpClient = (cacheOnly = false) => {
-  const signer = useAppStore((state) => state.signer)
-  const address = useAppStore((state) => state.address) ?? ''
+  const { data: signer } = useSigner()
+  const { address = '' } = useAccount()
   const client = useAppStore((state) => state.client)
   const setClient = useAppStore((state) => state.setClient)
   const reset = useAppStore((state) => state.reset)
