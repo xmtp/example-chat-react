@@ -10,7 +10,6 @@ export const getEnv = (): 'dev' | 'production' | 'local' => {
 }
 
 export const isAppEnvDemo = (): boolean => {
-  console.log(process.env.NEXT_PUBLIC_APP_ENVIRONMENT)
   return process.env.NEXT_PUBLIC_APP_ENVIRONMENT === 'demo'
 }
 
