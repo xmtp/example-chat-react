@@ -10,6 +10,8 @@ import {
 } from '../helpers'
 import { useAppStore } from '../store/app'
 
+const API_URL = process.env.NEXT_PUBLIC_XMTP_API_URL || 'http://localhost'
+
 const useInitXmtpClient = (cacheOnly = false) => {
   const signer = useAppStore((state) => state.signer)
   const address = useAppStore((state) => state.address) ?? ''
@@ -37,14 +39,14 @@ const useInitXmtpClient = (cacheOnly = false) => {
             }
             keys = await Client.getKeys(wallet, {
               // env: getEnv(),
-              apiUrl: 'https://xmtp.snormore.dev:5555',
+              apiUrl: API_URL,
               appVersion: getAppVersion(),
             })
             storeKeys(address, keys)
           }
           const xmtp = await Client.create(null, {
             // env: getEnv(),
-            apiUrl: 'https://xmtp.snormore.dev:5555',
+            apiUrl: API_URL,
             appVersion: getAppVersion(),
             privateKeyOverride: keys,
           })
