@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { ethers } from 'ethers'
 import Web3Modal, { IProviderOptions, providers } from 'web3modal'
 import WalletConnectProvider from '@walletconnect/web3-provider'
@@ -19,7 +19,8 @@ const cachedGetAvatarUrl = new Map<string, string | undefined>()
 let provider: ethers.providers.Web3Provider
 
 const useWalletProvider = () => {
-  const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
+  const web3Modal = useAppStore((state) => state.web3Modal)
+  const setWeb3Modal = useAppStore((state) => state.setWeb3Modal)
   const setAddress = useAppStore((state) => state.setAddress)
   const setSigner = useAppStore((state) => state.setSigner)
   const reset = useAppStore((state) => state.reset)
@@ -140,7 +141,8 @@ const useWalletProvider = () => {
         },
       }
     }
-    setWeb3Modal(new Web3Modal({ cacheProvider: true, providerOptions }))
+    !web3Modal &&
+      setWeb3Modal(new Web3Modal({ cacheProvider: true, providerOptions }))
   }, [])
 
   useEffect(() => {
