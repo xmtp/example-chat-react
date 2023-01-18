@@ -21,9 +21,6 @@ let provider: ethers.providers.Web3Provider
 const useWalletProvider = () => {
   const { open: openWeb3Modal, isOpen } = useWeb3Modal()
   const { data: signer } = useSigner()
-  // useWalletProvider()
-  // const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
-  // const setAddress = useAppStore((state) => state.setAddress)
   const setSigner = useAppStore((state) => state.setSigner)
   const reset = useAppStore((state) => state.reset)
 
@@ -104,67 +101,48 @@ const useWalletProvider = () => {
     }
   }, [openWeb3Modal, isOpen])
 
-  // const connect = useCallback(async () => {
-  //   // if (!web3Modal) {
-  //   //   throw new Error('web3Modal not initialized')
-  //   // }
-  //   if (isOpen) {
-  //     return null
-  //   }
-
-  //   try {
-  //     openWeb3Modal()
-  //     // const instance = await web3Modal.connect()
-  //     // if (!instance) {
-  //     //   return
-  //     // }
-  //     // instance.on('accountsChanged', handleAccountsChanged)
-
-  //     // provider = new ethers.providers.Web3Provider(instance, 'any')
-  //     // const newSigner = provider.getSigner()
-  //     // setSigner(newSigner)
-  //     // setAddress(await newSigner.getAddress())
-  //     // return newSigner
-  //   } catch (e) {
-  //     // TODO: better error handling/surfacing here.
-  //     // Note that web3Modal.connect throws an error when the user closes the
-  //     // modal, as "User closed modal"
-  //     console.log('error', e)
-  //   }
-  // }, [isOpen, openWeb3Modal])
-
+  // TODO: Figure out if new web3modal supports this config
   // useEffect(() => {
-  //   console.log('useWalletProvider: initializing web3Modal')
-
-  // TODO: Remove this, don't need all the useEffect stuff with the new web3modal stuff
-  // useEffect(() => {
-  //   if (!web3Modal) {
-  //     return
+  //   const infuraId =
+  //     process.env.NEXT_PUBLIC_INFURA_ID || 'b6058e03f2cd4108ac890d3876a56d0d'
+  //   const providerOptions: IProviderOptions = {
+  //     walletconnect: {
+  //       package: WalletConnectProvider,
+  //       options: {
+  //         infuraId,
+  //       },
+  //     },
   //   }
-  //   const initCached = async () => {
-  //     try {
-  //       const cachedProviderJson = localStorage.getItem(
-  //         'WEB3_CONNECT_CACHED_PROVIDER'
-  //       )
-  //       if (!cachedProviderJson) {
-  //         return
-  //       }
-  //       const cachedProviderName = JSON.parse(cachedProviderJson)
-  //       const instance = await web3Modal.connectTo(cachedProviderName)
-  //       if (!instance) {
-  //         return
-  //       }
-  //       instance.on('accountsChanged', handleAccountsChanged)
-  //       provider = new ethers.providers.Web3Provider(instance, 'any')
-  //       const newSigner = provider.getSigner()
-  //       setSigner(newSigner)
-  //       setAddress(await newSigner.getAddress())
-  //     } catch (e) {
-  //       console.error(e)
+  //   if (
+  //     !window.ethereum ||
+  //     (window.ethereum && !window.ethereum.isCoinbaseWallet)
+  //   ) {
+  //     providerOptions.walletlink = {
+  //       package: WalletLink,
+  //       options: {
+  //         appName: 'Chat via XMTP',
+  //         infuraId,
+  //         // darkMode: false,
+  //       },
   //     }
   //   }
-  //   initCached()
-  // }, [web3Modal])
+  //   if (!window.ethereum || !window.ethereum.isMetaMask) {
+  //     providerOptions['custom-metamask'] = {
+  //       display: {
+  //         logo: providers.METAMASK.logo,
+  //         name: 'Install MetaMask',
+  //         description: 'Connect using browser wallet',
+  //       },
+  //       package: {},
+  //       connector: async () => {
+  //         window.open('https://metamask.io')
+  //         // throw new Error("MetaMask not installed");
+  //       },
+  //     }
+  //   }
+  //   !web3Modal &&
+  //     setWeb3Modal(new Web3Modal({ cacheProvider: true, providerOptions }))
+  // }, [])
 
   return {
     resolveName,

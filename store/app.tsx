@@ -2,6 +2,7 @@ import { Client, Conversation, DecodedMessage } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
 import create from 'zustand'
 import getUniqueMessages from '../helpers/getUniqueMessages'
+import Web3Modal from 'web3modal'
 
 // Used to keep track of the current view state of the extension app
 // The extension doesn't have access to next/router, so captures
@@ -9,6 +10,8 @@ import getUniqueMessages from '../helpers/getUniqueMessages'
 type ExtensionAppViewState = 'dm' | 'home' | 'conversation'
 
 interface AppState {
+  web3Modal: Web3Modal | undefined
+  setWeb3Modal: (signer: Web3Modal | undefined) => void
   signer: Signer | undefined
   activeRecipient: string | undefined
   setSigner: (signer: Signer | undefined) => void
@@ -34,6 +37,9 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set) => ({
+  web3Modal: undefined,
+  setWeb3Modal: (web3Modal: Web3Modal | undefined) =>
+    set(() => ({ web3Modal })),
   signer: undefined,
   setSigner: (signer: Signer | undefined) => set(() => ({ signer })),
   address: undefined,
