@@ -2,8 +2,11 @@ import { Client, Conversation, DecodedMessage } from '@xmtp/xmtp-js'
 import { Signer } from 'ethers'
 import create from 'zustand'
 import getUniqueMessages from '../helpers/getUniqueMessages'
+import Web3Modal from 'web3modal'
 
 interface AppState {
+  web3Modal: Web3Modal | undefined
+  setWeb3Modal: (signer: Web3Modal | undefined) => void
   signer: Signer | undefined
   setSigner: (signer: Signer | undefined) => void
   address: string | undefined
@@ -23,6 +26,9 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set) => ({
+  web3Modal: undefined,
+  setWeb3Modal: (web3Modal: Web3Modal | undefined) =>
+    set(() => ({ web3Modal })),
   signer: undefined,
   setSigner: (signer: Signer | undefined) => set(() => ({ signer })),
   address: undefined,
