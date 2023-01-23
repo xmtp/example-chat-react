@@ -39,3 +39,4 @@ yarn-error.log*
 scratch
 
 .npmrc
+public/esbuild

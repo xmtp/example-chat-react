@@ -1,0 +1,42 @@
+{
+  "short_name": "XMTP Chat",
+  "name": "XMTP Chat",
+  "action": {
+    "default_title": "Open App",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "./firebase-messaging-sw.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*/*", "https://*/*"],
+      "js": ["esbuild/src/content/index.js"]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' http://localhost; object-src 'self';"
+  },
+  "description": "XMTP Chat",
+  "version": "1.0",
+  "permissions": [
+    "activeTab",
+    "alarms",
+    "background",
+    "debugger",
+    "gcm",
+    "notifications",
+    "scripting",
+    "storage",
+    "tabs",
+    "webRequest"
+  ],
+  "host_permissions": ["https://*/*"],
+  "web_accessible_resources": [
+    {
+      "resources": ["popup.html", "test.js", "esbuild/src/popup/index.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "manifest_version": 3
+}

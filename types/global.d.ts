@@ -1,3 +1,4 @@
+export {}
 declare module '*.svg' {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const content: any
@@ -30,4 +31,11 @@ declare module 'react-blockies' {
   const Blockies: React.FC<BlockiesProps>
 
   export default Blockies
+}
+
+declare global {
+  // type GlobalWindow = Window & typeof globalThis
+  interface Window {
+    _xmtp: object
+  }
 }

@@ -1,10 +1,16 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/router'
 import AddressInput from '../AddressInput'
-import { isEns, getAddressFromPath, is0xAddress } from '../../helpers'
+import { isEns, is0xAddress } from '../../helpers'
 import { useAppStore } from '../../store/app'
-import useWalletProvider from '../../hooks/useWalletProvider'
 import BackArrow from '../BackArrow'
+import { getEnsAddress, getEnsName } from '../../helpers/ethereumClient'
+
+type RecipientInputProps = {
+  recipientWalletAddress: string | undefined
+  onSubmit?: (address: string) => Promise<void> | void
+  onInputChange?: () => void
+  onBackArrowClick?: () => void
+}
 
 const RecipientInputMode = {
   InvalidEntry: 0,
@@ -14,11 +20,13 @@ const RecipientInputMode = {
   NotOnNetwork: 4,
 }
 
-const RecipientControl = (): JSX.Element => {
-  const { resolveName, lookupAddress } = useWalletProvider()
+const RecipientControl = ({
+  recipientWalletAddress,
+  onSubmit,
+  onInputChange,
+  onBackArrowClick,
+}: RecipientInputProps): JSX.Element => {
   const client = useAppStore((state) => state.client)
-  const router = useRouter()
-  const recipientWalletAddress = getAddressFromPath(router)
   const [recipientInputMode, setRecipientInputMode] = useState(
     RecipientInputMode.InvalidEntry
   )
@@ -31,27 +39,22 @@ const RecipientControl = (): JSX.Element => {
     [client]
   )
 
-  const onSubmit = async (address: string) => {
-    router.push(address ? `/dm/${address}` : '/dm/')
-  }
-
-  const handleBackArrowClick = useCallback(() => {
-    router.push('/')
-  }, [router])
-
-  const completeSubmit = async (address: string, input: HTMLInputElement) => {
-    if (await checkIfOnNetwork(address)) {
-      onSubmit(address)
-      input.blur()
-      setRecipientInputMode(RecipientInputMode.Submitted)
-    } else {
-      setRecipientInputMode(RecipientInputMode.NotOnNetwork)
-    }
-  }
+  const completeSubmit = useCallback(
+    async (address: string, input: HTMLInputElement) => {
+      if (await checkIfOnNetwork(address)) {
+        onSubmit(address)
+        input.blur()
+        setRecipientInputMode(RecipientInputMode.Submitted)
+      } else {
+        setRecipientInputMode(RecipientInputMode.NotOnNetwork)
+      }
+    },
+    [onSubmit, setRecipientInputMode, checkIfOnNetwork]
+  )
 
   useEffect(() => {
     const handleAddressLookup = async (address: string) => {
-      const name = await lookupAddress(address)
+      const name = await getEnsName(address)
       setHasName(!!name)
     }
     if (recipientWalletAddress && !isEns(recipientWalletAddress)) {
@@ -60,7 +63,7 @@ const RecipientControl = (): JSX.Element => {
     } else {
       setRecipientInputMode(RecipientInputMode.InvalidEntry)
     }
-  }, [lookupAddress, recipientWalletAddress])
+  }, [recipientWalletAddress])
 
   const handleSubmit = useCallback(
     async (e: React.SyntheticEvent, value?: string) => {
@@ -72,7 +75,8 @@ const RecipientControl = (): JSX.Element => {
       const recipientValue = value || data.recipient.value
       if (isEns(recipientValue)) {
         setRecipientInputMode(RecipientInputMode.FindingEntry)
-        const address = await resolveName(recipientValue)
+        const address = await getEnsAddress(recipientValue)
+
         if (address) {
           await completeSubmit(address, input)
         } else {
@@ -82,30 +86,33 @@ const RecipientControl = (): JSX.Element => {
         await completeSubmit(recipientValue, input)
       }
     },
-    [resolveName]
+    [completeSubmit]
   )
 
+  // If user enters an ens address or if we detect a valid eth wallet address, submit
+  // Otherwise, mark the input as "invalid"
   const handleInputChange = useCallback(
     async (e: React.SyntheticEvent) => {
       const data = e.target as typeof e.target & {
         value: string
       }
-      if (router.pathname !== '/dm') {
-        router.push('/dm')
-      }
+
+      // This is how the normal app changes the route, and the extension changes the app context
+      onInputChange?.()
+
       if (isEns(data.value) || is0xAddress(data.value)) {
         handleSubmit(e, data.value)
       } else {
         setRecipientInputMode(RecipientInputMode.InvalidEntry)
       }
     },
-    [handleSubmit, router]
+    [handleSubmit, onInputChange]
   )
 
   return (
     <>
       <div className="md:hidden flex items-center ml-3">
-        <BackArrow onClick={handleBackArrowClick} />
+        <BackArrow onClick={onBackArrowClick} />
       </div>
       <div className="flex-1 flex-col shrink justify-center flex bg-zinc-50 md:border-b md:border-gray-200 md:px-4 md:pb-[2px]">
         <form

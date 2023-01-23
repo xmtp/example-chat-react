@@ -1,15 +1,17 @@
+import React from 'react'
 import { Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { useRouter } from 'next/router'
 
 type NavigationViewProps = {
+  show: boolean
   children?: React.ReactNode
 }
 
-const NavigationView = ({ children }: NavigationViewProps): JSX.Element => {
-  const router = useRouter()
-  const show = router.pathname === '/'
-
+const NavigationView = ({
+  children,
+  show,
+}: NavigationViewProps): JSX.Element => {
   return (
     <>
       <Transition.Root show={show} as={Fragment}>
@@ -23,7 +25,7 @@ const NavigationView = ({ children }: NavigationViewProps): JSX.Element => {
             leaveFrom="translate-x-0"
             leaveTo="-translate-x-full"
           >
-            <div className="relative flex-1 flex flex-col w-full bg-white">
+            <div className="relative flex flex-col flex-1 w-full bg-white">
               {children}
             </div>
           </Transition.Child>
@@ -36,4 +38,14 @@ const NavigationView = ({ children }: NavigationViewProps): JSX.Element => {
   )
 }
 
-export default NavigationView
+export const ReactNavigationView = ({ children }) => {
+  return <NavigationView show={true}>{children}</NavigationView>
+}
+
+const NextNavigationView = ({ children }) => {
+  const router = useRouter()
+  const show = router.pathname === '/'
+  return <NavigationView show={show}>{children}</NavigationView>
+}
+
+export default NextNavigationView

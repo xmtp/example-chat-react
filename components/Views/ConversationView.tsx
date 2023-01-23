@@ -4,12 +4,13 @@ import { useRouter } from 'next/router'
 
 type ConversationViewProps = {
   children?: React.ReactNode
+  show: boolean
 }
 
-const ConversationView = ({ children }: ConversationViewProps): JSX.Element => {
-  const router = useRouter()
-  const show = router.pathname !== '/'
-
+const ConversationView = ({
+  children,
+  show,
+}: ConversationViewProps): JSX.Element => {
   return (
     <>
       <Transition.Root show={show} as={Fragment}>

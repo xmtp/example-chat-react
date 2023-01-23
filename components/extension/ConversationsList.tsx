@@ -1,42 +1,47 @@
-import React, { useEffect, useState } from 'react'
-import Address from './Address'
-import { useRouter } from 'next/router'
 import { Conversation } from '@xmtp/xmtp-js'
-import { classNames, formatDate, getConversationKey } from '../helpers'
-import Avatar from './Avatar'
-import { useAppStore } from '../store/app'
-import { NoConversationsMessage } from './NoConversationsMessage'
+import { useEffect, useState } from 'react'
+import { classNames, formatDate, getConversationKey } from '../../helpers'
+import useWalletProvider from '../../hooks/useWalletProvider'
+import { useAppStore } from '../../store/app'
+import Address from '../Address'
+import Avatar from '../Avatar'
+// import { ConversationTile } from '../ConversationsList'
+import { NoConversationsMessage } from '../NoConversationsMessage'
 
 type ConversationTileProps = {
   conversation: Conversation
+  isSelected: boolean
   onClick?: (conversation: Conversation) => void
 }
 
 export const ConversationTile = ({
   conversation,
+  isSelected,
+  onClick,
 }: ConversationTileProps): JSX.Element | null => {
-  const router = useRouter()
+  // const router = useRouter()
   const address = useAppStore((state) => state.address)
   const previewMessages = useAppStore((state) => state.previewMessages)
   const loadingConversations = useAppStore(
     (state) => state.loadingConversations
   )
-  const [recipentAddress, setRecipentAddress] = useState<string>()
+  const setActiveConversation = useAppStore((state) => state.setActiveRecipient)
+  // const [recipentAddress, setRecipentAddress] = useState<string>()
 
-  useEffect(() => {
-    const routeAddress =
-      (Array.isArray(router.query.recipientWalletAddr)
-        ? router.query.recipientWalletAddr.join('/')
-        : router.query.recipientWalletAddr) ?? ''
-    setRecipentAddress(routeAddress)
-  }, [router.query.recipientWalletAddr])
+  // useEffect(() => {
+  //   const routeAddress =
+  //     (Array.isArray(router.query.recipientWalletAddr)
+  //       ? router.query.recipientWalletAddr.join('/')
+  //       : router.query.recipientWalletAddr) ?? ''
+  //   setRecipentAddress(routeAddress)
+  // }, [router.query.recipientWalletAddr])
 
-  useEffect(() => {
-    if (!recipentAddress && window.location.pathname.includes('/dm')) {
-      router.push(window.location.pathname)
-      setRecipentAddress(window.location.pathname.replace('/dm/', ''))
-    }
-  }, [recipentAddress, window.location.pathname])
+  // useEffect(() => {
+  //   if (!recipentAddress && window.location.pathname.includes('/dm')) {
+  //     // router.push(window.location.pathname)
+  //     // setRecipentAddress(recipientAddress)
+  //   }
+  // }, [recipentAddress])
 
   if (!previewMessages.get(getConversationKey(conversation))) {
     return null
@@ -47,19 +52,25 @@ export const ConversationTile = ({
   const conversationDomain =
     conversation.context?.conversationId.split('/')[0] ?? ''
 
-  const isSelected = recipentAddress === getConversationKey(conversation)
+  // const isSelected = recipentAddress === getConversationKey(conversation)
+
+  // const onClickConversation = () => {
+  //   setActiveConversation(conversation.peerAddress)
+  //   onClick?.(conversation)
+  // }
 
   if (!latestMessage) {
     return null
   }
 
-  const onClick = (path: string) => {
-    router.push(path)
+  const handleClick = (conversation: Conversation) => {
+    setActiveConversation(conversation.peerAddress)
+    onClick?.(conversation)
   }
 
   return (
     <div
-      onClick={() => onClick(`/dm/${getConversationKey(conversation)}`)}
+      onClick={() => handleClick(conversation)}
       className={classNames(
         'h-20',
         'py-2',
@@ -112,9 +123,16 @@ export const ConversationTile = ({
   )
 }
 
-const ConversationsList = (): JSX.Element => {
+const ConversationsList = () => {
+  const activeConversation = useAppStore((state) => state.activeConversation)
   const conversations = useAppStore((state) => state.conversations)
   const previewMessages = useAppStore((state) => state.previewMessages)
+  const convoMessages = useAppStore((state) => state.convoMessages)
+  const setExtensionAppViewState = useAppStore(
+    (state) => state.setExtensionAppViewState
+  )
+
+  const { resolveName } = useWalletProvider()
 
   const orderByLatestMessage = (
     convoA: Conversation,
@@ -127,6 +145,19 @@ const ConversationsList = (): JSX.Element => {
     return convoALastMessageDate < convoBLastMessageDate ? 1 : -1
   }
 
+  const handleClickedConversation = (peerAddress: string) => {
+    console.log('clicked convo', peerAddress)
+
+    setExtensionAppViewState('conversation')
+  }
+
+  // This was a hack to reload the eth name info if the conversation changed
+  // TODO: Do we need this?
+  // useEffect(() => {
+  //   extensionViewState === 'conversation' &&
+  //     reloadIfQueryParamPresent(activeRecipient)
+  // }, [activeRecipient, reloadIfQueryParamPresent, extensionViewState])
+
   if (!conversations || conversations.size == 0) {
     return <NoConversationsMessage />
   }
@@ -137,14 +168,14 @@ const ConversationsList = (): JSX.Element => {
         conversations.size > 0 &&
         Array.from(conversations.values())
           .sort(orderByLatestMessage)
-          .map((convo) => {
-            return (
-              <ConversationTile
-                key={getConversationKey(convo)}
-                conversation={convo}
-              />
-            )
-          })}
+          .map((convo) => (
+            <ConversationTile
+              key={convo.peerAddress}
+              conversation={convo}
+              isSelected={activeConversation === convo.peerAddress}
+              onClick={handleClickedConversation.bind(null, convo.peerAddress)}
+            />
+          ))}
     </>
   )
 }
