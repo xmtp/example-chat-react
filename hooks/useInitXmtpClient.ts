@@ -2,13 +2,7 @@ import { Client } from '@xmtp/xmtp-js'
 import { utils } from '@noble/secp256k1'
 import { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
-import {
-  getAppVersion,
-  getEnv,
-  loadKeys,
-  storeKeys,
-  wipeKeys,
-} from '../helpers'
+import { getEnv, wipeKeys } from '../helpers'
 import { useAppStore } from '../store/app'
 
 import {
@@ -38,26 +32,6 @@ const useInitXmtpClient = (cacheOnly = false) => {
       if (wallet && !client) {
         try {
           setIsRequestPending(true)
-          // let keys = loadKeys(address)
-          // console.log('keys', keys)
-
-          // if (!keys) {
-          //   if (cacheOnly) {
-          //     return
-          //   }
-          //   keys = await Client.getKeys(wallet, {
-          //     env: getEnv(),
-          //     appVersion: getAppVersion(),
-          //   })
-          //   storeKeys(address, keys)
-          // }
-          // const xmtp = await Client.create(null, {
-          //   env: getEnv(),
-          //   appVersion: getAppVersion(),
-          //   privateKeyOverride: keys,
-          // })
-          // setClient(xmtp)
-          // setIsRequestPending(false)
 
           const address = await wallet.getAddress()
 

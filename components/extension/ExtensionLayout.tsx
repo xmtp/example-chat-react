@@ -1,6 +1,6 @@
 import React, { ReactNode, useCallback, useEffect } from 'react'
 import { useSigner } from 'wagmi'
-import { useWeb3Modal, Web3Button, Web3Modal } from '@web3modal/react'
+import { useWeb3Modal, Web3Modal } from '@web3modal/react'
 
 import useInitXmtpClient from '../../hooks/useInitXmtpClient'
 import useListConversations from '../../hooks/useListConversations'
@@ -21,7 +21,6 @@ import { ethereumClient } from '../../helpers/ethereumClient'
 import ConversationScreen from './screens/ConversationScreen'
 import { clear as clearStorage } from '../../helpers/localPrivateKeyStorage'
 import { getFirebaseToken } from '../../helpers/firebase'
-import useNotificationSubscription from '../../hooks/useNotificationSubscription'
 
 export const PROJECT_ID =
   process.env.WALLETCONNECT_PROJECT_ID ||
@@ -41,29 +40,24 @@ export const ExtensionLayout = ({ children }) => {
   const setSigner = useAppStore((state) => state.setSigner)
   const setAddress = useAppStore((state) => state.setAddress)
   const { initClient } = useInitXmtpClient()
-  const { connect: connectWallet, disconnect: disconnectWallet } =
-    useWalletProvider()
-  const { register: registerPush, revoke } = useNotificationSubscription()
+  const { disconnect: disconnectWallet } = useWalletProvider()
   useListConversations()
 
   const handleConnect = useCallback(async () => {
     openWeb3Modal()
-    // data && (await initClient(data))
   }, [initClient, data])
 
   useEffect(() => {
     ;(async () => {
-      if (isLoading || isError) return
+      if (isLoading || isError) {
+        return
+      }
 
       if (data) {
         await initClient(data)
       }
     })()
   }, [isLoading, data, isError, initClient])
-
-  useEffect(() => {
-    client && registerPush()
-  }, [client, registerPush])
 
   useEffect(() => {
     console.log('sending extension loaded')
@@ -86,14 +80,9 @@ export const ExtensionLayout = ({ children }) => {
   }
 
   const handleDisconnect = async () => {
-    localStorage.removeItem('walletconnect')
-    Object.keys(localStorage).forEach((key) => {
-      if (key.startsWith('-walletlink')) {
-        localStorage.removeItem(key)
-      }
-    })
-    setSigner(undefined)
-    setAddress(undefined)
+    disconnectWallet()
+    setSigner(null)
+    setAddress(null)
     clearStorage()
   }
 
@@ -110,6 +99,10 @@ export const ExtensionLayout = ({ children }) => {
     }
   }
 
+  useEffect(() => {
+    requestNotificationPerms()
+  }, [])
+
   return (
     <div>
       <ReactNavigationView>
@@ -124,14 +117,7 @@ export const ExtensionLayout = ({ children }) => {
               )}
             </NavigationHeaderLayout>
             <NavigationPanel onConnect={handleConnect} />
-            <Web3Button />
             <Web3Modal projectId={PROJECT_ID} ethereumClient={ethereumClient} />
-            {/* <button className="mt-8" onClick={handleConnect}>
-            connect wallet
-          </button> */}
-            <button onClick={requestNotificationPerms}>
-              Request push notifications
-            </button>
             <UserMenu
               onConnect={handleConnect}
               onDisconnect={handleDisconnect}

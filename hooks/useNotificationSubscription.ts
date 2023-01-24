@@ -23,8 +23,6 @@ import { doRegistration, pushClient } from '../helpers/pushNotifications'
 // const pushClient = createPromiseClient(Notifications, transport)
 
 const updateSubscriptions = async (xmtp: Client) => {
-  console.log('updating subscriptions')
-
   const conversations = await xmtp.conversations.list()
   const installationId = await getInstallationId()
   const convoTopics = conversations.map((convo) => convo.topic)

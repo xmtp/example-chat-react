@@ -1,11 +1,11 @@
 import { Conversation } from '@xmtp/xmtp-js'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { classNames, formatDate, getConversationKey } from '../../helpers'
+import useNotificationSubscription from '../../hooks/useNotificationSubscription'
 import useWalletProvider from '../../hooks/useWalletProvider'
 import { useAppStore } from '../../store/app'
 import Address from '../Address'
 import Avatar from '../Avatar'
-// import { ConversationTile } from '../ConversationsList'
 import { NoConversationsMessage } from '../NoConversationsMessage'
 
 type ConversationTileProps = {
@@ -19,29 +19,12 @@ export const ConversationTile = ({
   isSelected,
   onClick,
 }: ConversationTileProps): JSX.Element | null => {
-  // const router = useRouter()
   const address = useAppStore((state) => state.address)
   const previewMessages = useAppStore((state) => state.previewMessages)
   const loadingConversations = useAppStore(
     (state) => state.loadingConversations
   )
   const setActiveConversation = useAppStore((state) => state.setActiveRecipient)
-  // const [recipentAddress, setRecipentAddress] = useState<string>()
-
-  // useEffect(() => {
-  //   const routeAddress =
-  //     (Array.isArray(router.query.recipientWalletAddr)
-  //       ? router.query.recipientWalletAddr.join('/')
-  //       : router.query.recipientWalletAddr) ?? ''
-  //   setRecipentAddress(routeAddress)
-  // }, [router.query.recipientWalletAddr])
-
-  // useEffect(() => {
-  //   if (!recipentAddress && window.location.pathname.includes('/dm')) {
-  //     // router.push(window.location.pathname)
-  //     // setRecipentAddress(recipientAddress)
-  //   }
-  // }, [recipentAddress])
 
   if (!previewMessages.get(getConversationKey(conversation))) {
     return null
@@ -51,13 +34,6 @@ export const ConversationTile = ({
 
   const conversationDomain =
     conversation.context?.conversationId.split('/')[0] ?? ''
-
-  // const isSelected = recipentAddress === getConversationKey(conversation)
-
-  // const onClickConversation = () => {
-  //   setActiveConversation(conversation.peerAddress)
-  //   onClick?.(conversation)
-  // }
 
   if (!latestMessage) {
     return null
@@ -127,12 +103,10 @@ const ConversationsList = () => {
   const activeConversation = useAppStore((state) => state.activeConversation)
   const conversations = useAppStore((state) => state.conversations)
   const previewMessages = useAppStore((state) => state.previewMessages)
-  const convoMessages = useAppStore((state) => state.convoMessages)
   const setExtensionAppViewState = useAppStore(
     (state) => state.setExtensionAppViewState
   )
-
-  const { resolveName } = useWalletProvider()
+  const { register: registerPushNotifications } = useNotificationSubscription()
 
   const orderByLatestMessage = (
     convoA: Conversation,
@@ -157,6 +131,12 @@ const ConversationsList = () => {
   //   extensionViewState === 'conversation' &&
   //     reloadIfQueryParamPresent(activeRecipient)
   // }, [activeRecipient, reloadIfQueryParamPresent, extensionViewState])
+
+  useEffect(() => {
+    if (conversations && conversations.size > 0) {
+      registerPushNotifications()
+    }
+  }, [conversations, registerPushNotifications])
 
   if (!conversations || conversations.size == 0) {
     return <NoConversationsMessage />
