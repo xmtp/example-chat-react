@@ -1,0 +1,12 @@
+version: v1
+plugins:
+  - name: es
+    out: gen
+    # With target=ts, we generate TypeScript files.
+    # Use target=js+dts to generate JavaScript and TypeScript declaration files
+    # like remote generation does.
+    opt: target=ts
+  - name: connect-web
+    out: gen
+    # With target=ts, we generate TypeScript files.
+    opt: target=ts

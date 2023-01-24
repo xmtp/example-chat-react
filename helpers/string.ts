@@ -26,6 +26,7 @@ export const formatTime = (d: Date | undefined): string =>
       })
     : ''
 
+// if we're not at the root and not at the dm path, we're in a conversation
 export const checkPath = () => {
   return window.location.pathname !== '/' && window.location.pathname !== '/dm'
 }

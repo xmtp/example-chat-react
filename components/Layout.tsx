@@ -1,9 +1,10 @@
 import Head from 'next/head'
 import Link from 'next/link'
+
 import { NavigationView, ConversationView } from './Views'
 import { RecipientControl } from './Conversation'
-import NewMessageButton from './NewMessageButton'
 import NavigationPanel from './NavigationPanel'
+import NewMessageButton from './NewMessageButton'
 import XmtpInfoPanel from './XmtpInfoPanel'
 import UserMenu from './UserMenu'
 import React, { useCallback } from 'react'
@@ -11,9 +12,15 @@ import { useAppStore } from '../store/app'
 import useInitXmtpClient from '../hooks/useInitXmtpClient'
 import useListConversations from '../hooks/useListConversations'
 import useWalletProvider from '../hooks/useWalletProvider'
+import { useRouter } from 'next/router'
+import { Web3Modal } from '@web3modal/react'
+import { PROJECT_ID } from './extension/ExtensionLayout'
+import { ethereumClient } from '../helpers/ethereumClient'
+import { getAddressFromPath } from '../helpers'
 
 const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const client = useAppStore((state) => state.client)
+  const router = useRouter()
   const { initClient } = useInitXmtpClient()
   useListConversations()
   const walletAddress = useAppStore((state) => state.address)
@@ -24,12 +31,21 @@ const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
 
   const handleDisconnect = useCallback(async () => {
     await disconnectWallet()
-  }, [disconnectWallet])
+    router.push('/')
+  }, [disconnectWallet, router])
 
   const handleConnect = useCallback(async () => {
     await connectWallet()
     signer && (await initClient(signer))
-  }, [connectWallet, initClient, signer])
+  }, [initClient, signer, connectWallet])
+
+  const handleClickedNewMessage = () => {
+    router.push('/dm/')
+  }
+
+  const handleRecipientSubmit = (address: string) => {
+    router.push(address ? `/dm/${address}` : '/dm/')
+  }
 
   return (
     <>
@@ -48,7 +64,13 @@ const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                 <Link href="/" passHref={true}>
                   <img className="h-8 w-auto" src="/xmtp-icon.png" alt="XMTP" />
                 </Link>
-                {walletAddress && client && <NewMessageButton />}
+                {walletAddress && client && (
+                  <NewMessageButton onClick={handleClickedNewMessage} />
+                )}
+                <Web3Modal
+                  projectId={PROJECT_ID}
+                  ethereumClient={ethereumClient}
+                />
               </div>
               <NavigationPanel onConnect={handleConnect} />
               <UserMenu
@@ -58,11 +80,20 @@ const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
             </div>
           </aside>
         </NavigationView>
-        <ConversationView>
+        <ConversationView show={router.pathname !== '/'}>
           {walletAddress && client ? (
             <>
               <div className="flex bg-zinc-50 border-b border-gray-200 md:bg-white md:border-0 max-h-16 min-h-[4rem]">
-                <RecipientControl />
+                <RecipientControl
+                  recipientWalletAddress={getAddressFromPath(router)}
+                  onSubmit={handleRecipientSubmit}
+                  onBackArrowClick={() => router.push('/')}
+                  onInputChange={() => {
+                    if (router.pathname !== '/dm') {
+                      router.push('/dm')
+                    }
+                  }}
+                />
               </div>
               {children}
             </>

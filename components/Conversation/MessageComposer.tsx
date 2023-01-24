@@ -3,18 +3,20 @@ import { classNames } from '../../helpers'
 import messageComposerStyles from '../../styles/MessageComposer.module.css'
 import upArrowGreen from '../../public/up-arrow-green.svg'
 import upArrowGrey from '../../public/up-arrow-grey.svg'
-import { useRouter } from 'next/router'
 import Image from 'next/image'
 
 type MessageComposerProps = {
   onSend: (msg: string) => Promise<void>
+  recipientWalletAddr: string
 }
 
-const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
+const MessageComposer = ({
+  onSend,
+  recipientWalletAddr,
+}: MessageComposerProps): JSX.Element => {
   const [message, setMessage] = useState('')
-  const router = useRouter()
 
-  useEffect(() => setMessage(''), [router.query.recipientWalletAddr])
+  useEffect(() => setMessage(''), [recipientWalletAddr])
 
   const onMessageChange = (e: React.FormEvent<HTMLInputElement>) =>
     setMessage(e.currentTarget.value)

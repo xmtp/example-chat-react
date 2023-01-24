@@ -59,8 +59,8 @@ const Conversation = ({
   }
 
   return (
-    <>
-      <div className="bg-white h-[calc(100vh-7rem)]">
+    <div className="flex flex-col">
+      <div className="bg-white grow h-[calc(100vh-7rem)]">
         <div className="h-full flex justify-between flex-col">
           <MessagesList
             fetchNextMessages={fetchNextMessages}
@@ -69,8 +69,11 @@ const Conversation = ({
           />
         </div>
       </div>
-      <MessageComposer onSend={sendMessage} />
-    </>
+      <MessageComposer
+        onSend={sendMessage}
+        recipientWalletAddr={recipientWalletAddr}
+      />
+    </div>
   )
 }
 
