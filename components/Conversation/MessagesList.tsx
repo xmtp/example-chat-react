@@ -30,7 +30,6 @@ const TypeOfMessage = ({ msg }: MessageTileProps): JSX.Element => {
   const isVoiceMemo = contentTypeId === 'voice-key'
   console.log(contentTypeId)
 
-  debugger
   if (isVoiceMemo) {
     return (
       <audio controls>
