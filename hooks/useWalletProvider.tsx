@@ -76,7 +76,8 @@ const useWalletProvider = () => {
       if (
         key.startsWith('xmtp') ||
         key.startsWith('wagmi') ||
-        key.startsWith('-walletlink')
+        key.startsWith('-walletlink') ||
+        key.startsWith('walletconnect')
       ) {
         localStorage.removeItem(key)
       }
