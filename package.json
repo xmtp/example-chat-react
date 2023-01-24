@@ -9,7 +9,6 @@
     "ext:build:dev": "node esbuild.js",
     "ext:build": "NODE_ENV=production node esbuild.js",
     "ext:watch": "node esbuild.js --watch",
-    "dev:esbuild": "concurrently",
     "build": "next build && next export",
     "start": "next start",
     "lint": "next lint",
