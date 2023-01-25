@@ -15,7 +15,6 @@ export type MessageListProps = {
 
 type MessageTileProps = {
   message: DecodedMessage
-  msg: DecodedMessage
 }
 
 const isOnSameDay = (d1?: Date, d2?: Date): boolean => {
@@ -25,19 +24,20 @@ const isOnSameDay = (d1?: Date, d2?: Date): boolean => {
 const formatDate = (d?: Date) =>
   d?.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 
-const TypeOfMessage = ({ msg }: MessageTileProps): JSX.Element => {
-  const contentTypeId = msg.contentType.typeId
+const TypeOfMessage = ({ message }: MessageTileProps): JSX.Element => {
+  const contentTypeId = message.contentType.typeId
   const isVoiceMemo = contentTypeId === 'voice-key'
-  console.log(contentTypeId)
 
   if (isVoiceMemo) {
     return (
       <audio controls>
-        <source src={msg.content} type="audio/mpeg" />
+        <source src={message.content} type="audio/mpeg" />
       </audio>
     )
+  } else if (message.error) {
+    return <div>{message.error.message}</div>
   } else {
-    return <Emoji text={msg.content || ''} />
+    return <Emoji text={message.content || ''} />
   }
 }
 
@@ -52,7 +52,7 @@ const MessageTile = ({ message }: MessageTileProps): JSX.Element => (
         </span>
       </div>
       <span className="block text-md px-2 mt-2 text-black font-normal break-words">
-        <TypeOfMessage msg={message} />
+        <TypeOfMessage message={message} />
         {/* {message.error ? (
           `Error: ${message.error?.message}`
         ) : (

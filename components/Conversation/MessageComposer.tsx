@@ -11,8 +11,14 @@ type MessageComposerProps = {
   onSend: (msg: object) => Promise<void>
 }
 
+type Message = { content: string | ArrayBuffer; contentType: string }
+
 const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
-  const [message, setMessage] = useState({ content: '', contentType: '' })
+  const [message, setMessage] = useState<Message>({
+    content: '',
+    contentType: '',
+  })
+
   const router = useRouter()
 
   useEffect(
@@ -27,13 +33,15 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
   const addAudioElement = (blob: Blob) => {
     const reader = new FileReader()
     reader.readAsDataURL(blob)
-    return new Promise((_resolve) => {
+    return new Promise(() => {
       reader.onloadend = () => {
-        setMessage({
-          ...message,
-          content: reader.result,
-          contentType: 'voiceMemo',
-        })
+        if (reader.result !== null) {
+          setMessage({
+            ...message,
+            content: reader.result,
+            contentType: 'voiceMemo',
+          })
+        }
       }
     })
   }

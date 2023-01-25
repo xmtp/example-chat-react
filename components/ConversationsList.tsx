@@ -43,6 +43,8 @@ const ConversationTile = ({
 
   const latestMessage = previewMessages.get(getConversationKey(conversation))
 
+  const contentTypeId = latestMessage?.contentType.typeId
+
   const conversationDomain =
     conversation.context?.conversationId.split('/')[0] ?? ''
 
@@ -103,8 +105,10 @@ const ConversationTile = ({
           </span>
         </div>
         <span className="text-sm text-gray-500 line-clamp-1 break-all">
-          {address === latestMessage?.senderAddress && 'You: '}{' '}
-          {latestMessage?.content}
+          {address === latestMessage?.senderAddress && 'You: '}
+          {contentTypeId === 'voice-key'
+            ? 'Audio File'
+            : latestMessage?.content}
         </span>
       </div>
     </div>
