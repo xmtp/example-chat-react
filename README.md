@@ -9,7 +9,7 @@ The XMTP React Chat example app has been archived and this repo is no longer bei
 Check out these other supported app repos you can use for guidance and inspiration when building with XMTP:
 
 - The [XMTP Quickstart React chat app](https://github.com/xmtp/xmtp-quickstart-react) demonstrates the core capabilities of the XMTP client SDK, providing code you can use to learn to build a basic messaging app.
-- The [XMTP Inbox chat app](https://github.com/xmtp-labs/xmtp-inbox-web) demonstrates core and advanced capabilities of the XMTP client SDK, showcasing innovative ways of building with the XMTP client SDK. This app is an evolution of the XMTP React Chat example app previously maintained in this repo.
+- The [XMTP Inbox chat app](https://github.com/xmtp-labs/xmtp-inbox-web) demonstrates core and advanced capabilities of the XMTP client SDK, showcasing innovative ways of building with XMTP. This app is an evolution of the XMTP React Chat example app previously maintained in this repo.
 
 For even more examples of apps built with XMTP, see:
 
