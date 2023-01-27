@@ -1,10 +1,24 @@
 # React Chat Example
 
-![Test](https://github.com/xmtp/example-chat-react/actions/workflows/test.yml/badge.svg)
-![Lint](https://github.com/xmtp/example-chat-react/actions/workflows/lint.yml/badge.svg)
-![Build](https://github.com/xmtp/example-chat-react/actions/workflows/build.yml/badge.svg)
+![Status](https://img.shields.io/badge/Project_Status-Archived-red)
 
 ![x-red-sm](https://user-images.githubusercontent.com/510695/163488403-1fb37e86-c673-4b48-954e-8460ae4d4b05.png)
+
+The XMTP React Chat example app has been archived and this repo is no longer being maintained.
+
+Check out these other supported app repos you can use for guidance and inspiration when building with XMTP:
+
+- The [XMTP Quickstart React chat app](https://github.com/xmtp/xmtp-quickstart-react) demonstrates the core capabilities of the XMTP client SDK, providing code you can use to learn to build a basic messaging app.
+- The [XMTP Inbox chat app](https://github.com/xmtp-labs/xmtp-inbox-web) demonstrates core and advanced capabilities of the XMTP client SDK, showcasing innovative ways of building with XMTP. This app is an evolution of the XMTP React Chat example app previously maintained in this repo.
+
+For even more examples of apps built with XMTP, see:
+
+- [Awesome-xtmp](https://github.com/xmtp/awesome-xmtp)
+- [Built with XMTP](https://xmtp.org/built-with-xmtp)
+
+You can still fork this repo and existing forks continue to work.
+
+---
 
 **Example chat application demonstrating the core concepts and capabilities of the XMTP client SDK**
 
@@ -12,7 +26,7 @@ This application is built with React, [Next.js](https://nextjs.org/), and the [`
 
 Use the application to send and receive messages using the XMTP `dev` network environment, with some [important considerations](#considerations). You are also free to customize and deploy the application.
 
-This application is maintained by [XMTP Labs](https://xmtp.com) and distributed under [MIT License](./LICENSE) for learning about and developing applications built with XMTP, a messaging protocol and decentralized communication network for blockchain wallets. The application has not undergone a formal security audit.
+This application is distributed under [MIT License](./LICENSE) for learning about and developing applications built with XMTP, a messaging protocol and decentralized communication network for blockchain wallets. The application has not undergone a formal security audit.
 
 ## Getting Started
 
@@ -62,4 +76,3 @@ Here are some important considerations when working with the example chat applic
 - The application sends and receives messages using the XMTP `dev` network environment. To connect to the `production` network instead, set the following environment variable `NEXT_PUBLIC_XMTP_ENVIRONMENT=production`.
   - XMTP may occasionally delete messages and keys from the `dev` network, and will provide advance notice in the XMTP Discord community ([request access](https://xmtp.typeform.com/to/yojTJarb?utm_source=docs_home)). The `production` network is configured to store messages indefinitely.
 - You can't yet send a message to a wallet address that hasn't used XMTP. The client displays an error when it looks up an address that doesn't have an identity broadcast on the XMTP network.
-  - This limitation will soon be resolved by improvements to the `xmtp-js` library that will allow messages to be created and stored for future delivery, even if the recipient hasn't used XMTP yet.
