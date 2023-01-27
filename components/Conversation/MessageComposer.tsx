@@ -4,27 +4,56 @@ import messageComposerStyles from '../../styles/MessageComposer.module.css'
 import upArrowGreen from '../../public/up-arrow-green.svg'
 import upArrowGrey from '../../public/up-arrow-grey.svg'
 import { useRouter } from 'next/router'
+import { AudioRecorder } from 'react-audio-voice-recorder'
 import Image from 'next/image'
 
 type MessageComposerProps = {
-  onSend: (msg: string) => Promise<void>
+  onSend: (msg: object) => Promise<void>
 }
 
+type Message = { content: string | ArrayBuffer; contentType: string }
+
 const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState<Message>({
+    content: '',
+    contentType: '',
+  })
+
   const router = useRouter()
 
-  useEffect(() => setMessage(''), [router.query.recipientWalletAddr])
+  useEffect(
+    () => setMessage({ ...message, content: '' }),
+    [router.query.recipientWalletAddr]
+  )
 
-  const onMessageChange = (e: React.FormEvent<HTMLInputElement>) =>
-    setMessage(e.currentTarget.value)
+  const onMessageChange = (e: React.FormEvent<HTMLInputElement>) => {
+    setMessage({ ...message, content: e.currentTarget.value })
+  }
+
+  const addAudioElement = (blob: Blob) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(blob)
+    return new Promise(() => {
+      reader.onloadend = () => {
+        if (reader.result !== null) {
+          setMessage({
+            ...message,
+            content: reader.result,
+            contentType: 'voiceMemo',
+          })
+        }
+      }
+    })
+  }
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!message) {
+    const contentMessage = message.content
+
+    if (!contentMessage) {
       return
     }
-    setMessage('')
+    setMessage({ ...message, content: '', contentType: '' })
     await onSend(message)
   }
 
@@ -46,6 +75,7 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
         autoComplete="off"
         onSubmit={onSubmit}
       >
+        <AudioRecorder onRecordingComplete={addAudioElement} />
         <input
           type="text"
           placeholder="Type something..."
@@ -58,7 +88,7 @@ const MessageComposer = ({ onSend }: MessageComposerProps): JSX.Element => {
             messageComposerStyles.input
           )}
           name="message"
-          value={message}
+          value={message.content}
           onChange={onMessageChange}
           required
         />

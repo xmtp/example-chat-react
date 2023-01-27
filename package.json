@@ -29,6 +29,7 @@
     "imagemin-svgo": "^9.0.0",
     "next": "13.0.5",
     "react": "18.2.0",
+    "react-audio-voice-recorder": "^1.0.4",
     "react-blockies": "^1.4.1",
     "react-dom": "18.2.0",
     "react-emoji-render": "^1.2.4",
