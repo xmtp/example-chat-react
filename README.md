@@ -1,6 +1,6 @@
 # ARCHIVED
 
-https://img.shields.io/badge/Project_Status-Archived-red?
+https://img.shields.io/badge/Project_Status-Archived-red
 
 ![x-red-sm](https://user-images.githubusercontent.com/510695/163488403-1fb37e86-c673-4b48-954e-8460ae4d4b05.png)
 
